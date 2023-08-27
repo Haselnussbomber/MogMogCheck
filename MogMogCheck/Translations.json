@@ -28,17 +28,5 @@
   "TableHeader.Price": {
     "en": "Price",
     "de": "Preis"
-  },
-
-  "ItemContextMenu.OpenOnGarlandTools": {
-    "en": "Open on Garland Tools",
-    "de": "Auf Garland Tools öffnen"
-  },
-
-  "template": {
-    "en": "",
-    "de": "",
-    "fr": "",
-    "ja": ""
   }
 }

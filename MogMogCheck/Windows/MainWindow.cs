@@ -3,11 +3,10 @@ using System.Numerics;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using HaselCommon.Extensions.Sheets;
+using HaselCommon.Sheets;
 using HaselCommon.Utils;
 using ImGuiNET;
 using MogMogCheck.Sheets;
-using Item = Lumina.Excel.GeneratedSheets.Item;
 
 namespace MogMogCheck.Windows;
 
@@ -109,7 +108,7 @@ public unsafe class MainWindow : Window
 
         Service.TextureManager.GetIcon(item.Icon).Draw(32 * scale);
 
-        if (item.IsUnlockable() && item.HasAcquired())
+        if (item.IsUnlockable && item.HasAcquired)
         {
             ImGui.SameLine(18 * scale, 0);
             ImGuiUtils.PushCursorY(16 * scale);
@@ -130,7 +129,7 @@ public unsafe class MainWindow : Window
             ImGuiContextMenu.CreateItemFinder(item.RowId),
             ImGuiContextMenu.CreateCopyItemName(item.RowId),
             ImGuiContextMenu.CreateItemSearch(item.RowId),
-            ImGuiContextMenu.CreateGarlandTools(item.RowId),
+            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
         }
         .Draw();
 
@@ -159,7 +158,7 @@ public unsafe class MainWindow : Window
             ImGuiContextMenu.CreateItemFinder(item.RowId),
             ImGuiContextMenu.CreateCopyItemName(item.RowId),
             ImGuiContextMenu.CreateItemSearch(item.RowId),
-            ImGuiContextMenu.CreateGarlandTools(item.RowId),
+            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
         }
         .Draw();
 
