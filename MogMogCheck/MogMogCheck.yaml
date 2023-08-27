@@ -1,0 +1,5 @@
+name: MogMogCheck
+author: Haselnussbomber
+punchline: A plugin to assist tracking Moogle Treasure Trove rewards
+repo_url: https://github.com/Haselnussbomber/MogMogCheck
+description: MogMogCheck is small plugin that lists items from the Moogle Treasure Trove (in German called Mog Mog Kollektion), their collection status and checkmarks to track how many tomestones are needed.
