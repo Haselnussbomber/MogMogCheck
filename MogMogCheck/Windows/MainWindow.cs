@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Windowing;
@@ -23,6 +24,14 @@ public unsafe class MainWindow : Window
     public MainWindow() : base("MogMogCheck")
     {
         Namespace = "MogMogCheckMain";
+
+        Size = new Vector2(570, 740);
+        SizeCondition = ImGuiCond.FirstUseEver;
+        SizeConstraints = new WindowSizeConstraints()
+        {
+            MinimumSize = new Vector2(300, 200),
+            MaximumSize = new Vector2(4069),
+        };
     }
 
     public override void Update()

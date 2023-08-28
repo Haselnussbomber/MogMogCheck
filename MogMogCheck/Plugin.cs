@@ -35,10 +35,6 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.OnLanguageChange += Config.Save;
 
         Service.CommandManager.AddHandler("/mogmog", new(OnCommand));
-
-        #if DEBUG
-        Service.WindowManager.OpenWindow<MainWindow>();
-        #endif
     }
 
     private void OnCommand(string command, string arguments)
