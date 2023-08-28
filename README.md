@@ -1,4 +1,4 @@
-**MogMogCheck** is small plugin that lists items from the Moogle Treasure Trove (in German called Mog Mog Kollektion), their collection status and checkmarks to track how many tomestones are needed.
+**MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name). It lists the items, their collection status and their price. You can also check the boxes to keep track of how many Tomestones you need at the top.
 
 Open with `/mogmog`.
 
