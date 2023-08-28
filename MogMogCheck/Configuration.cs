@@ -21,7 +21,7 @@ public partial class Configuration : IPluginConfiguration, ITranslationConfig
     public string PluginLanguage { get; set; } = "en";
     public PluginLanguageOverride PluginLanguageOverride { get; set; } = PluginLanguageOverride.Client;
 
-    public Dictionary<int, bool> TrackedItems = new();
+    public Dictionary<uint, bool> TrackedItems = new();
 }
 
 public partial class Configuration

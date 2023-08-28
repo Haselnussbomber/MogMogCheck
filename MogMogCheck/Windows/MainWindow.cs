@@ -1,20 +1,72 @@
+using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Sheets;
 using HaselCommon.Utils;
 using ImGuiNET;
+using MogMogCheck.Records;
 using MogMogCheck.Sheets;
+using MogMogCheck.Tables;
+using InstanceContentCSBonus = Lumina.Excel.GeneratedSheets.InstanceContentCSBonus;
 
 namespace MogMogCheck.Windows;
 
 public unsafe class MainWindow : Window
 {
+    private SpecialShop? _shop;
+    private RewardsTable? _rewardsTable;
+    private DutiesTable? _dutiesTable;
+
     public MainWindow() : base("MogMogCheck")
     {
         Namespace = "MogMogCheckMain";
+    }
+
+    public override void Update()
+    {
+        _shop = GetRow<SpecialShop>(1769929);
+
+        if (_rewardsTable == null && _shop != null)
+        {
+            var rewards = new List<Reward>();
+
+            for (var i = 0u; i < _shop.Items!.Length; i++)
+            {
+                var row = _shop.Items![i];
+                if (row.ItemId == 0)
+                    continue;
+
+                var rewardItem = GetRow<Item>((uint)row.ItemId);
+                var requiredItem = GetRow<Item>((uint)row.RequiredItem);
+                if (rewardItem == null || requiredItem == null)
+                    continue;
+
+                rewards.Add(new(i, rewardItem, row.StackSize, requiredItem, row.RequiredCount));
+            }
+
+            _rewardsTable = new(rewards);
+        }
+
+        if (_dutiesTable == null)
+        {
+            var duties = new List<Duty>();
+
+            foreach (var row in GetSheet<InstanceContentCSBonus>()!)
+            {
+                if (row.Item.Row == 0)
+                    continue;
+
+                var instanceContent = GetRow<InstanceContent>(row.Instance.Row);
+                if (instanceContent == null || instanceContent.ContentFinderCondition.Row == 0)
+                    continue;
+
+                duties.Add(new(instanceContent.ContentFinderCondition.Value!, GetRow<Item>(row.Item.Row)!, row.Unknown2, row.Unknown3));
+            }
+
+            _dutiesTable = new(duties);
+        }
     }
 
     public override void OnClose()
@@ -24,18 +76,17 @@ public unsafe class MainWindow : Window
 
     public override bool DrawConditions()
     {
-        return Service.ClientState.IsLoggedIn;
+        return Service.ClientState.IsLoggedIn
+            && _shop != null
+            && _shop.Items.Length > 0
+            && _dutiesTable != null;
     }
 
     public override void Draw()
     {
-        var shop = GetRow<SpecialShop>(1769929);
-        if (shop == null || shop.Items.Length == 0)
-            return;
-
         var scale = ImGui.GetIO().FontGlobalScale;
-        
-        var tomestone = GetRow<Item>((uint)shop.Items[0].RequiredItem);
+
+        var tomestone = GetRow<Item>((uint)_shop!.Items[0].RequiredItem);
         if (tomestone == null)
             return;
 
@@ -53,8 +104,8 @@ public unsafe class MainWindow : Window
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
-        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)shop.Items[0].RequiredItem);
-        var needed = shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue(item.ItemId, out var tracked) && tracked ? item.RequiredCount : 0));
+        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop.Items[0].RequiredItem);
+        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ItemId, out var tracked) && tracked ? item.RequiredCount : 0));
         if (needed > owned)
         {
             var remaining = needed - owned;
@@ -65,120 +116,26 @@ public unsafe class MainWindow : Window
             ImGui.TextUnformatted(t("Currency.Info", owned, needed));
         }
 
-        using var child = ImRaii.Child("##TableWrapper");
-
-        using var table = ImRaii.Table("##Items", 3);
-
-        ImGui.TableSetupColumn(t("TableHeader.Track"), ImGuiTableColumnFlags.WidthFixed, 24);
-        ImGui.TableSetupColumn(t("TableHeader.Item"), ImGuiTableColumnFlags.WidthStretch);
-        ImGui.TableSetupColumn(t("TableHeader.Price"), ImGuiTableColumnFlags.WidthFixed, 120);
-
-        ImGui.TableHeadersRow();
-
-        for (var i = 0; i < shop.Items.Length; i++)
-        {
-            var item = shop.Items[i];
-            if (item.ItemId == 0)
-                continue;
-
-            ImGui.TableNextRow();
-            ImGui.TableNextColumn();
-            ImGuiUtils.PushCursorY(4 * scale);
-
-            if (!Plugin.Config.TrackedItems.TryGetValue(item.ItemId, out var tracked))
-                Plugin.Config.TrackedItems.Add(item.ItemId, tracked = false);
-
-            if (ImGui.Checkbox($"##Row{i}", ref tracked))
-            {
-                if (tracked)
-                {
-                    if (!Plugin.Config.TrackedItems.ContainsKey(item.ItemId))
-                        Plugin.Config.TrackedItems.Add(item.ItemId, tracked);
-                    else
-                        Plugin.Config.TrackedItems[item.ItemId] = tracked;
-                }
-                else
-                {
-                    Plugin.Config.TrackedItems.Remove(item.ItemId);
-                }
-
-                Plugin.Config.Save();
-            }
-
-            ImGui.TableNextColumn();
-            DrawItem($"Row{i}", GetRow<Item>((uint)item.ItemId), item.StackSize);
-
-            ImGui.TableNextColumn();
-            DrawCurrency($"Row{i}", GetRow<Item>((uint)item.RequiredItem), item.RequiredCount);
-        }
+        using var tabs = ImRaii.TabBar("##Tabs");
+        DrawRewardsTab();
+        DrawDutiesTab();
     }
 
-    public static void DrawItem(string key, Item? item, uint stackSize)
+    public void DrawRewardsTab()
     {
-        if (item == null)
+        using var rewardsTab = ImRaii.TabItem(t("Tabs.Rewards"));
+        if (!rewardsTab.Success)
             return;
 
-        var scale = ImGui.GetIO().FontGlobalScale;
-
-        Service.TextureManager.GetIcon(item.Icon).Draw(32 * scale);
-
-        if (item.IsUnlockable && item.HasAcquired)
-        {
-            ImGui.SameLine(18 * scale, 0);
-            ImGuiUtils.PushCursorY(16 * scale);
-
-            var tex = Service.TextureProvider.GetTextureFromGame("ui/uld/RecipeNoteBook_hr1.tex");
-            if (tex != null)
-            {
-                var pos = ImGui.GetWindowPos() + ImGui.GetCursorPos() - new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY());
-                ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos + Vector2.Zero, pos + new Vector2(24 * scale), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
-            }
-        }
-
-        ImGui.SameLine(40 * scale, 0);
-        ImGui.Selectable($"##{key}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, 32 * scale));
-
-        new ImGuiContextMenu($"##{key}_ItemContextMenu{item.RowId}_Tooltip")
-        {
-            ImGuiContextMenu.CreateItemFinder(item.RowId),
-            ImGuiContextMenu.CreateCopyItemName(item.RowId),
-            ImGuiContextMenu.CreateItemSearch(item.RowId),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
-        }
-        .Draw();
-
-        var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
-        ImGui.SameLine(42 * scale, 0);
-        ImGuiUtils.PushCursorY(-1 * scale);
-        using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
-            ImGui.TextUnformatted(name);
-
-        ImGui.SameLine(42 * scale, 0);
-        ImGuiUtils.PushCursorY(ImGui.GetFrameHeight() - 9 * scale);
-        using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
-            ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
+        _rewardsTable?.Draw(32);
     }
 
-    public static void DrawCurrency(string key, Item? item, uint needed)
+    public void DrawDutiesTab()
     {
-        if (item == null)
+        using var dutiesTab = ImRaii.TabItem(t("Tabs.Duties"));
+        if (!dutiesTab.Success)
             return;
 
-        var scale = ImGui.GetIO().FontGlobalScale;
-
-        Service.TextureManager.GetIcon(item.Icon).Draw(32 * scale);
-
-        new ImGuiContextMenu($"##{key}_ItemContextMenu{item.RowId}_Tooltip")
-        {
-            ImGuiContextMenu.CreateItemFinder(item.RowId),
-            ImGuiContextMenu.CreateCopyItemName(item.RowId),
-            ImGuiContextMenu.CreateItemSearch(item.RowId),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
-        }
-        .Draw();
-
-        ImGui.SameLine(45 * scale);
-        ImGuiUtils.PushCursorY(6 * scale);
-        ImGui.TextUnformatted($"{needed}");
+        _dutiesTable?.Draw(32);
     }
 }

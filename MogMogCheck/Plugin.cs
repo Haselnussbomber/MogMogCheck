@@ -20,7 +20,7 @@ public sealed partial class Plugin : IDalamudPlugin
         HaselCommonBase.Initialize(pluginInterface);
 
         Config = Configuration.Load();
-        Config.TrackedItems.RemoveAll((int itemId, bool tracked) => !tracked); // clear old untracked items
+        Config.TrackedItems.RemoveAll((uint itemId, bool tracked) => !tracked); // clear old untracked items
 
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MogMogCheck.Translations.json")
             ?? throw new Exception($"Could not find translations resource \"MogMogCheck.Translations.json\".");
