@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Fixed:** The window now has a default size of 570x740 on first use and a minimum size of 300x200.
+
 ## [1.0.2] (2023-08-28)
 
 - **Fixed:** Table no longer cuts off before the end.
@@ -21,7 +25,7 @@
 
 First release. 🥳
 
-[unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
 [1.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v0.0.1...v1.0.0
