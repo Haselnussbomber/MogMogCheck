@@ -28,7 +28,10 @@ public class DutiesTable : Table<Duty>
     private sealed class DutyColumn : ColumnString<Duty>
     {
         public override string ToName(Duty item)
-            => item.ContentFinderCondition.Name.RawString;
+        {
+            var name = item.ContentFinderCondition.Name.RawString;
+            return char.ToUpper(name[0]) + name[1..];
+        }
 
         public override unsafe void DrawColumn(Duty item, int _)
         {
