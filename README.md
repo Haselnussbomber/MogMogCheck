@@ -12,6 +12,6 @@ You can also check the boxes to keep track of how many Tomestones you need at th
 The Duties tab lists all the duties that reward Tomestones for the event.  
 Clicking on a duty will open the Duty Finder with that duty selected.
 
-![Screenshot of Duties tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/17b2a860-a3a5-4bd1-ae5e-50e4da82a6eb)
+![Screenshot of Duties tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/bca920b3-ece6-4fab-b26a-13ed76273793)
 
 Technically it should automatically update with each event, as they seem to replace the same shop every time (meaning the shop id is always the same).
