@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Table;
 using HaselCommon.Utils;
@@ -34,7 +35,7 @@ public class RewardsTable : Table<Reward>
     private sealed class TrackColumn : Column<Reward>
     {
         public override float Width
-            => 28;
+            => 28 * ImGuiHelpers.GlobalScale;
 
         public override bool DrawFilter()
         {
@@ -44,15 +45,19 @@ public class RewardsTable : Table<Reward>
         public override int Compare(Reward lhs, Reward rhs)
             => lhs.Index.CompareTo(rhs.Index);
 
-        public override void DrawColumn(Reward reward, int idx)
+        public override void DrawColumn(Reward row, int idx)
         {
-            var scale = ImGui.GetIO().FontGlobalScale;
-            var itemId = reward.Item.RowId;
+            var scale = ImGuiHelpers.GlobalScale;
+            var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
+            var rowHeight = (ImGui.CalcTextSize("").Y + itemInnerSpacing.Y) * 2f;
+            var paddingY = (rowHeight - ImGui.GetFrameHeight()) * 0.5f;
+
+            var itemId = row.Item.RowId;
 
             if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var tracked))
                 Plugin.Config.TrackedItems.Add(itemId, tracked = false);
 
-            ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X, 6 * scale);
+            ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X * scale, paddingY);
 
             if (ImGui.Checkbox($"##Row{idx}", ref tracked))
             {
@@ -78,47 +83,54 @@ public class RewardsTable : Table<Reward>
         public override string ToName(Reward reward)
             => GetItemName(reward.Item.RowId);
 
-        public override void DrawColumn(Reward reward, int idx)
+        public override void DrawColumn(Reward row, int idx)
         {
-            var scale = ImGui.GetIO().FontGlobalScale;
-            var item = reward.Item;
-            var stackSize = reward.StackSize;
+            var scale = ImGuiHelpers.GlobalScale;
+            var itemSpacing = ImGui.GetStyle().ItemSpacing;
+            var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
 
-            Service.TextureManager.GetIcon(item.Icon).Draw(32 * scale);
+            var textHeight = ImGui.CalcTextSize("").Y;
+            var iconSize = (textHeight + itemInnerSpacing.Y) * 2f;
+            var textOffsetX = iconSize + itemSpacing.X;
+
+            var item = row.Item;
+            var stackSize = row.StackSize;
+
+            Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
             if (item.IsUnlockable && item.HasAcquired)
             {
-                ImGui.SameLine(18 * scale, 0);
-                ImGuiUtils.PushCursorY(16 * scale);
+                ImGui.SameLine(1, 0);
 
                 var tex = Service.TextureProvider.GetTextureFromGame("ui/uld/RecipeNoteBook_hr1.tex");
                 if (tex != null)
                 {
-                    var pos = ImGui.GetWindowPos() + ImGui.GetCursorPos() - new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY());
-                    ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos + Vector2.Zero, pos + new Vector2(24 * scale), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
+                    var pos = ImGui.GetWindowPos() + ImGui.GetCursorPos() - new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY()) + new Vector2(iconSize / 2f + 4 * scale);
+                    ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos, pos + new Vector2(iconSize / 2f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
                 }
             }
 
-            ImGui.SameLine(32 * scale + ImGui.GetStyle().ItemSpacing.X, 0);
-            ImGui.Selectable($"##{idx}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, 32 * scale));
+            var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
+
+            ImGui.SameLine(textOffsetX, 0);
+            ImGui.Selectable($"##{idx}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - itemSpacing.Y));
 
             new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_Tooltip")
-        {
-            ImGuiContextMenu.CreateItemFinder(item.RowId),
-            ImGuiContextMenu.CreateCopyItemName(item.RowId),
-            ImGuiContextMenu.CreateItemSearch(item.RowId),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
-        }
+            {
+                ImGuiContextMenu.CreateItemFinder(item.RowId),
+                ImGuiContextMenu.CreateCopyItemName(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+            }
             .Draw();
 
-            var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
-            ImGui.SameLine(32 * scale + ImGui.GetStyle().ItemSpacing.X, 0);
-            ImGuiUtils.PushCursorY(-1 * scale);
+            ImGui.SameLine(textOffsetX, 0);
+            ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
                 ImGui.TextUnformatted(name);
 
-            ImGui.SameLine(32 * scale + ImGui.GetStyle().ItemSpacing.X, 0);
-            ImGuiUtils.PushCursorY(ImGui.GetFrameHeight() - 9 * scale);
+            ImGui.SameLine(textOffsetX, 0);
+            ImGuiUtils.PushCursorY(textHeight);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
                 ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
         }
@@ -132,24 +144,30 @@ public class RewardsTable : Table<Reward>
         public override int Compare(Reward lhs, Reward rhs)
             => lhs.RequiredCount.CompareTo(rhs.RequiredCount);
 
-        public override void DrawColumn(Reward reward, int _)
+        public override void DrawColumn(Reward row, int _)
         {
-            var scale = ImGui.GetIO().FontGlobalScale;
+            var itemSpacing = ImGui.GetStyle().ItemSpacing;
+            var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
+            var textHeight = ImGui.CalcTextSize("").Y;
+            var rowHeight = (textHeight + itemInnerSpacing.Y) * 2f;
+            var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
+            var paddingY = (rowHeight - iconSize) * 0.5f;
 
-            Service.TextureManager.GetIcon(reward.RequiredItem.Icon).Draw(32 * scale);
+            ImGuiUtils.PushCursorY(paddingY);
+            Service.TextureManager.GetIcon(row.RequiredItem.Icon).Draw(iconSize);
 
-            new ImGuiContextMenu($"##{reward.Item.RowId}_ItemContextMenu{reward.RequiredItem.RowId}_Tooltip")
+            new ImGuiContextMenu($"##{row.Item.RowId}_ItemContextMenu{row.RequiredItem.RowId}_Tooltip")
             {
-                ImGuiContextMenu.CreateItemFinder(reward.RequiredItem.RowId),
-                ImGuiContextMenu.CreateCopyItemName(reward.RequiredItem.RowId),
-                ImGuiContextMenu.CreateItemSearch(reward.RequiredItem.RowId),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(reward.RequiredItem.RowId),
+                ImGuiContextMenu.CreateItemFinder(row.RequiredItem.RowId),
+                ImGuiContextMenu.CreateCopyItemName(row.RequiredItem.RowId),
+                ImGuiContextMenu.CreateItemSearch(row.RequiredItem.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools(row.RequiredItem.RowId),
             }
             .Draw();
 
-            ImGui.SameLine(32 * scale + ImGui.GetStyle().ItemSpacing.X);
-            ImGuiUtils.PushCursorY(6 * scale);
-            ImGui.TextUnformatted(t("CurrencyReward.Normal", reward.RequiredCount));
+            ImGui.SameLine(iconSize + itemSpacing.X);
+            ImGuiUtils.PushCursorY(paddingY);
+            ImGui.TextUnformatted(t("CurrencyReward.Normal", row.RequiredCount));
         }
     }
 }

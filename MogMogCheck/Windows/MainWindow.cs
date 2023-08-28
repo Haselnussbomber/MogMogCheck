@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -84,7 +85,7 @@ public unsafe class MainWindow : Window
 
     public override void Draw()
     {
-        var scale = ImGui.GetIO().FontGlobalScale;
+        var scale = ImGuiHelpers.GlobalScale;
 
         var tomestone = GetRow<Item>((uint)_shop!.Items[0].RequiredItem);
         if (tomestone == null)
@@ -127,7 +128,10 @@ public unsafe class MainWindow : Window
         if (!rewardsTab.Success)
             return;
 
-        _rewardsTable?.Draw(32);
+        var textHeight = ImGui.CalcTextSize("").Y;
+        var iconSize = (textHeight + ImGui.GetStyle().ItemInnerSpacing.Y) * 2f;
+        var rowHeight = iconSize + ImGui.GetStyle().ItemSpacing.Y;
+        _rewardsTable?.Draw(rowHeight);
     }
 
     public void DrawDutiesTab()
@@ -136,6 +140,6 @@ public unsafe class MainWindow : Window
         if (!dutiesTab.Success)
             return;
 
-        _dutiesTable?.Draw(32);
+        _dutiesTable?.Draw(32 * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.Y);
     }
 }

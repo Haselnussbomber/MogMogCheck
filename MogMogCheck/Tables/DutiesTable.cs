@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Dalamud.Interface;
 using Dalamud.Interface.Table;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using HaselCommon.Utils;
@@ -27,17 +28,17 @@ public class DutiesTable : Table<Duty>
 
     private sealed class DutyColumn : ColumnString<Duty>
     {
-        public override string ToName(Duty item)
+        public override string ToName(Duty row)
         {
-            var name = item.ContentFinderCondition.Name.RawString;
+            var name = row.ContentFinderCondition.Name.RawString;
             return char.ToUpper(name[0]) + name[1..];
         }
 
-        public override unsafe void DrawColumn(Duty item, int _)
+        public override unsafe void DrawColumn(Duty row, int _)
         {
-            var scale = ImGui.GetIO().FontGlobalScale;
+            var scale = ImGuiHelpers.GlobalScale;
 
-            var clicked = ImGui.Selectable($"##Duty{item.ContentFinderCondition.RowId}", false, ImGuiSelectableFlags.None, new(ImGui.GetContentRegionAvail().X, 32 * scale));
+            var clicked = ImGui.Selectable($"##Duty{row.ContentFinderCondition.RowId}", false, ImGuiSelectableFlags.None, new(ImGui.GetContentRegionAvail().X, 32 * scale));
             /*
             if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
             {
@@ -53,10 +54,10 @@ public class DutiesTable : Table<Duty>
 
             ImGui.SameLine(1, ImGui.GetStyle().ItemInnerSpacing.X);
             ImGuiUtils.PushCursorY(6 * scale);
-            ImGui.TextUnformatted(ToName(item));
+            ImGui.TextUnformatted(ToName(row));
             if (clicked)
             {
-                AgentContentsFinder.Instance()->OpenRegularDuty(item.ContentFinderCondition.RowId);
+                AgentContentsFinder.Instance()->OpenRegularDuty(row.ContentFinderCondition.RowId);
             }
         }
     }
@@ -69,30 +70,33 @@ public class DutiesTable : Table<Duty>
         public override int Compare(Duty lhs, Duty rhs)
             => lhs.RewardItemCount.CompareTo(rhs.RewardItemCount);
 
-        public override void DrawColumn(Duty item, int _)
+        public override void DrawColumn(Duty row, int _)
         {
-            var scale = ImGui.GetIO().FontGlobalScale;
+            var iconSize = 28 * ImGuiHelpers.GlobalScale;
+            var rowHeight = 32 * ImGuiHelpers.GlobalScale;
+            var iconPadding = (rowHeight - iconSize) * 0.5f;
 
-            Service.TextureManager.GetIcon(item.RewardItem.Icon).Draw(32 * scale);
+            ImGuiUtils.PushCursorY(iconPadding);
+            Service.TextureManager.GetIcon(row.RewardItem.Icon).Draw(iconSize);
 
-            new ImGuiContextMenu($"##{item.ContentFinderCondition.RowId}_ItemContextMenu{item.RewardItem.RowId}_Tooltip")
+            new ImGuiContextMenu($"##{row.ContentFinderCondition.RowId}_ItemContextMenu{row.RewardItem.RowId}_Tooltip")
             {
-                ImGuiContextMenu.CreateItemFinder(item.RewardItem.RowId),
-                ImGuiContextMenu.CreateCopyItemName(item.RewardItem.RowId),
-                ImGuiContextMenu.CreateItemSearch(item.RewardItem.RowId),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RewardItem.RowId),
+                ImGuiContextMenu.CreateItemFinder(row.RewardItem.RowId),
+                ImGuiContextMenu.CreateCopyItemName(row.RewardItem.RowId),
+                ImGuiContextMenu.CreateItemSearch(row.RewardItem.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools(row.RewardItem.RowId),
             }
             .Draw();
 
-            ImGui.SameLine(32 * scale + ImGui.GetStyle().ItemSpacing.X);
-            ImGuiUtils.PushCursorY(6 * scale);
-            if (item.RewardItemCountLoss > 0)
+            ImGui.SameLine(iconSize + ImGui.GetStyle().ItemSpacing.X);
+            ImGuiUtils.PushCursorY((rowHeight - ImGui.CalcTextSize("").Y - iconPadding * 2f) * 0.5f);
+            if (row.RewardItemCountLoss > 0)
             {
-                ImGui.TextUnformatted(t("CurrencyReward.MinMax", item.RewardItemCountLoss, item.RewardItemCount));
+                ImGui.TextUnformatted(t("CurrencyReward.MinMax", row.RewardItemCountLoss, row.RewardItemCount));
             }
             else
             {
-                ImGui.TextUnformatted(t("CurrencyReward.Normal", item.RewardItemCount));
+                ImGui.TextUnformatted(t("CurrencyReward.Normal", row.RewardItemCount));
             }
         }
     }
