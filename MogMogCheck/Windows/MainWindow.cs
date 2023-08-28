@@ -92,14 +92,14 @@ public unsafe class MainWindow : Window
             }
 
             ImGui.TableNextColumn();
-            DrawItem($"Row{i}", GetRow<Item>((uint)item.ItemId));
+            DrawItem($"Row{i}", GetRow<Item>((uint)item.ItemId), item.StackSize);
 
             ImGui.TableNextColumn();
             DrawCurrency($"Row{i}", GetRow<Item>((uint)item.RequiredItem), item.RequiredCount);
         }
     }
 
-    public static void DrawItem(string key, Item? item)
+    public static void DrawItem(string key, Item? item, uint stackSize)
     {
         if (item == null)
             return;
@@ -133,10 +133,11 @@ public unsafe class MainWindow : Window
         }
         .Draw();
 
+        var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
         ImGui.SameLine(42 * scale, 0);
         ImGuiUtils.PushCursorY(-1 * scale);
         using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
-            ImGui.TextUnformatted(GetItemName(item.RowId));
+            ImGui.TextUnformatted(name);
 
         ImGui.SameLine(42 * scale, 0);
         ImGuiUtils.PushCursorY(ImGui.GetFrameHeight() - 9 * scale);
