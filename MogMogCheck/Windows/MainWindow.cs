@@ -34,22 +34,36 @@ public unsafe class MainWindow : Window
             return;
 
         var scale = ImGui.GetIO().FontGlobalScale;
+        
+        var tomestone = GetRow<Item>((uint)shop.Items[0].RequiredItem);
+        if (tomestone == null)
+            return;
 
-        DrawCurrency(
-            "CurrentCurrency",
-            GetRow<Item>((uint)shop.Items[0].RequiredItem),
-            (uint)InventoryManager.Instance()->GetInventoryItemCount((uint)shop.Items[0].RequiredItem));
-        ImGuiUtils.SameLineSpace();
-        ImGuiUtils.PushCursorY(6 * scale);
-        ImGui.TextUnformatted(t("Currency.Owned"));
+        Service.TextureManager.GetIcon(tomestone.Icon).Draw(32 * scale);
 
-        DrawCurrency(
-            "NeededCurrency",
-            GetRow<Item>((uint)shop.Items[0].RequiredItem),
-            shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue(item.ItemId, out var tracked) && tracked ? item.RequiredCount : 0)));
-        ImGuiUtils.SameLineSpace();
+        new ImGuiContextMenu($"##Tomestone_ItemContextMenu{tomestone.RowId}_Tooltip")
+        {
+            ImGuiContextMenu.CreateItemFinder(tomestone.RowId),
+            ImGuiContextMenu.CreateCopyItemName(tomestone.RowId),
+            ImGuiContextMenu.CreateItemSearch(tomestone.RowId),
+            ImGuiContextMenu.CreateOpenOnGarlandTools(tomestone.RowId),
+        }
+        .Draw();
+
+        ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
-        ImGui.TextUnformatted(t("Currency.Needed"));
+
+        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)shop.Items[0].RequiredItem);
+        var needed = shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue(item.ItemId, out var tracked) && tracked ? item.RequiredCount : 0));
+        if (needed > owned)
+        {
+            var remaining = needed - owned;
+            ImGui.TextUnformatted(t("Currency.InfoWithRemaining", owned, needed, remaining));
+        }
+        else
+        {
+            ImGui.TextUnformatted(t("Currency.Info", owned, needed));
+        }
 
         using var child = ImRaii.Child("##TableWrapper");
 

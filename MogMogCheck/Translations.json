@@ -8,13 +8,13 @@
     "de": "Bitte beachte, dass Gegenstandsnamen nicht übersetzbar sind, da sie vom Spiel-Client und nicht von den Lumina-Sheets abgerufen werden."
   },
 
-  "Currency.Owned": {
-    "en": "owned",
-    "de": "im Besitz"
+  "Currency.Info": {
+    "en": "{0} owned, {1} needed",
+    "de": "{0} im Besitz, {1} benötigt"
   },
-  "Currency.Needed": {
-    "en": "needed",
-    "de": "benötigt"
+  "Currency.InfoWithRemaining": {
+    "en": "{0} owned, {1} needed, {2} remaining",
+    "de": "{0} im Besitz, {1} benötigt, {2} verbleibend"
   },
 
   "TableHeader.Track": {
