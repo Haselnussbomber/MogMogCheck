@@ -89,13 +89,12 @@ public class RewardsTable : Table<Reward>
             var itemSpacing = ImGui.GetStyle().ItemSpacing;
             var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
 
-            var textHeight = ImGui.GetTextLineHeight(); // GetTextLineHeightWithSpacing?
+            var textHeight = ImGui.GetTextLineHeight();
             var rowHeight = (textHeight + itemInnerSpacing.Y) * 2f;
             var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var textOffsetX = iconSize + itemSpacing.X;
 
             var item = row.Item;
-            var stackSize = row.StackSize;
 
             var cursor = ImGui.GetCursorPos();
             ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
@@ -122,8 +121,6 @@ public class RewardsTable : Table<Reward>
                 }
             }
 
-            var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
-
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y);
             ImGui.Selectable($"##{idx}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, rowHeight - itemSpacing.Y));
@@ -141,7 +138,7 @@ public class RewardsTable : Table<Reward>
             ImGui.SetCursorPosY(cursor.Y);
             ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
-                ImGui.TextUnformatted(name);
+                ImGui.TextUnformatted($"{(row.Quantity > 1 ? row.Quantity.ToString() + "x " : "")}{GetItemName(item.RowId)}");
 
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y + textHeight);

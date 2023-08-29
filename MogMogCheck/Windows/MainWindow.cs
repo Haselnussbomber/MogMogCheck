@@ -53,7 +53,7 @@ public unsafe class MainWindow : Window
                 if (rewardItem == null || requiredItem == null)
                     continue;
 
-                rewards.Add(new(i, rewardItem, row.StackSize, requiredItem, row.RequiredCount));
+                rewards.Add(new(i, rewardItem, row.Quantity, requiredItem, row.RequiredCount));
             }
 
             _rewardsTable = new(rewards);

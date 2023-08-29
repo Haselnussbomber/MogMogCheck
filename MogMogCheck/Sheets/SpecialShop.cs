@@ -13,7 +13,7 @@ public class SpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
     {
         public const int StructSize = 0x4C; // 0x50 - 0x4
 
-        [FieldOffset(0x4)] public uint StackSize;
+        [FieldOffset(0x4)] public uint Quantity;
         [FieldOffset(0x8)] public uint Unk8;
         [FieldOffset(0xC)] public uint RequiredCount;
         [FieldOffset(0x10)] public uint Unk10;
@@ -43,7 +43,7 @@ public class SpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
 
         public unsafe void Read(int index, RowParser parser)
         {
-            StackSize = parser.ReadOffset<uint>((ushort)(0x4 + StructSize * index));
+            Quantity = parser.ReadOffset<uint>((ushort)(0x4 + StructSize * index));
             Unk8 = parser.ReadOffset<uint>((ushort)(0x8 + StructSize * index));
             RequiredCount = parser.ReadOffset<uint>((ushort)(0xC + StructSize * index));
             Unk10 = parser.ReadOffset<uint>((ushort)(0x10 + StructSize * index));

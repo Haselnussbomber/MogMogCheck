@@ -38,7 +38,7 @@ public unsafe class DebugWindow : Window
             ImGui.TableNextRow();
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.StackSize}");
+            ImGui.TextUnformatted($"{item.Quantity}");
 
             ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{item.Unk8}");
