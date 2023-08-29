@@ -7,7 +7,7 @@ Open with `/mogmog`.
 The Rewards tab lists items of the "Newest ... Tomestone Exchange" shop with their collection status and price.  
 You can also check the boxes to keep track of how many Tomestones you need at the top.
 
-![Screenshot of Rewards tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/00fbf54a-6e66-4ebd-ae68-c5b4106c7f64)
+![Screenshot of Rewards tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/eab01490-9ca0-4bb9-a18b-bd51c0837c31)
 
 The Duties tab lists all the duties that reward Tomestones for the event.  
 Clicking on a duty will open the Duty Finder with that duty selected.
