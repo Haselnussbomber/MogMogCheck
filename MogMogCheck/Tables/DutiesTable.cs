@@ -89,7 +89,7 @@ public class DutiesTable : Table<Duty>
             .Draw();
 
             ImGui.SameLine(iconSize + ImGui.GetStyle().ItemSpacing.X);
-            ImGuiUtils.PushCursorY((rowHeight - ImGui.CalcTextSize("").Y - iconPadding * 2f) * 0.5f);
+            ImGuiUtils.PushCursorY((rowHeight - ImGui.GetTextLineHeight() - iconPadding * 2f) * 0.5f);
             if (row.RewardItemCountLoss > 0)
             {
                 ImGui.TextUnformatted(t("CurrencyReward.MinMax", row.RewardItemCountLoss, row.RewardItemCount));

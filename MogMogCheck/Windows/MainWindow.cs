@@ -137,10 +137,7 @@ public unsafe class MainWindow : Window
         if (!rewardsTab.Success)
             return;
 
-        var textHeight = ImGui.CalcTextSize("").Y;
-        var iconSize = (textHeight + ImGui.GetStyle().ItemInnerSpacing.Y) * 2f;
-        var rowHeight = iconSize + ImGui.GetStyle().ItemSpacing.Y;
-        _rewardsTable?.Draw(rowHeight);
+        _rewardsTable?.Draw((ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y * 0.5f + ImGui.GetStyle().ItemSpacing.Y) * 2f - 1);
     }
 
     public void DrawDutiesTab()

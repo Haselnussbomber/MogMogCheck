@@ -49,7 +49,7 @@ public class RewardsTable : Table<Reward>
         {
             var scale = ImGuiHelpers.GlobalScale;
             var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
-            var rowHeight = (ImGui.CalcTextSize("").Y + itemInnerSpacing.Y) * 2f;
+            var rowHeight = (ImGui.GetTextLineHeight() + itemInnerSpacing.Y) * 2f;
             var paddingY = (rowHeight - ImGui.GetFrameHeight()) * 0.5f;
 
             var itemId = row.Item.RowId;
@@ -89,13 +89,16 @@ public class RewardsTable : Table<Reward>
             var itemSpacing = ImGui.GetStyle().ItemSpacing;
             var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
 
-            var textHeight = ImGui.CalcTextSize("").Y;
-            var iconSize = (textHeight + itemInnerSpacing.Y) * 2f;
+            var textHeight = ImGui.GetTextLineHeight(); // GetTextLineHeightWithSpacing?
+            var rowHeight = (textHeight + itemInnerSpacing.Y) * 2f;
+            var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var textOffsetX = iconSize + itemSpacing.X;
 
             var item = row.Item;
             var stackSize = row.StackSize;
 
+            var cursor = ImGui.GetCursorPos();
+            ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
             if (item.IsUnlockable && item.HasAcquired)
@@ -105,15 +108,16 @@ public class RewardsTable : Table<Reward>
                 var tex = Service.TextureProvider.GetTextureFromGame("ui/uld/RecipeNoteBook_hr1.tex");
                 if (tex != null)
                 {
-                    var pos = ImGui.GetWindowPos() + ImGui.GetCursorPos() - new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY()) + new Vector2(iconSize / 2f + 4 * scale);
-                    ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos, pos + new Vector2(iconSize / 2f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
+                    var pos = ImGui.GetWindowPos() + ImGui.GetCursorPos() - new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY()) + new Vector2(iconSize / 2.5f + 4 * scale);
+                    ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos, pos + new Vector2(iconSize / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
                 }
             }
 
             var name = $"{(stackSize > 1 ? stackSize.ToString() + "x " : "")}{GetItemName(item.RowId)}";
 
             ImGui.SameLine(textOffsetX, 0);
-            ImGui.Selectable($"##{idx}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - itemSpacing.Y));
+            ImGui.SetCursorPosY(cursor.Y);
+            ImGui.Selectable($"##{idx}_Item{item.RowId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, rowHeight - itemSpacing.Y));
 
             new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_Tooltip")
             {
@@ -125,14 +129,17 @@ public class RewardsTable : Table<Reward>
             .Draw();
 
             ImGui.SameLine(textOffsetX, 0);
+            ImGui.SetCursorPosY(cursor.Y);
             ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
                 ImGui.TextUnformatted(name);
 
             ImGui.SameLine(textOffsetX, 0);
-            ImGuiUtils.PushCursorY(textHeight);
+            ImGui.SetCursorPosY(cursor.Y + textHeight);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
                 ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
+
+            // TODO: show whats needed to unlock the reward (Quest...)
         }
     }
 
@@ -148,7 +155,7 @@ public class RewardsTable : Table<Reward>
         {
             var itemSpacing = ImGui.GetStyle().ItemSpacing;
             var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
-            var textHeight = ImGui.CalcTextSize("").Y;
+            var textHeight = ImGui.GetTextLineHeight();
             var rowHeight = (textHeight + itemInnerSpacing.Y) * 2f;
             var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var paddingY = (rowHeight - iconSize) * 0.5f;
