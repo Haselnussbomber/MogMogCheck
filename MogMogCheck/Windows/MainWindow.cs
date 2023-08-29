@@ -16,9 +16,9 @@ namespace MogMogCheck.Windows;
 
 public unsafe class MainWindow : Window
 {
-    private SpecialShop? _shop;
-    private RewardsTable? _rewardsTable;
-    private DutiesTable? _dutiesTable;
+    private readonly SpecialShop? _shop;
+    private readonly RewardsTable? _rewardsTable;
+    private readonly DutiesTable? _dutiesTable;
 
     public MainWindow() : base("MogMogCheck")
     {
@@ -31,10 +31,7 @@ public unsafe class MainWindow : Window
             MinimumSize = new Vector2(300, 200),
             MaximumSize = new Vector2(4069),
         };
-    }
 
-    public override void Update()
-    {
         _shop = GetRow<SpecialShop>(1769929);
         if (_shop == null)
             return;
