@@ -52,7 +52,7 @@ public class RewardsTable : Table<Reward>
             var rowHeight = (ImGui.GetTextLineHeight() + itemInnerSpacing.Y) * 2f;
             var paddingY = (rowHeight - ImGui.GetFrameHeight()) * 0.5f;
 
-            var itemId = row.Item.RowId;
+            var itemId = row.ReceiveItems[0].Item!.RowId;
 
             if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var tracked))
                 Plugin.Config.TrackedItems.Add(itemId, tracked = false);
@@ -81,7 +81,7 @@ public class RewardsTable : Table<Reward>
     private sealed class RewardColumn : ColumnString<Reward>
     {
         public override string ToName(Reward reward)
-            => GetItemName(reward.Item.RowId);
+            => GetItemName(reward.ReceiveItems[0].Item!.RowId);
 
         public override void DrawColumn(Reward row, int idx)
         {
@@ -94,7 +94,9 @@ public class RewardsTable : Table<Reward>
             var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var textOffsetX = iconSize + itemSpacing.X;
 
-            var item = row.Item;
+            // TODO: add support for item 2 (see: PLD shields)
+            var item = row.ReceiveItems[0].Item!;
+            var quantity = row.ReceiveItems[0].Quantity;
 
             var cursor = ImGui.GetCursorPos();
             ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
@@ -138,14 +140,24 @@ public class RewardsTable : Table<Reward>
             ImGui.SetCursorPosY(cursor.Y);
             ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
-                ImGui.TextUnformatted($"{(row.Quantity > 1 ? row.Quantity.ToString() + "x " : "")}{GetItemName(item.RowId)}");
+                ImGui.TextUnformatted($"{(quantity > 1 ? quantity.ToString() + "x " : "")}{GetItemName(item.RowId)}");
 
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y + textHeight);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
                 ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
 
-            // TODO: show whats needed to unlock the reward (Quest...)
+            if (row.RequiredQuest != null)
+            {
+                var regionWidth = ImGui.GetContentRegionAvail().X;
+                ImGui.SameLine(regionWidth - ImGuiUtils.GetIconSize(FontAwesomeIcon.InfoCircle).X - itemSpacing.X);
+                ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
+                ImGuiUtils.Icon(FontAwesomeIcon.InfoCircle, 0x7FFFFFFF);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip(t("Reward.RequiredQuest.Tooltip", row.RequiredQuest.Name));
+                }
+            }
         }
     }
 
@@ -155,7 +167,7 @@ public class RewardsTable : Table<Reward>
             => 130;
 
         public override int Compare(Reward lhs, Reward rhs)
-            => lhs.RequiredCount.CompareTo(rhs.RequiredCount);
+            => lhs.GiveItems[0].Quantity.CompareTo(rhs.GiveItems[0].Quantity);
 
         public override void DrawColumn(Reward row, int _)
         {
@@ -166,21 +178,25 @@ public class RewardsTable : Table<Reward>
             var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var paddingY = (rowHeight - iconSize) * 0.5f;
 
-            ImGuiUtils.PushCursorY(paddingY);
-            Service.TextureManager.GetIcon(row.RequiredItem.Icon).Draw(iconSize);
+            // TODO: add support for item 2 and 3
+            var item = row.GiveItems[0].Item!;
+            var quantity = row.GiveItems[0].Quantity;
 
-            new ImGuiContextMenu($"##{row.Item.RowId}_ItemContextMenu{row.RequiredItem.RowId}_Tooltip")
+            ImGuiUtils.PushCursorY(paddingY);
+            Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
+
+            new ImGuiContextMenu($"##{item.RowId}_ItemContextMenu{item.RowId}_Tooltip")
             {
-                ImGuiContextMenu.CreateItemFinder(row.RequiredItem.RowId),
-                ImGuiContextMenu.CreateCopyItemName(row.RequiredItem.RowId),
-                ImGuiContextMenu.CreateItemSearch(row.RequiredItem.RowId),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(row.RequiredItem.RowId),
+                ImGuiContextMenu.CreateItemFinder(item.RowId),
+                ImGuiContextMenu.CreateCopyItemName(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
             }
             .Draw();
 
             ImGui.SameLine(iconSize + itemSpacing.X);
             ImGuiUtils.PushCursorY(paddingY);
-            ImGui.TextUnformatted(t("CurrencyReward.Normal", row.RequiredCount));
+            ImGui.TextUnformatted(t("CurrencyReward.Normal", quantity));
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
@@ -37,46 +36,21 @@ public unsafe class MainWindow : Window
     public override void Update()
     {
         _shop = GetRow<SpecialShop>(1769929);
+        if (_shop == null)
+            return;
 
-        if (_rewardsTable == null && _shop != null)
-        {
-            var rewards = new List<Reward>();
+        _rewardsTable ??= new(
+            _shop.Items
+                .Where(row => row.ReceiveItemId1 != 0)
+                .Select((row, index) => new Reward(index, row))
+                .ToArray());
 
-            for (var i = 0u; i < _shop.Items!.Length; i++)
-            {
-                var row = _shop.Items![i];
-                if (row.ItemId == 0)
-                    continue;
-
-                var rewardItem = GetRow<Item>((uint)row.ItemId);
-                var requiredItem = GetRow<Item>((uint)row.RequiredItem);
-                if (rewardItem == null || requiredItem == null)
-                    continue;
-
-                rewards.Add(new(i, rewardItem, row.Quantity, requiredItem, row.RequiredCount));
-            }
-
-            _rewardsTable = new(rewards);
-        }
-
-        if (_dutiesTable == null)
-        {
-            var duties = new List<Duty>();
-
-            foreach (var row in GetSheet<InstanceContentCSBonus>()!)
-            {
-                if (row.Item.Row == 0)
-                    continue;
-
-                var instanceContent = GetRow<InstanceContent>(row.Instance.Row);
-                if (instanceContent == null || instanceContent.ContentFinderCondition.Row == 0)
-                    continue;
-
-                duties.Add(new(instanceContent.ContentFinderCondition.Value!, GetRow<Item>(row.Item.Row)!, row.Unknown2, row.Unknown3));
-            }
-
-            _dutiesTable = new(duties);
-        }
+        _dutiesTable ??= new(
+            GetSheet<InstanceContentCSBonus>()
+                .Where(row => row.Item.Row != 0)
+                .Select(row => new Duty(row))
+                .Where(row => row.RewardItem != null && row.ContentFinderCondition?.RowId != 0)
+                .ToArray());
     }
 
     public override void OnClose()
@@ -88,7 +62,8 @@ public unsafe class MainWindow : Window
     {
         return Service.ClientState.IsLoggedIn
             && _shop != null
-            && _shop.Items.Length > 0
+            && _rewardsTable != null
+            && _rewardsTable.TotalItems > 0
             && _dutiesTable != null;
     }
 
@@ -96,7 +71,7 @@ public unsafe class MainWindow : Window
     {
         var scale = ImGuiHelpers.GlobalScale;
 
-        var tomestone = GetRow<Item>((uint)_shop!.Items[0].RequiredItem);
+        var tomestone = GetRow<Item>((uint)_shop!.Items[0].GiveItemId1);
         if (tomestone == null)
             return;
 
@@ -114,8 +89,8 @@ public unsafe class MainWindow : Window
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
-        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop.Items[0].RequiredItem);
-        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ItemId, out var tracked) && tracked ? item.RequiredCount : 0));
+        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop.Items[0].GiveItemId1);
+        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var tracked) && tracked ? item.GiveCount1 : 0));
         if (needed > owned)
         {
             var remaining = needed - owned;

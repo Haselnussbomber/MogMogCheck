@@ -30,7 +30,7 @@ public class DutiesTable : Table<Duty>
     {
         public override string ToName(Duty row)
         {
-            var name = row.ContentFinderCondition.Name.RawString;
+            var name = row.ContentFinderCondition!.Name.RawString;
             return char.ToUpper(name[0]) + name[1..];
         }
 
@@ -38,7 +38,7 @@ public class DutiesTable : Table<Duty>
         {
             var scale = ImGuiHelpers.GlobalScale;
 
-            var clicked = ImGui.Selectable($"##Duty{row.ContentFinderCondition.RowId}", false, ImGuiSelectableFlags.None, new(ImGui.GetContentRegionAvail().X, 32 * scale));
+            var clicked = ImGui.Selectable($"##Duty{row.ContentFinderCondition!.RowId}", false, ImGuiSelectableFlags.None, new(ImGui.GetContentRegionAvail().X, 32 * scale));
             /*
             if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
             {
@@ -77,9 +77,9 @@ public class DutiesTable : Table<Duty>
             var iconPadding = (rowHeight - iconSize) * 0.5f;
 
             ImGuiUtils.PushCursorY(iconPadding);
-            Service.TextureManager.GetIcon(row.RewardItem.Icon).Draw(iconSize);
+            Service.TextureManager.GetIcon(row.RewardItem!.Icon).Draw(iconSize);
 
-            new ImGuiContextMenu($"##{row.ContentFinderCondition.RowId}_ItemContextMenu{row.RewardItem.RowId}_Tooltip")
+            new ImGuiContextMenu($"##{row.ContentFinderCondition!.RowId}_ItemContextMenu{row.RewardItem.RowId}_Tooltip")
             {
                 ImGuiContextMenu.CreateItemFinder(row.RewardItem.RowId),
                 ImGuiContextMenu.CreateCopyItemName(row.RewardItem.RowId),

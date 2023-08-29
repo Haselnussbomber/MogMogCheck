@@ -47,6 +47,11 @@
     "de": "Vergütung"
   },
 
+  "Reward.RequiredQuest.Tooltip": {
+    "en": "Requires the quest \"{0}\" to be completed.",
+    "de": "Erfordert den Abschluss der Quest \"{0}\"."
+  },
+
   "CurrencyReward.MinMax": {
     "en": "{0} or {1}",
     "de": "{0} oder {1}"

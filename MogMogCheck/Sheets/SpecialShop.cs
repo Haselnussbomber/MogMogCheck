@@ -13,19 +13,19 @@ public class SpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
     {
         public const int StructSize = 0x4C; // 0x50 - 0x4
 
-        [FieldOffset(0x4)] public uint Quantity;
-        [FieldOffset(0x8)] public uint Unk8;
-        [FieldOffset(0xC)] public uint RequiredCount;
-        [FieldOffset(0x10)] public uint Unk10;
-        [FieldOffset(0x14)] public uint Unk14;
-        [FieldOffset(0x18)] public int ItemId;
-        [FieldOffset(0x1C)] public int Unk1C;
-        [FieldOffset(0x20)] public int Unk20;
-        [FieldOffset(0x24)] public int Unk24;
-        [FieldOffset(0x28)] public int RequiredItem;
-        [FieldOffset(0x2C)] public int Unk2C;
-        [FieldOffset(0x30)] public int Unk30;
-        [FieldOffset(0x34)] public int RequiredQuest;
+        [FieldOffset(0x4)] public uint ReceiveCount1;
+        [FieldOffset(0x8)] public uint ReceiveCount2;
+        [FieldOffset(0xC)] public uint GiveCount1;
+        [FieldOffset(0x10)] public uint GiveCount2;
+        [FieldOffset(0x14)] public uint GiveCount3;
+        [FieldOffset(0x18)] public int ReceiveItemId1;
+        [FieldOffset(0x1C)] public int ReceiveItemId2;
+        [FieldOffset(0x20)] public int ReceiveSpecialShopItemCategory1;
+        [FieldOffset(0x24)] public int ReceiveSpecialShopItemCategory2;
+        [FieldOffset(0x28)] public int GiveItemId1;
+        [FieldOffset(0x2C)] public int GiveItemId2;
+        [FieldOffset(0x30)] public int GiveItemId3;
+        [FieldOffset(0x34)] public int UnlockQuest;
         [FieldOffset(0x38)] public int Unk38;
         [FieldOffset(0x3C)] public int Unk3C;
         [FieldOffset(0x40)] public ushort Unk40;
@@ -43,19 +43,19 @@ public class SpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
 
         public unsafe void Read(int index, RowParser parser)
         {
-            Quantity = parser.ReadOffset<uint>((ushort)(0x4 + StructSize * index));
-            Unk8 = parser.ReadOffset<uint>((ushort)(0x8 + StructSize * index));
-            RequiredCount = parser.ReadOffset<uint>((ushort)(0xC + StructSize * index));
-            Unk10 = parser.ReadOffset<uint>((ushort)(0x10 + StructSize * index));
-            Unk14 = parser.ReadOffset<uint>((ushort)(0x14 + StructSize * index));
-            ItemId = parser.ReadOffset<int>((ushort)(0x18 + StructSize * index));
-            Unk1C = parser.ReadOffset<int>((ushort)(0x1C + StructSize * index));
-            Unk20 = parser.ReadOffset<int>((ushort)(0x20 + StructSize * index));
-            Unk24 = parser.ReadOffset<int>((ushort)(0x24 + StructSize * index));
-            RequiredItem = parser.ReadOffset<int>((ushort)(0x28 + StructSize * index));
-            Unk2C = parser.ReadOffset<int>((ushort)(0x2C + StructSize * index));
-            Unk30 = parser.ReadOffset<int>((ushort)(0x30 + StructSize * index));
-            RequiredQuest = parser.ReadOffset<int>((ushort)(0x34 + StructSize * index));
+            ReceiveCount1 = parser.ReadOffset<uint>((ushort)(0x4 + StructSize * index));
+            ReceiveCount2 = parser.ReadOffset<uint>((ushort)(0x8 + StructSize * index));
+            GiveCount1 = parser.ReadOffset<uint>((ushort)(0xC + StructSize * index));
+            GiveCount2 = parser.ReadOffset<uint>((ushort)(0x10 + StructSize * index));
+            GiveCount3 = parser.ReadOffset<uint>((ushort)(0x14 + StructSize * index));
+            ReceiveItemId1 = parser.ReadOffset<int>((ushort)(0x18 + StructSize * index));
+            ReceiveItemId2 = parser.ReadOffset<int>((ushort)(0x1C + StructSize * index));
+            ReceiveSpecialShopItemCategory1 = parser.ReadOffset<int>((ushort)(0x20 + StructSize * index));
+            ReceiveSpecialShopItemCategory2 = parser.ReadOffset<int>((ushort)(0x24 + StructSize * index));
+            GiveItemId1 = parser.ReadOffset<int>((ushort)(0x28 + StructSize * index));
+            GiveItemId2 = parser.ReadOffset<int>((ushort)(0x2C + StructSize * index));
+            GiveItemId3 = parser.ReadOffset<int>((ushort)(0x30 + StructSize * index));
+            UnlockQuest = parser.ReadOffset<int>((ushort)(0x34 + StructSize * index));
             Unk38 = parser.ReadOffset<int>((ushort)(0x38 + StructSize * index));
             Unk3C = parser.ReadOffset<int>((ushort)(0x3C + StructSize * index));
             Unk40 = parser.ReadOffset<ushort>((ushort)(0x40 + StructSize * index));
