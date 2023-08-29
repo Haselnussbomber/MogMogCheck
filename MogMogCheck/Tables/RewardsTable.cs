@@ -101,6 +101,15 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
+            new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_IconTooltip")
+            {
+                ImGuiContextMenu.CreateItemFinder(item.RowId),
+                ImGuiContextMenu.CreateCopyItemName(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+            }
+            .Draw();
+
             if (item.IsUnlockable && item.HasAcquired)
             {
                 ImGui.SameLine(1, 0);
