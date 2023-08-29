@@ -1,8 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.3] (2023-08-29)
 
-- **Fixed:** The window now has a default size of 570x740 on first use and a minimum size of 300x200.
+- **Added:** A little info to the right of an item if it requires a quest to unlock.
+- **Fixed:** Reduced the icon size to what it was before 1.0.2.
+- **Fixed:** The window now has a default size of 570x740 (for first use).
 
 ## [1.0.2] (2023-08-28)
 
@@ -26,6 +28,7 @@
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[1.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v0.0.1...v1.0.0
