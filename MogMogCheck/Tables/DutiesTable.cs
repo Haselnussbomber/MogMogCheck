@@ -42,13 +42,8 @@ public class DutiesTable : Table<Duty>
             /*
             if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
             {
-                var icon = Service.TextureProvider.GetIcon(item.ContentFinderCondition.Image);
-                if (icon != null)
-                {
-                    using var tooltip = ImRaii.Tooltip();
-                    ImGui.Image(icon.ImGuiHandle, new Vector2(1123, 360) * 0.5f);
-                    ImGuiHelpers.CenteredText(ToName(item));
-                }
+                using var tooltip = ImRaii.Tooltip();
+                Service.TextureManager.GetIcon(row.ContentFinderCondition.Image).Draw(new Vector2(1123, 360) * 0.5f);
             }
             */
 

@@ -19,4 +19,5 @@ public class Service
     [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
     [PluginService] public static ClientState ClientState { get; private set; } = null!;
     [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
+    [PluginService] public static IDataManager DataManager { get; private set; } = null!;
 }

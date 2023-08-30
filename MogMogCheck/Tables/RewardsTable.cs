@@ -3,14 +3,22 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Table;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using HaselCommon.Enums;
 using HaselCommon.Utils;
 using ImGuiNET;
+using Lumina.Data.Files;
+using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
+using Companion = Lumina.Excel.GeneratedSheets.Companion;
+using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 
 namespace MogMogCheck.Tables;
 
 public class RewardsTable : Table<Reward>
 {
+    private static readonly Dictionary<uint, Vector2?> IconSizeCache = new();
+
     private static readonly TrackColumn _trackColumn = new()
     {
         Label = t("Table.Rewards.Header.Track")
@@ -102,6 +110,109 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
+
+            if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
+            {
+                if (item.ItemAction.Value?.Type == (uint)ItemActionType.Mounts)
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    var mount = GetRow<Mount>(item.ItemAction.Value!.Data[0])!;
+                    Service.TextureManager.GetIcon(64000 + mount.Icon).Draw(192);
+                }
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Minions)
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    var companion = GetRow<Companion>(item.ItemAction.Value!.Data[0])!;
+                    Service.TextureManager.GetIcon(64000 + companion.Icon).Draw(192);
+                }
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.FashionAccessories)
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    var ornament = GetRow<Ornament>(item.ItemAction.Value!.Data[0])!;
+                    Service.TextureManager.GetIcon(59000 + ornament.Icon).Draw(192);
+                }
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Miscellaneous && item.ItemAction.Value?.Data[1] == 5211) // Emotes
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    var emote = GetRow<Emote>(item.ItemAction.Value!.Data[2])!;
+                    Service.TextureManager.GetIcon(emote.Icon).Draw(80);
+                }
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Cards)
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    var pos = ImGui.GetCursorPos();
+                    Service.TextureManager.GetPart("CardTripleTriad", 1, 0).Draw(208, 256);
+                    ImGui.SetCursorPos(pos);
+                    Service.TextureManager.GetIcon(82100 + item.ItemAction.Value!.Data[0]).Draw(208, 256);
+                }
+                else if (item.ItemUICategory.Row == 95) // Paintings
+                {
+                    var pictureId = (uint)GetRow<Picture>(item.AdditionalData)!.Image;
+
+                    if (!IconSizeCache.TryGetValue(pictureId, out var size))
+                    {
+                        var iconPath = Service.TextureProvider.GetIconPath(pictureId);
+                        if (string.IsNullOrEmpty(iconPath))
+                        {
+                            IconSizeCache.Add(pictureId, null);
+                        }
+                        else
+                        {
+                            var file = Service.DataManager.GetFile<TexFile>(iconPath);
+                            IconSizeCache.Add(pictureId, size = file != null ? new(file.Header.Width, file.Header.Height) : null);
+                        }
+                    }
+
+                    if (size != null)
+                    {
+                        using var tooltip = ImRaii.Tooltip();
+                        Service.TextureManager.GetIcon(pictureId).Draw(size * 0.5f);
+                    }
+                }
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Miscellaneous && FindRow<CharaMakeCustomize>(row => row?.HintItem.Row == item.RowId) != null) // Hairstyles etc.
+                {
+                    using var tooltip = ImRaii.Tooltip();
+
+                    var tribeId = 1;
+                    var isMale = false;
+                    unsafe
+                    {
+                        var character = (Character*)(Service.ClientState.LocalPlayer?.Address ?? 0);
+                        if (character != null)
+                        {
+                            tribeId = character->DrawData.CustomizeData.Clan;
+                            isMale = character->DrawData.CustomizeData.Sex == 0;
+                        }
+                    }
+
+                    //! https://github.com/ufx/GarlandTools/blob/a241dd8/Garland.Data/Modules/NPCs.cs#L434-L464
+                    var startIndex = tribeId switch
+                    {
+                        1 => isMale ? 0 : 100, // Midlander
+                        2 => isMale ? 200 : 300, // Highlander
+                        3 or 4 => isMale ? 400 : 500, // Wildwood / Duskwight
+                        5 or 6 => isMale ? 600 : 700, // Plainsfolks / Dunesfolk
+                        7 or 8 => isMale ? 800 : 900, // Seeker of the Sun / Keeper of the Moon
+                        9 or 10 => isMale ? 1000 : 1100, // Sea Wolf / Hellsguard
+                        11 or 12 => isMale ? 1200 : 1300, // Raen / Xaela
+                        13 or 14 => 1400, // Helions / The Lost
+                        15 or 16 => isMale ? 1600 : 1700, // Rava / Veena
+                        _ => 0
+                    };
+
+                    var charaMakeCustomize = FindRow<CharaMakeCustomize>(row => row?.RowId >= startIndex && row.HintItem.Row == item.RowId);
+                    if (charaMakeCustomize != null)
+                    {
+                        Service.TextureManager.GetIcon(charaMakeCustomize.Icon).Draw(192);
+                    }
+                }
+                else
+                {
+                    using var tooltip = ImRaii.Tooltip();
+                    Service.TextureManager.GetIcon(item.Icon).Draw(64);
+                }
+            }
+
             new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_IconTooltip")
             {
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
@@ -145,7 +256,7 @@ public class RewardsTable : Table<Reward>
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y + textHeight);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
-                ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
+                ImGui.TextUnformatted(item.ItemUICategory.Value!.Name);
 
             if (row.RequiredQuest != null)
             {
