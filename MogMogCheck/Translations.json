@@ -52,9 +52,12 @@
     "de": "Erfordert den Abschluss der Quest \"{0}\"."
   },
 
-  "CurrencyReward.MinMax": {
-    "en": "{0} or {1}",
-    "de": "{0} oder {1}"
+  "CurrencyReward.PvP": {
+    "en": "{0}/{1}/{2}"
+  },
+  "CurrencyReward.PvP.Tooltip": {
+    "en": "Win: {0} / Loss: {1} / Tie: {2}",
+    "de": "Sieg: {0} / Niederlage: {1} / Unentschieden: {2}"
   },
   "CurrencyReward.Normal": {
     "en": "{0}"

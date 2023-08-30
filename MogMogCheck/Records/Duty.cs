@@ -14,10 +14,12 @@ public record Duty
         RewardItem = row.Item.Row != 0 ? GetRow<Item>(row.Item.Row) : null;
         RewardItemCount = row.Unknown2;
         RewardItemCountLoss = row.Unknown3;
+        RewardItemCountTie = row.Unknown4;
     }
 
     public ContentFinderCondition? ContentFinderCondition { get; }
     public Item? RewardItem { get; }
     public uint RewardItemCount { get; }
     public uint RewardItemCountLoss { get; }
+    public uint RewardItemCountTie { get; }
 }

@@ -92,7 +92,9 @@ public class DutiesTable : Table<Duty>
             ImGuiUtils.PushCursorY((rowHeight - ImGui.GetTextLineHeight() - iconPadding * 2f) * 0.5f);
             if (row.RewardItemCountLoss > 0)
             {
-                ImGui.TextUnformatted(t("CurrencyReward.MinMax", row.RewardItemCountLoss, row.RewardItemCount));
+                ImGui.TextUnformatted(t("CurrencyReward.PvP", row.RewardItemCount, row.RewardItemCountLoss, row.RewardItemCountTie));
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip(t("CurrencyReward.PvP.Tooltip", row.RewardItemCount, row.RewardItemCountLoss, row.RewardItemCountTie));
             }
             else
             {
