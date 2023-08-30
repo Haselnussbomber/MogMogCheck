@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.0] (2023-08-30)
+
+- **Added:** Hovering over an item icon in the rewards table will now show a preview for emotes, fashion accessories, hairstyles, minions, mounts, paintings, and Triple Triad cards. Otherwise, just a slightly larger icon.
+- **Added:** The Rewards column in the Duties table now shows the amount for wins, losses, and ties for PvP Duties.
+
 ## [1.0.3] (2023-08-29)
 
 - **Added:** A little info to the right of an item if it requires a quest to unlock.
@@ -28,6 +33,7 @@
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[1.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.0...v1.0.1
