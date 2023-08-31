@@ -7,16 +7,16 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Sheets;
 using HaselCommon.Utils;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
 using MogMogCheck.Sheets;
 using MogMogCheck.Tables;
-using InstanceContentCSBonus = Lumina.Excel.GeneratedSheets.InstanceContentCSBonus;
 
 namespace MogMogCheck.Windows;
 
 public unsafe class MainWindow : Window
 {
-    private readonly SpecialShop? _shop;
+    private readonly ExtendedSpecialShop? _shop;
     private readonly RewardsTable? _rewardsTable;
     private readonly DutiesTable? _dutiesTable;
 
@@ -32,7 +32,7 @@ public unsafe class MainWindow : Window
             MaximumSize = new Vector2(4069),
         };
 
-        _shop = GetRow<SpecialShop>(1769929);
+        _shop = GetRow<ExtendedSpecialShop>(1769929);
         if (_shop == null)
             return;
 
@@ -68,7 +68,7 @@ public unsafe class MainWindow : Window
     {
         var scale = ImGuiHelpers.GlobalScale;
 
-        var tomestone = GetRow<Item>((uint)_shop!.Items[0].GiveItemId1);
+        var tomestone = GetRow<ExtendedItem>((uint)_shop!.Items[0].GiveItemId1);
         if (tomestone == null)
             return;
 

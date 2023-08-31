@@ -4,7 +4,7 @@ using Lumina.Excel;
 
 namespace MogMogCheck.Sheets;
 
-public class SpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
+public class ExtendedSpecialShop : Lumina.Excel.GeneratedSheets.SpecialShop
 {
     private const int NumItems = 60;
 

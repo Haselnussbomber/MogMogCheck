@@ -17,14 +17,14 @@ public unsafe class DebugWindow : Window
     {
         Namespace = "MogMogCheckDebug";
 
-        ColumnNames = typeof(SpecialShop.SpecialShopItem).GetFields(BindingFlags.Instance | BindingFlags.Public).Select(x => x.Name).ToArray();
+        ColumnNames = typeof(ExtendedSpecialShop.SpecialShopItem).GetFields(BindingFlags.Instance | BindingFlags.Public).Select(x => x.Name).ToArray();
     }
 
     public override void Draw()
     {
         ImGui.InputInt("Shop Id", ref _shopId);
 
-        var row = GetRow<SpecialShop>((uint)_shopId)!;
+        var row = GetRow<ExtendedSpecialShop>((uint)_shopId)!;
         ImGui.TextUnformatted(row.Name.ToDalamudString().ToString());
 
         using var table = ImRaii.Table("##MogMogSheet", 27);
