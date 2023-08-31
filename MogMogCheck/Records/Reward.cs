@@ -1,12 +1,11 @@
 using HaselCommon.Sheets;
 using Lumina.Excel.GeneratedSheets;
-using static MogMogCheck.Sheets.ExtendedSpecialShop;
 
 namespace MogMogCheck.Records;
 
 public record Reward
 {
-    public Reward(int Index, SpecialShopItem row)
+    public Reward(int Index, ExtendedSpecialShop.SpecialShopItem row)
     {
         this.Index = Index;
 

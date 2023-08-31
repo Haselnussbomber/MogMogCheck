@@ -3,8 +3,8 @@ using System.Reflection;
 using Dalamud.Interface.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
+using HaselCommon.Sheets;
 using ImGuiNET;
-using MogMogCheck.Sheets;
 
 namespace MogMogCheck.Windows;
 

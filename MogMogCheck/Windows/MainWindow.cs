@@ -9,7 +9,6 @@ using HaselCommon.Utils;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
-using MogMogCheck.Sheets;
 using MogMogCheck.Tables;
 
 namespace MogMogCheck.Windows;
