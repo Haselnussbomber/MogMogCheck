@@ -41,7 +41,7 @@ public partial class Configuration
         }
         catch (Exception ex)
         {
-            PluginLog.Error(ex, "Could not load configuration, creating a new one");
+            Service.PluginLog.Error(ex, "Could not load configuration, creating a new one");
 
             Service.PluginInterface.UiBuilder.AddNotification(
                 t("Config.CouldNotLoadConfigNotification"),
@@ -58,7 +58,7 @@ public partial class Configuration
 
     internal void Save()
     {
-        PluginLog.Information("Configuration saved.");
+        Service.PluginLog.Information("Configuration saved.");
         Service.PluginInterface.SavePluginConfig(this);
     }
 }

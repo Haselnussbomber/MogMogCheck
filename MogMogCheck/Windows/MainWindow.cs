@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface;
-using Dalamud.Interface.Raii;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Sheets;
@@ -77,7 +77,7 @@ public unsafe class MainWindow : Window
         {
             ImGuiContextMenu.CreateItemFinder(tomestone.RowId),
             ImGuiContextMenu.CreateCopyItemName(tomestone.RowId),
-            ImGuiContextMenu.CreateItemSearch(tomestone.RowId),
+            ImGuiContextMenu.CreateItemSearch(tomestone),
             ImGuiContextMenu.CreateOpenOnGarlandTools(tomestone.RowId),
         }
         .Draw();
