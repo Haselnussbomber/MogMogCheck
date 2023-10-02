@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface;
-using Dalamud.Interface.Raii;
-using Dalamud.Interface.Table;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Utility.Table;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using HaselCommon.Enums;
 using HaselCommon.Utils;
@@ -217,7 +218,7 @@ public class RewardsTable : Table<Reward>
             {
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
-                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item),
                 ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
             }
             .Draw();
@@ -242,7 +243,7 @@ public class RewardsTable : Table<Reward>
             {
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
-                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item),
                 ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
             }
             .Draw();
@@ -300,7 +301,7 @@ public class RewardsTable : Table<Reward>
             {
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
-                ImGuiContextMenu.CreateItemSearch(item.RowId),
+                ImGuiContextMenu.CreateItemSearch(item),
                 ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
             }
             .Draw();

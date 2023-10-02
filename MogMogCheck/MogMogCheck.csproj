@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <Reference Include="Dalamud" Private="false" />
-    <Reference Include="Dalamud.Interface" Private="false" />
     <Reference Include="FFXIVClientStructs" Private="false" />
     <Reference Include="ImGui.NET" Private="false" />
     <Reference Include="ImGuiScene" Private="false" />

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 using Dalamud.Plugin;
-using HaselCommon;
 using HaselCommon.Extensions;
 using MogMogCheck.Windows;
 
@@ -10,14 +9,11 @@ namespace MogMogCheck;
 
 public sealed partial class Plugin : IDalamudPlugin
 {
-    public string Name => "MogMogCheck";
-
     public static Configuration Config { get; private set; } = null!;
 
     public unsafe Plugin(DalamudPluginInterface pluginInterface)
     {
-        pluginInterface.Create<Service>();
-        HaselCommonBase.Initialize(pluginInterface);
+        Service.Initialize(pluginInterface);
 
         Config = Configuration.Load();
         Config.TrackedItems.RemoveAll((uint itemId, bool tracked) => !tracked); // clear old untracked items
@@ -30,7 +26,7 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.Initialize(translations, Config);
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
-        //Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
+        // Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange += Config.Save;
 
@@ -47,12 +43,13 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.CommandManager.RemoveHandler("/mogmog");
 
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
-        //Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
+        // Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange -= Config.Save;
 
         Config?.Save();
-        HaselCommonBase.Dispose();
+        Config = null!;
+        Service.Dispose();
     }
 
     private void OpenMainUi()
@@ -60,8 +57,8 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.WindowManager.ToggleWindow<MainWindow>();
     }
 
-    private void OpenConfigUi()
-    {
-        Service.WindowManager.ToggleWindow<ConfigWindow>();
-    }
+    // private void OpenConfigUi()
+    // {
+    //     Service.WindowManager.ToggleWindow<ConfigWindow>();
+    // }
 }

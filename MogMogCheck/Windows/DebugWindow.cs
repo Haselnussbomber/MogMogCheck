@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Reflection;
-using Dalamud.Interface.Raii;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using HaselCommon.Sheets;

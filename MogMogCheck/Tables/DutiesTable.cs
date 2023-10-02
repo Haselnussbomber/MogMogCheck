@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Dalamud.Interface;
-using Dalamud.Interface.Table;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Table;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using HaselCommon.Utils;
 using ImGuiNET;
@@ -78,7 +78,7 @@ public class DutiesTable : Table<Duty>
             {
                 ImGuiContextMenu.CreateItemFinder(row.RewardItem.RowId),
                 ImGuiContextMenu.CreateCopyItemName(row.RewardItem.RowId),
-                ImGuiContextMenu.CreateItemSearch(row.RewardItem.RowId),
+                ImGuiContextMenu.CreateItemSearch(row.RewardItem),
                 ImGuiContextMenu.CreateOpenOnGarlandTools(row.RewardItem.RowId),
             }
             .Draw();
