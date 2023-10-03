@@ -38,6 +38,7 @@ public unsafe class MainWindow : Window
         _rewardsTable ??= new(
             _shop.Items
                 .Where(row => row.ReceiveItemId1 != 0)
+                .OrderBy(row => row.SortKey)
                 .Select((row, index) => new Reward(index, row))
                 .ToArray());
 
@@ -45,7 +46,7 @@ public unsafe class MainWindow : Window
             GetSheet<InstanceContentCSBonus>()
                 .Where(row => row.Item.Row != 0)
                 .Select(row => new Duty(row))
-                .Where(row => row.RewardItem != null && row.ContentFinderCondition?.RowId != 0)
+                .Where(row => row.RewardItem != null && row.ContentFinderCondition != null && row.ContentFinderCondition.RowId != 0)
                 .ToArray());
     }
 

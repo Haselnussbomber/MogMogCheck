@@ -90,37 +90,58 @@ public unsafe class DebugWindow : Window
             ImGui.TextUnformatted($"{item.Unk40}");
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk42}");
-
-            ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{item.Unk44}");
-
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.PatchNumber}");
 
             ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{item.Unk48}");
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk49}");
-
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk4A}");
-
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk4B}");
-
-            ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{item.Unk4C}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk50}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk52}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk54}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.PatchNumber}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk58}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk59}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5A}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5B}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5C}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5D}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5E}");
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{item.Unk5F}");
 
             ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{item.SortKey}");
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk4E}");
+            ImGui.TextUnformatted($"{item.Unk61}");
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{item.Unk4F}");
+            ImGui.TextUnformatted($"{item.Unk62}");
         }
     }
 }
