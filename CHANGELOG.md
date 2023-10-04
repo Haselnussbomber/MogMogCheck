@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1] (2023-10-04)
+
+Update for Patch 6.5.
+
 ## [1.1.0] (2023-08-30)
 
 - **Added:** Hovering over an item icon in the rewards table will now show a preview for emotes, fashion accessories, hairstyles, minions, mounts, paintings, and Triple Triad cards. Otherwise, just a slightly larger icon.
@@ -33,6 +37,7 @@
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[1.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.1...v1.0.2
