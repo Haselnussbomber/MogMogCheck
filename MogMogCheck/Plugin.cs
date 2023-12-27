@@ -1,3 +1,4 @@
+using Dalamud.Interface.GameFonts;
 using Dalamud.Plugin;
 using HaselCommon.Extensions;
 using MogMogCheck.Windows;
@@ -7,6 +8,8 @@ namespace MogMogCheck;
 public sealed partial class Plugin : IDalamudPlugin
 {
     public static Configuration Config { get; private set; } = null!;
+    private static GameFontHandle? TripleTriadNumberFont = null!;
+    private static float TripleTriadNumberFontSize = 0;
 
     public unsafe Plugin(DalamudPluginInterface pluginInterface)
     {
@@ -39,6 +42,9 @@ public sealed partial class Plugin : IDalamudPlugin
 
         Service.TranslationManager.OnLanguageChange -= Config.Save;
 
+        TripleTriadNumberFont?.Dispose();
+        TripleTriadNumberFont = null!;
+
         Config?.Save();
         Config = null!;
         Service.Dispose();
@@ -53,4 +59,16 @@ public sealed partial class Plugin : IDalamudPlugin
     // {
     //     Service.WindowManager.ToggleWindow<ConfigWindow>();
     // }
+
+    internal static GameFontHandle GetTripleTriadNumberFont(float size)
+    {
+        if (TripleTriadNumberFont == null || TripleTriadNumberFontSize != size)
+        {
+            TripleTriadNumberFont?.Dispose();
+            TripleTriadNumberFont = Service.PluginInterface.UiBuilder.GetGameFontHandle(new GameFontStyle(GameFontFamily.MiedingerMid, size));
+            TripleTriadNumberFontSize = size;
+        }
+
+        return TripleTriadNumberFont;
+    }
 }

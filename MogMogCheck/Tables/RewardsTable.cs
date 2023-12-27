@@ -13,6 +13,7 @@ using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
 using Companion = Lumina.Excel.GeneratedSheets.Companion;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
+using TripleTriadCard = Lumina.Excel.GeneratedSheets2.TripleTriadCard;
 
 namespace MogMogCheck.Tables;
 
@@ -129,7 +130,6 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursorY((rowHeight - iconSize + itemInnerSpacing.Y) * 0.5f);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
-
             if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
             {
                 if (item.ItemAction.Value?.Type == (uint)ItemActionType.Mounts)
@@ -158,11 +158,94 @@ public class RewardsTable : Table<Reward>
                 }
                 else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Cards)
                 {
+                    var cardId = item.ItemAction.Value!.Data[0];
+                    var cardRow = GetRow<TripleTriadCard>(cardId)!;
+                    var cardResident = GetRow<TripleTriadCardResident>(cardId)!;
+                    var cardRarity = cardResident.TripleTriadCardRarity.Value!;
+
+                    var cardSize = new Vector2(208, 256);
+                    var cardSizeScaled = ImGuiHelpers.ScaledVector2(cardSize.X, cardSize.Y);
+
                     using var tooltip = ImRaii.Tooltip();
+                    ImGui.TextUnformatted($"{(cardResident.TripleTriadCardRarity.Row == 5 ? "Ex" : "No")}. {cardResident.Order} - {cardRow.Name}");
                     var pos = ImGui.GetCursorPos();
-                    Service.TextureManager.GetPart("CardTripleTriad", 1, 0).Draw(208, 256);
+                    Service.TextureManager.GetPart("CardTripleTriad", 1, 0).Draw(cardSizeScaled);
                     ImGui.SetCursorPos(pos);
-                    Service.TextureManager.GetIcon(82100 + item.ItemAction.Value!.Data[0]).Draw(208, 256);
+                    Service.TextureManager.GetIcon(87000 + cardRow.RowId).Draw(cardSizeScaled);
+
+                    var starSize = cardSizeScaled.Y / 10f;
+                    var starCenter = pos + new Vector2(starSize);
+                    var starRadius = starSize / 1.666f;
+
+                    static Vector2 GetPosOnCircle(float radius, int index, int numberOfPoints)
+                    {
+                        var angleIncrement = 2 * Math.PI / numberOfPoints;
+                        var angle = index * angleIncrement - Math.PI / 2;
+                        return new Vector2(
+                            radius * (float)Math.Cos(angle),
+                            radius * (float)Math.Sin(angle)
+                        );
+                    }
+
+                    if (cardRarity.Stars >= 1)
+                    {
+                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 0, 5)); // top
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                    }
+                    if (cardRarity.Stars >= 2)
+                    {
+                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 4, 5)); // left
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                    }
+                    if (cardRarity.Stars >= 3)
+                    {
+                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 1, 5)); // right
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                    }
+                    if (cardRarity.Stars >= 4)
+                    {
+                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 2, 5)); // bottom left
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                    }
+                    if (cardRarity.Stars >= 5)
+                    {
+                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 3, 5)); // bottom right
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                    }
+
+                    // type
+                    if (cardResident.TripleTriadCardType.Row != 0)
+                    {
+                        ImGui.SetCursorPos(pos + new Vector2(cardSize.X, 0) - new Vector2(starSize * 1.5f, -starSize / 2f));
+                        Service.TextureManager.GetPart("CardTripleTriad", 1, cardResident.TripleTriadCardType.Row + 2).Draw(starSize);
+                    }
+
+                    // numbers
+                    var numberSize = 208f / 10f;
+                    var fontHandle = Plugin.GetTripleTriadNumberFont(numberSize);
+                    using var font = ImRaii.PushFont(fontHandle.ImFont, fontHandle.Available);
+
+                    var numberText = $"{cardResident.Top:X}";
+                    var numberTextSize = ImGui.CalcTextSize(numberText);
+                    var numberTextWidth = numberTextSize.X / 1.333f;
+                    var numberCenter = pos + new Vector2(cardSizeScaled.X / 2f - numberTextWidth, cardSizeScaled.Y - numberTextSize.Y * 2f);
+
+                    static void DrawNumberText(Vector2 numberCenter, float numberTextWidth, int posIndex, string numberText)
+                    {
+                        // shadow
+                        ImGui.SetCursorPos(numberCenter + GetPosOnCircle(numberTextWidth, posIndex, 4) + ImGuiHelpers.ScaledVector2(2));
+                        using (ImRaii.PushColor(ImGuiCol.Text, 0xFF000000))
+                            ImGui.TextUnformatted(numberText);
+
+                        // text
+                        ImGui.SetCursorPos(numberCenter + GetPosOnCircle(numberTextWidth, posIndex, 4));
+                        ImGui.TextUnformatted(numberText);
+                    }
+
+                    DrawNumberText(numberCenter, numberTextWidth, 0, numberText); // top
+                    DrawNumberText(numberCenter, numberTextWidth, 1, $"{cardResident.Right:X}"); // right
+                    DrawNumberText(numberCenter, numberTextWidth, 2, $"{cardResident.Left:X}"); // left
+                    DrawNumberText(numberCenter, numberTextWidth, 3, $"{cardResident.Bottom:X}"); // bottom
                 }
                 else if (item.ItemUICategory.Row == 95) // Paintings
                 {
