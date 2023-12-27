@@ -44,7 +44,7 @@ public class RewardsTable : Table<Reward>
     private sealed class TrackColumn : Column<Reward>
     {
         public override float Width
-            => 28 * ImGuiHelpers.GlobalScale;
+            => 80 * ImGuiHelpers.GlobalScale;
 
         public override bool DrawFilter()
         {
@@ -61,21 +61,39 @@ public class RewardsTable : Table<Reward>
             var rowHeight = (ImGui.GetTextLineHeight() + itemInnerSpacing.Y) * 2f;
             var paddingY = (rowHeight - ImGui.GetFrameHeight()) * 0.5f;
 
-            var itemId = row.ReceiveItems[0].Item!.RowId;
+            var itemRow = row.ReceiveItems[0].Item!;
+            var itemId = itemRow.RowId;
+            var stackSize = itemRow.StackSize;
 
-            if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var tracked))
-                Plugin.Config.TrackedItems.Add(itemId, tracked = false);
+            if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
+                savedAmount = 0;
+
+            var inputAmount = (int)savedAmount;
 
             ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X * scale, paddingY);
+            ImGui.SetNextItemWidth(-1);
 
-            if (ImGui.Checkbox($"##Row{idx}", ref tracked))
+            var changed = ImGui.DragInt($"##Row{idx}", ref inputAmount, 1, 0, (int)stackSize, $"%d / {stackSize}");
+
+            if (inputAmount > stackSize)
+                inputAmount = (int)stackSize;
+
+            if (ImGui.IsItemHovered() || ImGui.IsItemActive())
             {
-                if (tracked)
+                if (inputAmount <= 1)
+                    ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Quantity));
+                else
+                    ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Quantity, inputAmount * row.GiveItems[0].Quantity));
+            }
+
+            if (changed && savedAmount != inputAmount)
+            {
+                if (inputAmount > 0)
                 {
                     if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
-                        Plugin.Config.TrackedItems.Add(itemId, tracked);
+                        Plugin.Config.TrackedItems.Add(itemId, (uint)inputAmount);
                     else
-                        Plugin.Config.TrackedItems[itemId] = tracked;
+                        Plugin.Config.TrackedItems[itemId] = (uint)inputAmount;
                 }
                 else
                 {

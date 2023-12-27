@@ -47,6 +47,14 @@
     "de": "Vergütung"
   },
 
+  "Reward.AmountInput.Tooltip.ResultOnly": {
+    "en": "Cost: {0}",
+    "de": "Kosten: {0}"
+  },
+  "Reward.AmountInput.Tooltip.Calculation": {
+    "en": "Cost: {0} * {1} = {2}",
+    "de": "Kosten: {0} * {1} = {2}"
+  },
   "Reward.RequiredQuest.Tooltip": {
     "en": "Requires the quest \"{0}\" to be completed.",
     "de": "Erfordert den Abschluss der Quest \"{0}\"."

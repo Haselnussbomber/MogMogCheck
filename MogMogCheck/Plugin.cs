@@ -13,7 +13,7 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.Initialize(pluginInterface);
 
         Config = Configuration.Load();
-        Config.TrackedItems.RemoveAll((uint itemId, bool tracked) => !tracked); // clear old untracked items
+        Config.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0); // clear old untracked items
 
         Service.TranslationManager.Initialize(Config);
 

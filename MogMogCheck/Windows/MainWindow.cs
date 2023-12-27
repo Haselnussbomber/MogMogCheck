@@ -87,7 +87,7 @@ public unsafe class MainWindow : Window
         ImGuiUtils.PushCursorY(6 * scale);
 
         var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop.Items[0].GiveItemId1);
-        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var tracked) && tracked ? item.GiveCount1 : 0));
+        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
         if (needed > owned)
         {
             var remaining = needed - owned;
