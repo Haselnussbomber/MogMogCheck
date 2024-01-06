@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MogMogCheck", "MogMogCheck\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon", "HaselCommon\HaselCommon\HaselCommon.csproj", "{1FD1157A-DF10-4F09-9123-0039CFB43E95}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon.InteropSourceGenerators", "HaselCommon\HaselCommon.InteropSourceGenerators\HaselCommon.InteropSourceGenerators.csproj", "{17089153-270B-4C51-BF79-A05C2970776A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,14 @@ Global
 		{1FD1157A-DF10-4F09-9123-0039CFB43E95}.Release|Any CPU.Build.0 = Release|x64
 		{1FD1157A-DF10-4F09-9123-0039CFB43E95}.Release|x64.ActiveCfg = Release|x64
 		{1FD1157A-DF10-4F09-9123-0039CFB43E95}.Release|x64.Build.0 = Release|x64
+		{17089153-270B-4C51-BF79-A05C2970776A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Debug|x64.Build.0 = Debug|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Release|x64.ActiveCfg = Release|Any CPU
+		{17089153-270B-4C51-BF79-A05C2970776A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

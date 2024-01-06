@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Plugin;
 using HaselCommon.Extensions;
@@ -11,10 +12,15 @@ public sealed partial class Plugin : IDalamudPlugin
     private static GameFontHandle? TripleTriadNumberFont = null!;
     private static float TripleTriadNumberFontSize = 0;
 
-    public unsafe Plugin(DalamudPluginInterface pluginInterface)
+    public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
+        Task.Run(HaselCommon.Interop.Resolver.GetInstance.Resolve)
+            .ContinueOnFrameworkThreadWith(Setup);
+    }
 
+    public void Setup()
+    {
         Config = Configuration.Load();
         Config.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0); // clear old untracked items
 
