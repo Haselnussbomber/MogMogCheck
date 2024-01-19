@@ -27,6 +27,7 @@ public partial class Configuration : ITranslationConfig
 public partial class Configuration
 {
     public Dictionary<uint, uint> TrackedItems = [];
+    public bool LimitToOne = true;
 }
 
 public partial class Configuration

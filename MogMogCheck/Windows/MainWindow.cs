@@ -98,6 +98,20 @@ public unsafe class MainWindow : Window
             ImGui.TextUnformatted(t("Currency.Info", owned, needed));
         }
 
+        if (ImGui.Checkbox(t("Config.LimitToOne"), ref Plugin.Config.LimitToOne))
+        {
+            foreach (var (itemId, amount) in Plugin.Config.TrackedItems)
+            {
+                if (amount > 1)
+                    Plugin.Config.TrackedItems[itemId] = 1;
+            }
+
+            Plugin.Config.Save();
+        }
+
+        if (!Plugin.Config.LimitToOne && ImGui.IsItemHovered())
+            ImGui.SetTooltip(t("Config.LimitToOne.Tooltip"));
+
         using var tabs = ImRaii.TabBar("##Tabs");
         DrawRewardsTab();
         DrawDutiesTab();

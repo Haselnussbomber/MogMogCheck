@@ -45,12 +45,10 @@ public class RewardsTable : Table<Reward>
     private sealed class TrackColumn : Column<Reward>
     {
         public override float Width
-            => 80 * ImGuiHelpers.GlobalScale;
+            => (Plugin.Config.LimitToOne ? ImGui.GetFrameHeightWithSpacing() : 80) * ImGuiHelpers.GlobalScale;
 
         public override bool DrawFilter()
-        {
-            return false;
-        }
+            => false;
 
         public override int Compare(Reward lhs, Reward rhs)
             => lhs.Index.CompareTo(rhs.Index);
@@ -64,44 +62,73 @@ public class RewardsTable : Table<Reward>
 
             var itemRow = row.ReceiveItems[0].Item!;
             var itemId = itemRow.RowId;
-            var stackSize = itemRow.StackSize;
-
-            if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
-                savedAmount = 0;
-
-            var inputAmount = (int)savedAmount;
 
             ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X * scale, paddingY);
             ImGui.SetNextItemWidth(-1);
 
-            var changed = ImGui.DragInt($"##Row{idx}", ref inputAmount, 1, 0, (int)stackSize, $"%d / {stackSize}");
-
-            if (inputAmount > stackSize)
-                inputAmount = (int)stackSize;
-
-            if (ImGui.IsItemHovered() || ImGui.IsItemActive())
+            if (Plugin.Config.LimitToOne)
             {
-                if (inputAmount <= 1)
-                    ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Quantity));
-                else
-                    ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Quantity, inputAmount * row.GiveItems[0].Quantity));
-            }
+                if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
+                    savedAmount = 0;
 
-            if (changed && savedAmount != inputAmount)
-            {
-                if (inputAmount > 0)
+                var isChecked = savedAmount > 0;
+                if (ImGui.Checkbox($"##Row{idx}", ref isChecked))
                 {
-                    if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
-                        Plugin.Config.TrackedItems.Add(itemId, (uint)inputAmount);
+                    if (isChecked)
+                    {
+                        if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
+                            Plugin.Config.TrackedItems.Add(itemId, 1);
+                        else
+                            Plugin.Config.TrackedItems[itemId] = 1;
+                    }
                     else
-                        Plugin.Config.TrackedItems[itemId] = (uint)inputAmount;
-                }
-                else
-                {
-                    Plugin.Config.TrackedItems.Remove(itemId);
+                    {
+                        Plugin.Config.TrackedItems.Remove(itemId);
+                    }
+
+                    Plugin.Config.Save();
                 }
 
-                Plugin.Config.Save();
+                if (isChecked && (ImGui.IsItemHovered() || ImGui.IsItemActive()))
+                {
+                    ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.ResultOnly", 1 * row.GiveItems[0].Quantity));
+                }
+            }
+            else
+            {
+                var canSell = !itemRow.IsUnique && !itemRow.IsUntradable && !itemRow.IsCollectable;
+                var stackSize = canSell ? 999 : itemRow.StackSize;
+
+                if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
+                    savedAmount = 0;
+
+                var inputAmount = (int)savedAmount;
+
+                var changed = ImGui.DragInt($"##Row{idx}", ref inputAmount, 1, 0, (int)stackSize, $"%d / {stackSize}", ImGuiSliderFlags.AlwaysClamp);
+                if (changed && savedAmount != inputAmount)
+                {
+                    if (inputAmount > 0)
+                    {
+                        if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
+                            Plugin.Config.TrackedItems.Add(itemId, (uint)inputAmount);
+                        else
+                            Plugin.Config.TrackedItems[itemId] = (uint)inputAmount;
+                    }
+                    else
+                    {
+                        Plugin.Config.TrackedItems.Remove(itemId);
+                    }
+
+                    Plugin.Config.Save();
+                }
+
+                if (ImGui.IsItemHovered() || ImGui.IsItemActive())
+                {
+                    if (inputAmount <= 1)
+                        ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Quantity));
+                    else
+                        ImGui.SetTooltip(t("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Quantity, inputAmount * row.GiveItems[0].Quantity));
+                }
             }
         }
     }

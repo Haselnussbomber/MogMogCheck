@@ -1,4 +1,8 @@
 {
+  "CommandHandlerHelpMessage": {
+    "en": "Open Window",
+    "de": "Öffne Fenster"
+  },
   "Config.CouldNotLoadConfigNotification": {
     "en": "Could not load the configuration file. Creating a new one.",
     "de": "Die Konfigurationsdatei konnte nicht geladen werden. Es wird eine neue erstellt."
@@ -6,6 +10,14 @@
   "Config.ItemNameNote": {
     "en": "Please note that item names are not translatable, as they are retrieved from the game client instead of the Lumina sheets.",
     "de": "Bitte beachte, dass Gegenstandsnamen nicht übersetzbar sind, da sie vom Spiel-Client und nicht von den Lumina-Sheets abgerufen werden."
+  },
+  "Config.LimitToOne": {
+    "en": "Limit stacks to 1 item",
+    "de": "Limitiere Stapel auf einen Gegenstand"
+  },
+  "Config.LimitToOne.Tooltip": {
+    "en": "Stacks that are greater than 1 are reset to 1!",
+    "de": "Stapel, die größer als 1 sind, werden auf 1 zurückgesetzt!"
   },
 
   "Currency.Info": {

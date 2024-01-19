@@ -27,11 +27,10 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.Initialize(Config);
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
-        // Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange += Config.Save;
 
-        Service.CommandManager.AddHandler("/mogmog", new(OnCommand));
+        Service.CommandManager.AddHandler("/mogmog", new(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") });
     }
 
     private void OnCommand(string command, string arguments)
@@ -44,7 +43,6 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.CommandManager.RemoveHandler("/mogmog");
 
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
-        // Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange -= Config.Save;
 
@@ -60,11 +58,6 @@ public sealed partial class Plugin : IDalamudPlugin
     {
         Service.WindowManager.ToggleWindow<MainWindow>();
     }
-
-    // private void OpenConfigUi()
-    // {
-    //     Service.WindowManager.ToggleWindow<ConfigWindow>();
-    // }
 
     internal static GameFontHandle GetTripleTriadNumberFont(float size)
     {
