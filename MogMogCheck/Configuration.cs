@@ -21,7 +21,7 @@ public partial class Configuration : IPluginConfiguration
 public partial class Configuration : ITranslationConfig
 {
     public string PluginLanguage { get; set; } = "en";
-    public PluginLanguageOverride PluginLanguageOverride { get; set; } = PluginLanguageOverride.Dalamud;
+    public PluginLanguageOverride PluginLanguageOverride { get; set; } = PluginLanguageOverride.Client;
 }
 
 public partial class Configuration

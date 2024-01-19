@@ -7,9 +7,9 @@
     "en": "Could not load the configuration file. Creating a new one.",
     "de": "Die Konfigurationsdatei konnte nicht geladen werden. Es wird eine neue erstellt."
   },
-  "Config.ItemNameNote": {
-    "en": "Please note that item names are not translatable, as they are retrieved from the game client instead of the Lumina sheets.",
-    "de": "Bitte beachte, dass Gegenstandsnamen nicht übersetzbar sind, da sie vom Spiel-Client und nicht von den Lumina-Sheets abgerufen werden."
+  "Config.LanguageNote": {
+    "en": "- Item names are always in the client's language, as they are retrieved from the game client.\n- At the moment, the plugin is only translated into English and German.",
+    "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Spielclient abgerufen werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
   },
   "Config.LimitToOne": {
     "en": "Limit stacks to 1 item",

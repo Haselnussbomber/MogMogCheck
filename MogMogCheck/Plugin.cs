@@ -27,6 +27,7 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.Initialize(Config);
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange += Config.Save;
 
@@ -43,6 +44,7 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.CommandManager.RemoveHandler("/mogmog");
 
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
 
         Service.TranslationManager.OnLanguageChange -= Config.Save;
 
@@ -57,6 +59,11 @@ public sealed partial class Plugin : IDalamudPlugin
     private void OpenMainUi()
     {
         Service.WindowManager.ToggleWindow<MainWindow>();
+    }
+
+    private void OpenConfigUi()
+    {
+        Service.WindowManager.ToggleWindow<ConfigWindow>();
     }
 
     internal static GameFontHandle GetTripleTriadNumberFont(float size)
