@@ -49,10 +49,9 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.OnLanguageChange -= Config.Save;
 
         TripleTriadNumberFont?.Dispose();
-        TripleTriadNumberFont = null!;
 
         Config?.Save();
-        Config = null!;
+
         Service.Dispose();
     }
 

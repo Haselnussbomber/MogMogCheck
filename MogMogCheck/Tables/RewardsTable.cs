@@ -344,6 +344,7 @@ public class RewardsTable : Table<Reward>
 
             new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_IconTooltip")
             {
+                ImGuiContextMenu.CreateTryOn(item),
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
                 ImGuiContextMenu.CreateItemSearch(item),
@@ -369,6 +370,7 @@ public class RewardsTable : Table<Reward>
 
             new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_Tooltip")
             {
+                ImGuiContextMenu.CreateTryOn(item),
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
                 ImGuiContextMenu.CreateItemSearch(item),
@@ -425,7 +427,7 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursorY(paddingY);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
 
-            new ImGuiContextMenu($"##{item.RowId}_ItemContextMenu{item.RowId}_Tooltip")
+            new ImGuiContextMenu($"##{row.Index}_ItemContextMenu{item.RowId}_Tooltip")
             {
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
