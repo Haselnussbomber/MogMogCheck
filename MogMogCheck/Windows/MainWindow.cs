@@ -16,6 +16,7 @@ namespace MogMogCheck.Windows;
 public unsafe class MainWindow : Window
 {
     private readonly ExtendedSpecialShop? _shop;
+    private readonly Reward[]? _rewardsItems;
     private readonly RewardsTable? _rewardsTable;
     private readonly DutiesTable? _dutiesTable;
 
@@ -35,14 +36,16 @@ public unsafe class MainWindow : Window
         if (_shop == null)
             return;
 
-        _rewardsTable ??= new(
-            _shop.Items
-                .Where(row => row.ReceiveItemId1 != 0)
-                .OrderBy(row => row.SortKey)
+        _rewardsItems = _shop.Items
+                .Where(row => row.ReceiveItemId1 != 0 && row.GiveItemId1 != 41306)
+                .OrderBy(row => row.GiveItemId1)
+                .ThenBy(row => row.SortKey)
                 .Select((row, index) => new Reward(index, row))
-                .ToArray());
+                .ToArray();
 
-        _dutiesTable ??= new(
+        _rewardsTable = new(_rewardsItems);
+
+        _dutiesTable = new(
             GetSheet<InstanceContentCSBonus>()
                 .Where(row => row.Item.Row != 0)
                 .Select(row => new Duty(row))
@@ -59,6 +62,7 @@ public unsafe class MainWindow : Window
     {
         return Service.ClientState.IsLoggedIn
             && _shop != null
+            && _rewardsItems != null
             && _rewardsTable != null
             && _rewardsTable.TotalItems > 0
             && _dutiesTable != null;
@@ -68,8 +72,8 @@ public unsafe class MainWindow : Window
     {
         var scale = ImGuiHelpers.GlobalScale;
 
-        var tomestone = GetRow<ExtendedItem>((uint)_shop!.Items[0].GiveItemId1);
-        if (tomestone == null)
+        var tomestone = GetRow<ExtendedItem>(_rewardsItems![0].GiveItems[0].Item?.RowId ?? 0);
+        if (tomestone == null || tomestone.RowId == 0)
             return;
 
         Service.TextureManager.GetIcon(tomestone.Icon).Draw(32 * scale);
@@ -86,7 +90,7 @@ public unsafe class MainWindow : Window
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
-        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop.Items[0].GiveItemId1);
+        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop!.Items[0].GiveItemId1);
         var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
         if (needed > owned)
         {
