@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** It's now possible to switch to stack mode, which displays a number slider instead of a checkbox to set the stack size of non-unique items you want to buy more than one of.
+- **Added:** A configuration window to change the language of the plugin has been added, accessible through Dalamud's plugin installer.
+  - Item names are always in the client's language, as they are properly formatted by the game's localization system.
+  - At the moment, the plugin is only translated into English and German.
+- **Added:** The context menu for equippable items now has a "Try on" option.
+- **Changed:** Item icon tooltips for Triple Triad Cards now mimic the card style, displaying their stars and stats.
+- **Changed:** The required quest indicator for Triple Triad Cards now displays the map marker icon, and its tooltip has been improved too.
+- **Fixed:** The currency context menu had duplicate menu entries.
+
 ## [1.1.1] (2023-10-04)
 
 Update for Patch 6.5.
