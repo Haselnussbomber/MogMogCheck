@@ -4,6 +4,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Utility.Table;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using HaselCommon.Enums;
 using HaselCommon.Utils;
@@ -391,13 +392,21 @@ public class RewardsTable : Table<Reward>
 
             if (row.RequiredQuest != null)
             {
+                var isQuestComplete = QuestManager.IsQuestComplete(row.RequiredQuest.RowId);
                 var regionWidth = ImGui.GetContentRegionAvail().X;
                 ImGui.SameLine(regionWidth - ImGuiUtils.GetIconSize(FontAwesomeIcon.InfoCircle).X - itemSpacing.X);
                 ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
-                ImGuiUtils.Icon(FontAwesomeIcon.InfoCircle, 0x7FFFFFFF);
+                Service.TextureManager.GetIcon(row.RequiredQuest.EventIconType.Value!.MapIconAvailable + (isQuestComplete ? 5u : 1u)).Draw(ImGui.GetFrameHeight());
+
                 if (ImGui.IsItemHovered())
                 {
-                    ImGui.SetTooltip(t("Reward.RequiredQuest.Tooltip", row.RequiredQuest.Name));
+                    using (ImRaii.Tooltip())
+                    {
+                        var status = isQuestComplete
+                            ? t("Reward.RequiredQuest.Tooltip.Completed")
+                            : t("Reward.RequiredQuest.Tooltip.Incomplete");
+                        ImGui.TextUnformatted(t("Reward.RequiredQuest.Tooltip", row.RequiredQuest.Name, status));
+                    }
                 }
             }
         }

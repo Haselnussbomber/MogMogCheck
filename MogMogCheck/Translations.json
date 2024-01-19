@@ -8,8 +8,8 @@
     "de": "Die Konfigurationsdatei konnte nicht geladen werden. Es wird eine neue erstellt."
   },
   "Config.LanguageNote": {
-    "en": "- Item names are always in the client's language, as they are retrieved from the game client.\n- At the moment, the plugin is only translated into English and German.",
-    "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Spielclient abgerufen werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
+    "en": "- Item names are always in the client's language, as they are properly formatted by the game's localization system.\n- At the moment, the plugin is only translated into English and German.",
+    "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Lokalisierungssystem des Spiels richtig formatiert werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
   },
   "Config.LimitToOne": {
     "en": "Limit stacks to 1 item",
@@ -68,8 +68,16 @@
     "de": "Kosten: {0} * {1} = {2}"
   },
   "Reward.RequiredQuest.Tooltip": {
-    "en": "Requires the quest \"{0}\" to be completed.",
-    "de": "Erfordert den Abschluss der Quest \"{0}\"."
+    "en": "Requires the quest \"{0}\" to be completed ({1})",
+    "de": "Erfordert den Abschluss der Quest \"{0}\" ({1})"
+  },
+  "Reward.RequiredQuest.Tooltip.Completed": {
+    "en": "Completed",
+    "de": "Abgeschlossen"
+  },
+  "Reward.RequiredQuest.Tooltip.Incomplete": {
+    "en": "Incomplete",
+    "de": "Nicht abgeschlossen"
   },
 
   "CurrencyReward.PvP": {
