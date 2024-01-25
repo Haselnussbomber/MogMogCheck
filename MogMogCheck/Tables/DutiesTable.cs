@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Table;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using HaselCommon.Extensions;
 using HaselCommon.Utils;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
 
 namespace MogMogCheck.Tables;
@@ -12,13 +13,13 @@ public class DutiesTable : Table<Duty>
 {
     private static readonly DutyColumn _dutyColumn = new()
     {
-        Label = t("Table.Duties.Header.Duty"),
+        LabelKey = "Table.Duties.Header.Duty",
         Flags = ImGuiTableColumnFlags.WidthStretch
     };
 
     private static readonly RewardColumn _rewardColumn = new()
     {
-        Label = t("Table.Duties.Header.Reward")
+        LabelKey = "Table.Duties.Header.Reward"
     };
 
     public DutiesTable(ICollection<Duty> items) : base("Duties", items, _dutyColumn, _rewardColumn)
@@ -29,10 +30,7 @@ public class DutiesTable : Table<Duty>
     private sealed class DutyColumn : ColumnString<Duty>
     {
         public override string ToName(Duty row)
-        {
-            var name = row.ContentFinderCondition!.Name.RawString;
-            return char.ToUpper(name[0]) + name[1..];
-        }
+            => GetSheetText<ContentFinderCondition>(row.ContentFinderCondition!.RowId, "Name").FirstCharToUpper();
 
         public override unsafe void DrawColumn(Duty row, int _)
         {

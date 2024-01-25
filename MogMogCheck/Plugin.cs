@@ -24,7 +24,6 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.TranslationManager.Initialize();
 
         Config = Configuration.Load();
-        Config.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0); // clear old untracked items
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
 

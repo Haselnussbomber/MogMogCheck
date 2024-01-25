@@ -11,11 +11,11 @@
     "en": "- Item names are always in the client's language, as they are properly formatted by the game's localization system.\n- At the moment, the plugin is only translated into English and German.",
     "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Lokalisierungssystem des Spiels richtig formatiert werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
   },
-  "Config.LimitToOne": {
-    "en": "Limit stacks to 1 item",
-    "de": "Limitiere Stapel auf einen Gegenstand"
+  "Config.CheckboxMode": {
+    "en": "Checkbox-Mode",
+    "de": "Checkbox-Modus"
   },
-  "Config.LimitToOne.Tooltip": {
+  "Config.CheckboxMode.Tooltip": {
     "en": "Stacks that are greater than 1 are reset to 1!",
     "de": "Stapel, die größer als 1 sind, werden auf 1 zurückgesetzt!"
   },
@@ -68,16 +68,22 @@
     "de": "Kosten: {0} * {1} = {2}"
   },
   "Reward.RequiredQuest.Tooltip": {
-    "en": "Requires the quest \"{0}\" to be completed ({1})",
-    "de": "Erfordert den Abschluss der Quest \"{0}\" ({1})"
+    "ja": "クエスト「{0}」をコンプリートしていると交換可能となります。 ({1})",
+    "en": "Will become available for exchange once you have completed the quest \"{0}\". ({1})",
+    "de": "Ist zum Eintausch verfügbar, sobald der Auftrag „{0}“ beendet wurde. ({1})",
+    "fr": "Deviendra disponible à l'échange lorsque vous aurez accompli la quête \"{0}\". ({1})"
   },
-  "Reward.RequiredQuest.Tooltip.Completed": {
+  "Reward.RequiredQuest.Tooltip.Complete": {
+    "ja": "コンプリート済み",
     "en": "Completed",
-    "de": "Abgeschlossen"
+    "de": "Abgeschlossen",
+    "fr": "Terminée"
   },
   "Reward.RequiredQuest.Tooltip.Incomplete": {
+    "ja": "未コンプリート",
     "en": "Incomplete",
-    "de": "Nicht abgeschlossen"
+    "de": "Nicht abgeschlossen",
+    "fr": "Pas terminée"
   },
 
   "CurrencyReward.PvP": {

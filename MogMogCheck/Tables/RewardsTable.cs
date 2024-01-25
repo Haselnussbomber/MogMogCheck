@@ -3,7 +3,6 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Utility.Table;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using HaselCommon.Enums;
@@ -24,18 +23,18 @@ public class RewardsTable : Table<Reward>
 
     private static readonly TrackColumn _trackColumn = new()
     {
-        Label = t("Table.Rewards.Header.Track")
+        LabelKey = "Table.Rewards.Header.Track"
     };
 
     private static readonly RewardColumn _rewardColumn = new()
     {
-        Label = t("Table.Rewards.Header.Reward"),
+        LabelKey = "Table.Rewards.Header.Reward",
         Flags = ImGuiTableColumnFlags.WidthStretch
     };
 
     private static readonly RequiredItemColumn _requiredItemColumn = new()
     {
-        Label = t("Table.Rewards.Header.RequiredItem")
+        LabelKey = "Table.Rewards.Header.RequiredItem"
     };
 
     public RewardsTable(ICollection<Reward> items) : base("Rewards", items, _trackColumn, _rewardColumn, _requiredItemColumn)
@@ -46,7 +45,7 @@ public class RewardsTable : Table<Reward>
     private sealed class TrackColumn : Column<Reward>
     {
         public override float Width
-            => (Plugin.Config.LimitToOne ? ImGui.GetFrameHeightWithSpacing() : 80) * ImGuiHelpers.GlobalScale;
+            => (Plugin.Config.CheckboxMode ? ImGui.GetFrameHeightWithSpacing() : 80) * ImGuiHelpers.GlobalScale;
 
         public override bool DrawFilter()
             => false;
@@ -67,7 +66,7 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X * scale, paddingY);
             ImGui.SetNextItemWidth(-1);
 
-            if (Plugin.Config.LimitToOne)
+            if (Plugin.Config.CheckboxMode)
             {
                 if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
                     savedAmount = 0;
@@ -160,31 +159,31 @@ public class RewardsTable : Table<Reward>
 
             if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
             {
-                if (item.ItemAction.Value?.Type == (uint)ItemActionType.Mounts)
+                if (item.ItemAction.Value?.Type == (uint)ItemActionType.Mount)
                 {
                     using var tooltip = ImRaii.Tooltip();
                     var mount = GetRow<Mount>(item.ItemAction.Value!.Data[0])!;
                     Service.TextureManager.GetIcon(64000 + mount.Icon).Draw(192);
                 }
-                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Minions)
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Companion)
                 {
                     using var tooltip = ImRaii.Tooltip();
                     var companion = GetRow<Companion>(item.ItemAction.Value!.Data[0])!;
                     Service.TextureManager.GetIcon(64000 + companion.Icon).Draw(192);
                 }
-                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.FashionAccessories)
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Ornament)
                 {
                     using var tooltip = ImRaii.Tooltip();
                     var ornament = GetRow<Ornament>(item.ItemAction.Value!.Data[0])!;
                     Service.TextureManager.GetIcon(59000 + ornament.Icon).Draw(192);
                 }
-                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Miscellaneous && item.ItemAction.Value?.Data[1] == 5211) // Emotes
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value?.Data[1] == 5211) // Emotes
                 {
                     using var tooltip = ImRaii.Tooltip();
                     var emote = GetRow<Emote>(item.ItemAction.Value!.Data[2])!;
                     Service.TextureManager.GetIcon(emote.Icon).Draw(80);
                 }
-                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Cards)
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.TripleTriadCard)
                 {
                     var cardId = item.ItemAction.Value!.Data[0];
                     var cardRow = GetRow<TripleTriadCard>(cardId)!;
@@ -299,7 +298,7 @@ public class RewardsTable : Table<Reward>
                         Service.TextureManager.GetIcon(pictureId).Draw(size * 0.5f);
                     }
                 }
-                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.Miscellaneous && FindRow<CharaMakeCustomize>(row => row?.HintItem.Row == item.RowId) != null) // Hairstyles etc.
+                else if (item.ItemAction.Value?.Type == (uint)ItemActionType.UnlockLink && FindRow<CharaMakeCustomize>(row => row?.HintItem.Row == item.RowId) != null) // Hairstyles etc.
                 {
                     using var tooltip = ImRaii.Tooltip();
 
@@ -353,7 +352,7 @@ public class RewardsTable : Table<Reward>
             }
             .Draw();
 
-            if (item.IsUnlockable && item.HasAcquired)
+            if (item.IsUnlockable && item.IsUnlocked)
             {
                 ImGui.SameLine(1, 0);
 
@@ -381,14 +380,15 @@ public class RewardsTable : Table<Reward>
 
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y);
+
             ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.GetItemRarityColor(item.Rarity)))
-                ImGui.TextUnformatted($"{(quantity > 1 ? quantity.ToString() + "x " : "")}{GetItemName(item.RowId)}");
+                ImGui.TextUnformatted($"{(quantity > 1 ? quantity.ToString() + "x " : "")}{item.Name}");
 
             ImGui.SameLine(textOffsetX, 0);
             ImGui.SetCursorPosY(cursor.Y + textHeight);
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
-                ImGui.TextUnformatted(item.ItemUICategory.Value!.Name);
+                ImGui.TextUnformatted(GetSheetText<ItemUICategory>(item.ItemUICategory.Row, "Name"));
 
             if (row.RequiredQuest != null)
             {
@@ -403,9 +403,9 @@ public class RewardsTable : Table<Reward>
                     using (ImRaii.Tooltip())
                     {
                         var status = isQuestComplete
-                            ? t("Reward.RequiredQuest.Tooltip.Completed")
+                            ? t("Reward.RequiredQuest.Tooltip.Complete")
                             : t("Reward.RequiredQuest.Tooltip.Incomplete");
-                        ImGui.TextUnformatted(t("Reward.RequiredQuest.Tooltip", row.RequiredQuest.Name, status));
+                        ImGui.TextUnformatted(t("Reward.RequiredQuest.Tooltip", GetSheetText<Quest>(row.RequiredQuest.RowId, "Name"), status));
                     }
                 }
             }

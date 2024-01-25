@@ -19,7 +19,7 @@ public partial class Configuration : IPluginConfiguration
 public partial class Configuration
 {
     public Dictionary<uint, uint> TrackedItems = [];
-    public bool LimitToOne = true;
+    public bool CheckboxMode = true;
 }
 
 public partial class Configuration

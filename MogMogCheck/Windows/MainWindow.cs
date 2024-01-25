@@ -4,6 +4,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using HaselCommon.Extensions;
 using HaselCommon.Sheets;
 using HaselCommon.Utils;
 using ImGuiNET;
@@ -18,6 +19,7 @@ public unsafe class MainWindow : Window
     private readonly ExtendedSpecialShop? _shop;
     private readonly Reward[]? _rewardsItems;
     private readonly RewardsTable? _rewardsTable;
+    private readonly ExtendedItem? _tomestone;
     private readonly DutiesTable? _dutiesTable;
 
     public MainWindow() : base("MogMogCheck")
@@ -43,7 +45,13 @@ public unsafe class MainWindow : Window
                 .Select((row, index) => new Reward(index, row))
                 .ToArray();
 
+        // clear old untracked items
+        if (Plugin.Config.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_rewardsItems.Any(entry => entry.ReceiveItems.Any(ri => ri.Item?.RowId == itemId))))
+            Plugin.Config.Save();
+
         _rewardsTable = new(_rewardsItems);
+
+        _tomestone = GetRow<ExtendedItem>(_rewardsItems![0].GiveItems[0].Item?.RowId ?? 0);
 
         _dutiesTable = new(
             GetSheet<InstanceContentCSBonus>()
@@ -59,31 +67,25 @@ public unsafe class MainWindow : Window
     }
 
     public override bool DrawConditions()
-    {
-        return Service.ClientState.IsLoggedIn
+        => Service.ClientState.IsLoggedIn
             && _shop != null
             && _rewardsItems != null
-            && _rewardsTable != null
-            && _rewardsTable.TotalItems > 0
+            && _rewardsTable?.TotalItems > 0
+            && _tomestone?.RowId > 0
             && _dutiesTable != null;
-    }
 
     public override void Draw()
     {
         var scale = ImGuiHelpers.GlobalScale;
 
-        var tomestone = GetRow<ExtendedItem>(_rewardsItems![0].GiveItems[0].Item?.RowId ?? 0);
-        if (tomestone == null || tomestone.RowId == 0)
-            return;
+        Service.TextureManager.GetIcon(_tomestone!.Icon).Draw(32 * scale);
 
-        Service.TextureManager.GetIcon(tomestone.Icon).Draw(32 * scale);
-
-        new ImGuiContextMenu($"##Tomestone_ItemContextMenu{tomestone.RowId}_Tooltip")
+        new ImGuiContextMenu($"##Tomestone_ItemContextMenu{_tomestone.RowId}_Tooltip")
         {
-            ImGuiContextMenu.CreateItemFinder(tomestone.RowId),
-            ImGuiContextMenu.CreateCopyItemName(tomestone.RowId),
-            ImGuiContextMenu.CreateItemSearch(tomestone),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(tomestone.RowId),
+            ImGuiContextMenu.CreateItemFinder(_tomestone.RowId),
+            ImGuiContextMenu.CreateCopyItemName(_tomestone.RowId),
+            ImGuiContextMenu.CreateItemSearch(_tomestone),
+            ImGuiContextMenu.CreateOpenOnGarlandTools(_tomestone.RowId),
         }
         .Draw();
 
@@ -102,7 +104,7 @@ public unsafe class MainWindow : Window
             ImGui.TextUnformatted(t("Currency.Info", owned, needed));
         }
 
-        if (ImGui.Checkbox(t("Config.LimitToOne"), ref Plugin.Config.LimitToOne))
+        if (ImGui.Checkbox(t("Config.CheckboxMode"), ref Plugin.Config.CheckboxMode))
         {
             foreach (var (itemId, amount) in Plugin.Config.TrackedItems)
             {
@@ -113,10 +115,13 @@ public unsafe class MainWindow : Window
             Plugin.Config.Save();
         }
 
-        if (!Plugin.Config.LimitToOne && ImGui.IsItemHovered())
-            ImGui.SetTooltip(t("Config.LimitToOne.Tooltip"));
+        if (!Plugin.Config.CheckboxMode && ImGui.IsItemHovered())
+            ImGui.SetTooltip(t("Config.CheckboxMode.Tooltip"));
 
         using var tabs = ImRaii.TabBar("##Tabs");
+        if (!tabs)
+            return;
+
         DrawRewardsTab();
         DrawDutiesTab();
     }
@@ -124,7 +129,7 @@ public unsafe class MainWindow : Window
     public void DrawRewardsTab()
     {
         using var rewardsTab = ImRaii.TabItem(t("Tabs.Rewards"));
-        if (!rewardsTab.Success)
+        if (!rewardsTab)
             return;
 
         _rewardsTable?.Draw((ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y * 0.5f + ImGui.GetStyle().ItemSpacing.Y) * 2f - 1);
@@ -133,7 +138,7 @@ public unsafe class MainWindow : Window
     public void DrawDutiesTab()
     {
         using var dutiesTab = ImRaii.TabItem(t("Tabs.Duties"));
-        if (!dutiesTab.Success)
+        if (!dutiesTab)
             return;
 
         _dutiesTable?.Draw(32 * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.Y);
