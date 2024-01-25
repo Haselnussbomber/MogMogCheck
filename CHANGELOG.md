@@ -2,14 +2,15 @@
 
 ## [Unreleased]
 
-- **Added:** It's now possible to switch to stack mode, which displays a number slider instead of a checkbox to set the stack size of non-unique items you want to buy more than one of.
-- **Added:** A configuration window to change the language of the plugin has been added, accessible through Dalamud's plugin installer.
-  - Item names are always in the client's language, as they are properly formatted by the game's localization system.
-  - At the moment, the plugin is only translated into English and German.
+Update for the First Hunt for Genesis.  
+The Second Hunt for Genesis is not supported until this plugin gets updated.
+
+- **Added:** Support for non-unique items that you want to buy more than one of has been added with a checkbox mode switch. When it's off, a slider is displayed instead, allowing you to set how many items you want to farm currency for.
 - **Added:** The context menu for equippable items now has a "Try on" option.
 - **Changed:** Item icon tooltips for Triple Triad Cards now mimic the card style, displaying their stars and stats.
-- **Changed:** The required quest indicator for Triple Triad Cards now displays the map marker icon, and its tooltip has been improved too.
-- **Fixed:** The currency context menu had duplicate menu entries.
+- **Changed:** Items that become available for exchange once you have completed a quest now display the map marker icon. The tooltips have also been improved. Both now indicate whether a quest was completed.
+- **Fixed:** The currency context menu in the duties tab had duplicate menu entries.
+- **Fixed:** Several names, like item names and quest titles, are now respecting the language selected in Dalamud instead of using the client's language.
 
 ## [1.1.1] (2023-10-04)
 
