@@ -2,6 +2,7 @@ name: MogMogCheck
 author: Haselnussbomber
 punchline: Tracking assistant for Moogle Treasure Trove rewards
 repo_url: https://github.com/Haselnussbomber/MogMogCheck
+icon_url: https://raw.githubusercontent.com/Haselnussbomber/MogMogCheck/main/MogMogCheck/Assets/Icon.png
 description: |
   MogMogCheck is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).
 
