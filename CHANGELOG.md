@@ -2,15 +2,17 @@
 
 ## [Unreleased]
 
-Update for the First Hunt for Genesis.  
-The Second Hunt for Genesis is not supported until this plugin gets updated.
+Update for The First Hunt for Genesis.  
+I did my best to have this plugin updated prior to the start of the event. Please enjoy!
 
-- **Added:** Support for non-unique items that you want to buy more than one of has been added with a checkbox mode switch. When it's off, a slider is displayed instead, allowing you to set how many items you want to farm currency for.
+- **Added:** A configuration window was added, accessible via Dalamuds Plugin Installer, the `/mogmog config` command, or via the cogwheel in the title bar of the MogMogCheck window. It allows you to change the following new settings:
+  - Open/Close with Mogpendium (default: on)
+  - Enable/disable Checkbox-Mode (default: on): The Checkbox-Mode is the default behaviour for MogMogCheck, as it was before the update. It displays a checkbox next to the items, that you can click to track the required tomestones. When Checkbox-Mode is off, it displays a slider instead. Non-unique items can be purchased multiple times, so if you want to track more than one of an item, you can now do so.
 - **Added:** The context menu for equippable items now has a "Try on" option.
 - **Changed:** Item icon tooltips for Triple Triad Cards now mimic the card style, displaying their stars and stats.
-- **Changed:** Items that become available for exchange once you have completed a quest now display the map marker icon. The tooltips have also been improved. Both now indicate whether a quest was completed.
-- **Fixed:** The currency context menu in the duties tab had duplicate menu entries.
-- **Fixed:** Several names, like item names and quest titles, are now respecting the language selected in Dalamud instead of using the client's language.
+- **Changed:** Items that become available for exchange once you have completed a quest now display the map marker icon. The tooltips have also been improved. Both now indicate whether a quest is complete/incomplete.
+- **Removed:** The Duties tab has been removed due to the introduction of the Mogpendium.
+- **Fixed:** Item names and quest titles are now respecting the language selected in Dalamud instead of using the client's language.
 
 ## [1.1.1] (2023-10-04)
 
