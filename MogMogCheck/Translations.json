@@ -42,15 +42,6 @@
     "de": "{0} im Besitz, {1} benötigt, {2} verbleibend"
   },
 
-  "Tabs.Rewards": {
-    "en": "Rewards",
-    "de": "Belohnungen"
-  },
-  "Tabs.Duties": {
-    "en": "Duties",
-    "de": "Inhalte"
-  },
-
   "Table.Rewards.Header.Track": {
     "en": "Track",
     "de": "Verfolgen"
@@ -62,14 +53,6 @@
   "Table.Rewards.Header.RequiredItem": {
     "en": "Required",
     "de": "Erforderlich"
-  },
-  "Table.Duties.Header.Duty": {
-    "en": "Duty",
-    "de": "Inhalt"
-  },
-  "Table.Duties.Header.Reward": {
-    "en": "Reward",
-    "de": "Vergütung"
   },
 
   "Reward.AmountInput.Tooltip.ResultOnly": {
@@ -97,16 +80,5 @@
     "en": "Incomplete",
     "de": "Nicht abgeschlossen",
     "fr": "Pas terminée"
-  },
-
-  "CurrencyReward.PvP": {
-    "en": "{0}/{1}/{2}"
-  },
-  "CurrencyReward.PvP.Tooltip": {
-    "en": "Win: {0} / Loss: {1} / Tie: {2}",
-    "de": "Sieg: {0} / Niederlage: {1} / Unentschieden: {2}"
-  },
-  "CurrencyReward.Normal": {
-    "en": "{0}"
   }
 }

@@ -447,7 +447,7 @@ public class RewardsTable : Table<Reward>
 
             ImGui.SameLine(iconSize + itemSpacing.X);
             ImGuiUtils.PushCursorY(paddingY);
-            ImGui.TextUnformatted(t("CurrencyReward.Normal", quantity));
+            ImGui.TextUnformatted(quantity.ToString());
         }
     }
 }

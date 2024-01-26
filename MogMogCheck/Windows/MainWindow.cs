@@ -1,14 +1,12 @@
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Extensions;
 using HaselCommon.Sheets;
 using HaselCommon.Utils;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
 using MogMogCheck.Tables;
 
@@ -20,7 +18,6 @@ public unsafe class MainWindow : Window
     private readonly Reward[]? _rewardsItems;
     private readonly RewardsTable? _rewardsTable;
     private readonly ExtendedItem? _tomestone;
-    private readonly DutiesTable? _dutiesTable;
 
     public MainWindow() : base("MogMogCheck")
     {
@@ -64,13 +61,6 @@ public unsafe class MainWindow : Window
 
         _tomestone = GetRow<ExtendedItem>(_rewardsItems![0].GiveItems[0].Item?.RowId ?? 0);
 
-        _dutiesTable = new(
-            GetSheet<InstanceContentCSBonus>()
-                .Where(row => row.Item.Row != 0)
-                .Select(row => new Duty(row))
-                .Where(row => row.RewardItem != null && row.ContentFinderCondition != null && row.ContentFinderCondition.RowId != 0)
-                .ToArray());
-
     }
 
     public override void OnClose()
@@ -83,8 +73,7 @@ public unsafe class MainWindow : Window
             && _shop != null
             && _rewardsItems != null
             && _rewardsTable?.TotalItems > 0
-            && _tomestone?.RowId > 0
-            && _dutiesTable != null;
+            && _tomestone?.RowId > 0;
 
     public override void Draw()
     {
@@ -116,29 +105,6 @@ public unsafe class MainWindow : Window
             ImGui.TextUnformatted(t("Currency.Info", owned, needed));
         }
 
-        using var tabs = ImRaii.TabBar("##Tabs");
-        if (!tabs)
-            return;
-
-        DrawRewardsTab();
-        DrawDutiesTab();
-    }
-
-    public void DrawRewardsTab()
-    {
-        using var rewardsTab = ImRaii.TabItem(t("Tabs.Rewards"));
-        if (!rewardsTab)
-            return;
-
         _rewardsTable?.Draw((ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y * 0.5f + ImGui.GetStyle().ItemSpacing.Y) * 2f - 1);
-    }
-
-    public void DrawDutiesTab()
-    {
-        using var dutiesTab = ImRaii.TabItem(t("Tabs.Duties"));
-        if (!dutiesTab)
-            return;
-
-        _dutiesTable?.Draw(32 * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.Y);
     }
 }
