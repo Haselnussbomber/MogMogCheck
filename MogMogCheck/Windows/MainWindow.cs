@@ -34,9 +34,20 @@ public unsafe class MainWindow : Window
             MaximumSize = new Vector2(4069),
         };
 
+        TitleBarButtons.Add(new()
+        {
+            Icon = Dalamud.Interface.FontAwesomeIcon.Cog,
+            IconOffset = new(0, 1),
+            ShowTooltip = () => ImGui.SetTooltip(t($"TitleBarButton.ToggleConfig.Tooltip.{(Service.WindowManager.IsWindowOpen<ConfigWindow>() ? "Close" : "Open")}Config")),
+            Click = (button) => { Service.WindowManager.ToggleWindow<ConfigWindow>(); }
+        });
+
         _shop = GetRow<ExtendedSpecialShop>(1769929);
         if (_shop == null)
+        {
+            OnClose();
             return;
+        }
 
         _rewardsItems = _shop.Items
                 .Where(row => row.ReceiveItemId1 != 0 && row.GiveItemId1 != 41306)
@@ -59,6 +70,7 @@ public unsafe class MainWindow : Window
                 .Select(row => new Duty(row))
                 .Where(row => row.RewardItem != null && row.ContentFinderCondition != null && row.ContentFinderCondition.RowId != 0)
                 .ToArray());
+
     }
 
     public override void OnClose()
@@ -103,20 +115,6 @@ public unsafe class MainWindow : Window
         {
             ImGui.TextUnformatted(t("Currency.Info", owned, needed));
         }
-
-        if (ImGui.Checkbox(t("Config.CheckboxMode"), ref Plugin.Config.CheckboxMode))
-        {
-            foreach (var (itemId, amount) in Plugin.Config.TrackedItems)
-            {
-                if (amount > 1)
-                    Plugin.Config.TrackedItems[itemId] = 1;
-            }
-
-            Plugin.Config.Save();
-        }
-
-        if (!Plugin.Config.CheckboxMode && ImGui.IsItemHovered())
-            ImGui.SetTooltip(t("Config.CheckboxMode.Tooltip"));
 
         using var tabs = ImRaii.TabBar("##Tabs");
         if (!tabs)

@@ -20,6 +20,7 @@ public partial class Configuration
 {
     public Dictionary<uint, uint> TrackedItems = [];
     public bool CheckboxMode = true;
+    public bool OpenWithMogpendium = true;
 }
 
 public partial class Configuration

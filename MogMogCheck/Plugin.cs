@@ -26,31 +26,51 @@ public sealed partial class Plugin : IDalamudPlugin
         Config = Configuration.Load();
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
+        Service.AddonObserver.AddonOpen += AddonObserver_AddonOpen;
+        Service.AddonObserver.AddonClose += AddonObserver_AddonClose;
 
         Service.CommandManager.AddHandler("/mogmog", new(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") });
-    }
-
-    private void OnCommand(string command, string arguments)
-    {
-        Service.WindowManager.ToggleWindow<MainWindow>();
-    }
-
-    void IDisposable.Dispose()
-    {
-        Service.CommandManager.RemoveHandler("/mogmog");
-
-        Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
-
-        TripleTriadNumberFont?.Dispose();
-
-        Config?.Save();
-
-        Service.Dispose();
     }
 
     private void OpenMainUi()
     {
         Service.WindowManager.ToggleWindow<MainWindow>();
+    }
+
+    private void OpenConfigUi()
+    {
+        Service.WindowManager.ToggleWindow<ConfigWindow>();
+    }
+
+    private void OnCommand(string command, string arguments)
+    {
+        switch (arguments.ToLower())
+        {
+            case "config":
+                Service.WindowManager.ToggleWindow<ConfigWindow>();
+                break;
+
+            default:
+                Service.WindowManager.ToggleWindow<MainWindow>();
+                break;
+        }
+    }
+
+    private void AddonObserver_AddonOpen(string addonName)
+    {
+        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
+        {
+            Service.WindowManager.OpenWindow<MainWindow>();
+        }
+    }
+
+    private void AddonObserver_AddonClose(string addonName)
+    {
+        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
+        {
+            Service.WindowManager.CloseWindow<MainWindow>();
+        }
     }
 
     internal static GameFontHandle GetTripleTriadNumberFont(float size)
@@ -63,5 +83,21 @@ public sealed partial class Plugin : IDalamudPlugin
         }
 
         return TripleTriadNumberFont;
+    }
+
+    void IDisposable.Dispose()
+    {
+        Service.CommandManager.RemoveHandler("/mogmog");
+
+        Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
+        Service.AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
+        Service.AddonObserver.AddonClose -= AddonObserver_AddonClose;
+
+        TripleTriadNumberFont?.Dispose();
+
+        Config?.Save();
+
+        Service.Dispose();
     }
 }

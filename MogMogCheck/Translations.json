@@ -11,6 +11,10 @@
     "en": "- Item names are always in the client's language, as they are properly formatted by the game's localization system.\n- At the moment, the plugin is only translated into English and German.",
     "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Lokalisierungssystem des Spiels richtig formatiert werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
   },
+  "Config.OpenWithMogpendium.Label": {
+    "en": "Open/Close with Mogpendium",
+    "de": "Mit Mogpendium öffnen/schließen"
+  },
   "Config.CheckboxMode": {
     "en": "Checkbox-Mode",
     "de": "Checkbox-Modus"
@@ -18,6 +22,15 @@
   "Config.CheckboxMode.Tooltip": {
     "en": "Stacks that are greater than 1 are reset to 1!",
     "de": "Stapel, die größer als 1 sind, werden auf 1 zurückgesetzt!"
+  },
+
+  "TitleBarButton.ToggleConfig.Tooltip.OpenConfig": {
+    "en": "Open Configuration",
+    "de": "Konfiguration öffnen"
+  },
+  "TitleBarButton.ToggleConfig.Tooltip.CloseConfig": {
+    "en": "Close Configuration",
+    "de": "Konfiguration schließen"
   },
 
   "Currency.Info": {
