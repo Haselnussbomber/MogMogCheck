@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] (2024-01-26)
 
 Update for The First Hunt for Genesis.  
 I did my best to have this plugin updated prior to the start of the event. Please enjoy!
@@ -51,6 +51,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.1...v2.0.0
 [1.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.2...v1.0.3

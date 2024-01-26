@@ -2,16 +2,14 @@
 
 **MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).
 
-Open with `/mogmog`.
+MogMogCheck automatically opens with the Mogpendium. Alternatively, you can open it with the `/mogmog` command.  
+Simply tick the checkboxes of the items you want to track and it shows you how many tomestones you still need to farm!
 
-The Rewards tab lists items of the "Newest ... Tomestone Exchange" shop with their collection status and price.  
-You can also check the boxes to keep track of how many Tomestones you need at the top.
+![Screenshot of MogMogCheck](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/7e031e2a-ab4d-47ab-943f-447c59451b6f)
 
-![Screenshot of Rewards tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/eab01490-9ca0-4bb9-a18b-bd51c0837c31)
+The configuration can be opened with the cog-button in the title bar, with the `/mogmog config` command, or via the Dalamud Plugin Installer.
 
-The Duties tab lists all the duties that reward Tomestones for the event.  
-Clicking on a duty will open the Duty Finder with that duty selected.
+It allows you to change the following new settings:
 
-![Screenshot of Duties tab](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/bca920b3-ece6-4fab-b26a-13ed76273793)
-
-Technically it should automatically update with each event, as they seem to replace the same shop every time (meaning the shop id is always the same).
+- Open/Close with Mogpendium (default: on)
+- Enable/disable Checkbox-Mode (default: on): The Checkbox-Mode is the default behaviour for MogMogCheck, as it was before the update. It displays a checkbox next to the items, that you can click to track the required tomestones. When Checkbox-Mode is off, it displays a slider instead. Non-unique items can be purchased multiple times, so if you want to track more than one of an item, you can now do so.
