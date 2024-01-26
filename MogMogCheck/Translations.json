@@ -47,12 +47,16 @@
     "de": "Verfolgen"
   },
   "Table.Rewards.Header.Reward": {
-    "en": "Item",
-    "de": "Gegenstand"
+    "ja": "交換できるアイテム",
+    "en": "Exchangeable Items",
+    "de": "Eintauschbare Gegenstände",
+    "fr": "Objets échangeables"
   },
   "Table.Rewards.Header.RequiredItem": {
-    "en": "Required",
-    "de": "Erforderlich"
+    "ja": "交換必要数",
+    "en": "Tomestones Required",
+    "de": "Benötigte Steine",
+    "fr": "Mémoquartz requis"
   },
 
   "Reward.AmountInput.Tooltip.ResultOnly": {
