@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Plugin;
-using HaselCommon.Extensions;
 using MogMogCheck.Windows;
 
 namespace MogMogCheck;
@@ -15,15 +13,14 @@ public sealed partial class Plugin : IDalamudPlugin
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Task.Run(HaselCommon.Interop.Resolver.GetInstance.Resolve)
-            .ContinueOnFrameworkThreadWith(Setup);
+        Service.TranslationManager.Initialize();
+        Config = Configuration.Load();
+        Service.Framework.RunOnFrameworkThread(Setup);
     }
 
-    public void Setup()
+    private void Setup()
     {
-        Service.TranslationManager.Initialize();
-
-        Config = Configuration.Load();
+        HaselCommon.Interop.Resolver.GetInstance.Resolve();
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
