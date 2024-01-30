@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.1] (2024-01-30)
+
+- **Fixed:** Tomestone count was always 0.
+- **Fixed:** Window open sound would play twice when MogMogCheck was opened with Mogpendium.
+
 ## [2.0.0] (2024-01-26)
 
 Update for The First Hunt for Genesis.  
@@ -51,6 +56,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.1...v2.0.0
 [1.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.0.3...v1.1.0
