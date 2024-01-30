@@ -93,8 +93,8 @@ public unsafe class MainWindow : Window
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
-        var owned = InventoryManager.Instance()->GetInventoryItemCount((uint)_shop!.Items[0].GiveItemId1);
-        var needed = _shop.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
+        var owned = InventoryManager.Instance()->GetInventoryItemCount(_tomestone.RowId);
+        var needed = _shop!.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
         if (needed > owned)
         {
             var remaining = needed - owned;
