@@ -56,9 +56,13 @@ public sealed partial class Plugin : IDalamudPlugin
 
     private void AddonObserver_AddonOpen(string addonName)
     {
-        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
+        if (Config.OpenWithMogpendium && addonName == "MoogleCollection" && !Service.WindowManager.IsWindowOpen<MainWindow>())
         {
-            Service.WindowManager.OpenWindow<MainWindow>();
+            Service.WindowManager.AddWindow(new MainWindow
+            {
+                DisableWindowSounds = true,
+                IsOpen = true
+            });
         }
     }
 

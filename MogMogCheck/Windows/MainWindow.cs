@@ -60,7 +60,6 @@ public unsafe class MainWindow : Window
         _rewardsTable = new(_rewardsItems);
 
         _tomestone = GetRow<ExtendedItem>(_rewardsItems![0].GiveItems[0].Item?.RowId ?? 0);
-
     }
 
     public override void OnClose()
