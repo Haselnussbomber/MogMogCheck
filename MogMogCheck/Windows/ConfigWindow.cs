@@ -1,4 +1,3 @@
-using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Utils;
@@ -11,14 +10,8 @@ public unsafe class ConfigWindow : Window
     public ConfigWindow() : base("MogMogCheck Configuration")
     {
         Namespace = "MogMogCheckConfig";
-
-        Size = new Vector2(400, 120);
-        SizeCondition = ImGuiCond.Appearing;
-        SizeConstraints = new WindowSizeConstraints()
-        {
-            MinimumSize = new Vector2(400, 100),
-            MaximumSize = new Vector2(4069),
-        };
+        AllowClickthrough = false;
+        AllowPinning = false;
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
     }
 
@@ -29,26 +22,28 @@ public unsafe class ConfigWindow : Window
 
     public override void Draw()
     {
+        var config = Service.GetService<Configuration>();
+
         // OpenWithMogpendium
-        if (ImGui.Checkbox($"{t("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref Plugin.Config.OpenWithMogpendium))
+        if (ImGui.Checkbox($"{t("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref config.OpenWithMogpendium))
         {
-            Plugin.Config.Save();
+            config.Save();
         }
 
         // CheckboxMode
         {
-            if (ImGui.Checkbox(t("Config.CheckboxMode"), ref Plugin.Config.CheckboxMode))
+            if (ImGui.Checkbox(t("Config.CheckboxMode"), ref config.CheckboxMode))
             {
-                if (Plugin.Config.CheckboxMode)
+                if (config.CheckboxMode)
                 {
-                    foreach (var (itemId, amount) in Plugin.Config.TrackedItems)
+                    foreach (var (itemId, amount) in config.TrackedItems)
                     {
                         if (amount > 1)
-                            Plugin.Config.TrackedItems[itemId] = 1;
+                            config.TrackedItems[itemId] = 1;
                     }
                 }
 
-                Plugin.Config.Save();
+                config.Save();
             }
 
             ImGuiUtils.PushCursorY(-3);

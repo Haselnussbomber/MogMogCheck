@@ -54,8 +54,8 @@ public unsafe class MainWindow : Window
                 .ToArray();
 
         // clear old untracked items
-        if (Plugin.Config.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_rewardsItems.Any(entry => entry.ReceiveItems.Any(ri => ri.Item?.RowId == itemId))))
-            Plugin.Config.Save();
+        if (Service.GetService<Configuration>().TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_rewardsItems.Any(entry => entry.ReceiveItems.Any(ri => ri.Item?.RowId == itemId))))
+            Service.GetService<Configuration>().Save();
 
         _rewardsTable = new(_rewardsItems);
 
@@ -93,7 +93,7 @@ public unsafe class MainWindow : Window
         ImGuiUtils.PushCursorY(6 * scale);
 
         var owned = InventoryManager.Instance()->GetInventoryItemCount(_tomestone.RowId);
-        var needed = _shop!.Items.Aggregate(0u, (total, item) => total + (Plugin.Config.TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
+        var needed = _shop!.Items.Aggregate(0u, (total, item) => total + (Service.GetService<Configuration>().TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
         if (needed > owned)
         {
             var remaining = needed - owned;

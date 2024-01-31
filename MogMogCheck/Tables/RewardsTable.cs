@@ -46,7 +46,7 @@ public class RewardsTable : Table<Reward>
     private sealed class TrackColumn : Column<Reward>
     {
         public override float Width
-            => (Plugin.Config.CheckboxMode ? ImGui.GetFrameHeightWithSpacing() : 80) * ImGuiHelpers.GlobalScale;
+            => (Service.GetService<Configuration>().CheckboxMode ? ImGui.GetFrameHeightWithSpacing() : 80) * ImGuiHelpers.GlobalScale;
 
         public override bool DrawFilter()
             => false;
@@ -56,6 +56,7 @@ public class RewardsTable : Table<Reward>
 
         public override void DrawColumn(Reward row, int idx)
         {
+            var config = Service.GetService<Configuration>();
             var scale = ImGuiHelpers.GlobalScale;
             var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing;
             var rowHeight = (ImGui.GetTextLineHeight() + itemInnerSpacing.Y) * 2f;
@@ -67,9 +68,9 @@ public class RewardsTable : Table<Reward>
             ImGuiUtils.PushCursor(ImGui.GetStyle().ItemInnerSpacing.X * scale, paddingY);
             ImGui.SetNextItemWidth(-1);
 
-            if (Plugin.Config.CheckboxMode)
+            if (config.CheckboxMode)
             {
-                if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
+                if (!config.TrackedItems.TryGetValue(itemId, out var savedAmount))
                     savedAmount = 0;
 
                 var isChecked = savedAmount > 0;
@@ -77,17 +78,17 @@ public class RewardsTable : Table<Reward>
                 {
                     if (isChecked)
                     {
-                        if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
-                            Plugin.Config.TrackedItems.Add(itemId, 1);
+                        if (!config.TrackedItems.ContainsKey(itemId))
+                            config.TrackedItems.Add(itemId, 1);
                         else
-                            Plugin.Config.TrackedItems[itemId] = 1;
+                            config.TrackedItems[itemId] = 1;
                     }
                     else
                     {
-                        Plugin.Config.TrackedItems.Remove(itemId);
+                        config.TrackedItems.Remove(itemId);
                     }
 
-                    Plugin.Config.Save();
+                    config.Save();
                 }
 
                 if (isChecked && (ImGui.IsItemHovered() || ImGui.IsItemActive()))
@@ -100,7 +101,7 @@ public class RewardsTable : Table<Reward>
                 var canSell = !itemRow.IsUnique && !itemRow.IsUntradable && !itemRow.IsCollectable;
                 var stackSize = canSell ? 999 : itemRow.StackSize;
 
-                if (!Plugin.Config.TrackedItems.TryGetValue(itemId, out var savedAmount))
+                if (!config.TrackedItems.TryGetValue(itemId, out var savedAmount))
                     savedAmount = 0;
 
                 var inputAmount = (int)savedAmount;
@@ -110,17 +111,17 @@ public class RewardsTable : Table<Reward>
                 {
                     if (inputAmount > 0)
                     {
-                        if (!Plugin.Config.TrackedItems.ContainsKey(itemId))
-                            Plugin.Config.TrackedItems.Add(itemId, (uint)inputAmount);
+                        if (!config.TrackedItems.ContainsKey(itemId))
+                            config.TrackedItems.Add(itemId, (uint)inputAmount);
                         else
-                            Plugin.Config.TrackedItems[itemId] = (uint)inputAmount;
+                            config.TrackedItems[itemId] = (uint)inputAmount;
                     }
                     else
                     {
-                        Plugin.Config.TrackedItems.Remove(itemId);
+                        config.TrackedItems.Remove(itemId);
                     }
 
-                    Plugin.Config.Save();
+                    config.Save();
                 }
 
                 if (ImGui.IsItemHovered() || ImGui.IsItemActive())

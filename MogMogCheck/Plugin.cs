@@ -6,14 +6,12 @@ namespace MogMogCheck;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public static Configuration Config { get; private set; } = null!;
-
     private readonly CommandInfo CommandInfo;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Config = Configuration.Load();
+        Service.AddService(Configuration.Load());
 
         CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
 
@@ -64,7 +62,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void AddonObserver_AddonOpen(string addonName)
     {
-        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
+        if (Service.GetService<Configuration>().OpenWithMogpendium && addonName == "MoogleCollection")
         {
             Service.WindowManager.OpenWindow<MainWindow>().DisableWindowSounds = true;
         }
@@ -72,7 +70,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void AddonObserver_AddonClose(string addonName)
     {
-        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
+        if (Service.GetService<Configuration>().OpenWithMogpendium && addonName == "MoogleCollection")
         {
             Service.WindowManager.CloseWindow<MainWindow>();
         }
@@ -87,8 +85,6 @@ public sealed class Plugin : IDalamudPlugin
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
         Service.AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
         Service.AddonObserver.AddonClose -= AddonObserver_AddonClose;
-
-        Config?.Save();
 
         Service.Dispose();
     }
