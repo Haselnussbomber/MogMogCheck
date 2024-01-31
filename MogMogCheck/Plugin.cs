@@ -1,4 +1,3 @@
-using Dalamud.Interface.GameFonts;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
 using MogMogCheck.Windows;
@@ -8,8 +7,6 @@ namespace MogMogCheck;
 public sealed class Plugin : IDalamudPlugin
 {
     public static Configuration Config { get; private set; } = null!;
-    private static GameFontHandle? TripleTriadNumberFont = null!;
-    private static float TripleTriadNumberFontSize = 0;
 
     private readonly CommandInfo CommandInfo;
 
@@ -81,18 +78,6 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
-    internal static GameFontHandle GetTripleTriadNumberFont(float size)
-    {
-        if (TripleTriadNumberFont == null || TripleTriadNumberFontSize != size)
-        {
-            TripleTriadNumberFont?.Dispose();
-            TripleTriadNumberFont = Service.PluginInterface.UiBuilder.GetGameFontHandle(new GameFontStyle(GameFontFamily.MiedingerMid, size));
-            TripleTriadNumberFontSize = size;
-        }
-
-        return TripleTriadNumberFont;
-    }
-
     void IDisposable.Dispose()
     {
         Service.CommandManager.RemoveHandler("/mogmog");
@@ -102,8 +87,6 @@ public sealed class Plugin : IDalamudPlugin
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
         Service.AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
         Service.AddonObserver.AddonClose -= AddonObserver_AddonClose;
-
-        TripleTriadNumberFont?.Dispose();
 
         Config?.Save();
 

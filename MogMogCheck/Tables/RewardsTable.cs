@@ -11,6 +11,7 @@ using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
+using MogMogCheck.Services;
 using Companion = Lumina.Excel.GeneratedSheets.Companion;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using TripleTriadCard = Lumina.Excel.GeneratedSheets2.TripleTriadCard;
@@ -19,7 +20,7 @@ namespace MogMogCheck.Tables;
 
 public class RewardsTable : Table<Reward>
 {
-    private static readonly Dictionary<uint, Vector2?> IconSizeCache = new();
+    private static readonly Dictionary<uint, Vector2?> IconSizeCache = [];
 
     private static readonly TrackColumn _trackColumn = new()
     {
@@ -249,7 +250,7 @@ public class RewardsTable : Table<Reward>
 
                     // numbers
                     var numberSize = 208f / 10f;
-                    var fontHandle = Plugin.GetTripleTriadNumberFont(numberSize);
+                    var fontHandle = Service.GetService<TripleTriadNumberFontManager>().GetFont(numberSize);
                     using var font = ImRaii.PushFont(fontHandle.ImFont, fontHandle.Available);
 
                     var numberText = $"{cardResident.Top:X}";
