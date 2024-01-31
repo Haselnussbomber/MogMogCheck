@@ -1,4 +1,5 @@
 using Dalamud.Interface.GameFonts;
+using Dalamud.Game.Command;
 using Dalamud.Plugin;
 using MogMogCheck.Windows;
 
@@ -10,10 +11,15 @@ public sealed class Plugin : IDalamudPlugin
     private static GameFontHandle? TripleTriadNumberFont = null!;
     private static float TripleTriadNumberFontSize = 0;
 
+    private readonly CommandInfo CommandInfo;
+
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
         Config = Configuration.Load();
+
+        CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
+
         Service.Framework.RunOnFrameworkThread(Setup);
     }
 
@@ -21,12 +27,18 @@ public sealed class Plugin : IDalamudPlugin
     {
         HaselCommon.Interop.Resolver.GetInstance.Resolve();
 
+        Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
         Service.AddonObserver.AddonOpen += AddonObserver_AddonOpen;
         Service.AddonObserver.AddonClose += AddonObserver_AddonClose;
 
-        Service.CommandManager.AddHandler("/mogmog", new(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") });
+        Service.CommandManager.AddHandler("/mogmog", CommandInfo);
+    }
+
+    private void PluginInterface_LanguageChanged(string langCode)
+    {
+        CommandInfo.HelpMessage = t("CommandHandlerHelpMessage");
     }
 
     private void OpenMainUi()
@@ -85,6 +97,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         Service.CommandManager.RemoveHandler("/mogmog");
 
+        Service.PluginInterface.LanguageChanged -= PluginInterface_LanguageChanged;
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
         Service.AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
