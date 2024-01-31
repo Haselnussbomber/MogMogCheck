@@ -4,7 +4,7 @@ using MogMogCheck.Windows;
 
 namespace MogMogCheck;
 
-public sealed partial class Plugin : IDalamudPlugin
+public sealed class Plugin : IDalamudPlugin
 {
     public static Configuration Config { get; private set; } = null!;
     private static GameFontHandle? TripleTriadNumberFont = null!;
@@ -13,7 +13,6 @@ public sealed partial class Plugin : IDalamudPlugin
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Service.TranslationManager.Initialize();
         Config = Configuration.Load();
         Service.Framework.RunOnFrameworkThread(Setup);
     }
@@ -56,13 +55,9 @@ public sealed partial class Plugin : IDalamudPlugin
 
     private void AddonObserver_AddonOpen(string addonName)
     {
-        if (Config.OpenWithMogpendium && addonName == "MoogleCollection" && !Service.WindowManager.IsWindowOpen<MainWindow>())
+        if (Config.OpenWithMogpendium && addonName == "MoogleCollection")
         {
-            Service.WindowManager.AddWindow(new MainWindow
-            {
-                DisableWindowSounds = true,
-                IsOpen = true
-            });
+            Service.WindowManager.OpenWindow<MainWindow>().DisableWindowSounds = true;
         }
     }
 
