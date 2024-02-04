@@ -354,7 +354,7 @@ public class RewardsTable : Table<Reward>
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
                 ImGuiContextMenu.CreateItemSearch(item),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools("item", item.RowId),
             }
             .Draw();
 
@@ -380,7 +380,7 @@ public class RewardsTable : Table<Reward>
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
                 ImGuiContextMenu.CreateItemSearch(item),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools("item", item.RowId),
             }
             .Draw();
 
@@ -414,6 +414,12 @@ public class RewardsTable : Table<Reward>
                         ImGui.TextUnformatted(t("Reward.RequiredQuest.Tooltip", GetSheetText<Quest>(row.RequiredQuest.RowId, "Name"), status));
                     }
                 }
+
+                new ImGuiContextMenu($"##{idx}_ItemContextMenu{item.RowId}_RequiredQuest{row.RequiredQuest.RowId}")
+                {
+                    ImGuiContextMenu.CreateOpenOnGarlandTools("quest", row.RequiredQuest.RowId),
+                }
+                .Draw();
             }
         }
     }
@@ -449,7 +455,7 @@ public class RewardsTable : Table<Reward>
                 ImGuiContextMenu.CreateItemFinder(item.RowId),
                 ImGuiContextMenu.CreateCopyItemName(item.RowId),
                 ImGuiContextMenu.CreateItemSearch(item),
-                ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+                ImGuiContextMenu.CreateOpenOnGarlandTools("item", item.RowId),
             }
             .Draw();
 

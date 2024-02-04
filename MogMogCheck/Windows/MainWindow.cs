@@ -93,7 +93,7 @@ public unsafe class MainWindow : Window
             ImGuiContextMenu.CreateItemFinder(_tomestone.RowId),
             ImGuiContextMenu.CreateCopyItemName(_tomestone.RowId),
             ImGuiContextMenu.CreateItemSearch(_tomestone),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(_tomestone.RowId),
+            ImGuiContextMenu.CreateOpenOnGarlandTools("item", _tomestone.RowId),
         }
         .Draw();
 
