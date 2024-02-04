@@ -19,6 +19,8 @@ public unsafe class MainWindow : Window
     private readonly RewardsTable? _rewardsTable;
     private readonly ExtendedItem? _tomestone;
 
+    public int OwnedTimestoneCount { get; private set; }
+
     public MainWindow() : base("MogMogCheck")
     {
         Namespace = "MogMogCheckMain";
@@ -74,6 +76,12 @@ public unsafe class MainWindow : Window
             && _rewardsTable?.TotalItems > 0
             && _tomestone?.RowId > 0;
 
+    public override void PreDraw()
+    {
+        base.PreDraw();
+        OwnedTimestoneCount = InventoryManager.Instance()->GetInventoryItemCount(_tomestone!.RowId);
+    }
+
     public override void Draw()
     {
         var scale = ImGuiHelpers.GlobalScale;
@@ -92,16 +100,15 @@ public unsafe class MainWindow : Window
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
-        var owned = InventoryManager.Instance()->GetInventoryItemCount(_tomestone.RowId);
         var needed = _shop!.Items.Aggregate(0u, (total, item) => total + (Service.GetService<Configuration>().TrackedItems.TryGetValue((uint)item.ReceiveItemId1, out var amount) ? amount * item.GiveCount1 : 0));
-        if (needed > owned)
+        if (needed > OwnedTimestoneCount)
         {
-            var remaining = needed - owned;
-            ImGui.TextUnformatted(t("Currency.InfoWithRemaining", owned, needed, remaining));
+            var remaining = needed - OwnedTimestoneCount;
+            ImGui.TextUnformatted(t("Currency.InfoWithRemaining", OwnedTimestoneCount, needed, remaining));
         }
         else
         {
-            ImGui.TextUnformatted(t("Currency.Info", owned, needed));
+            ImGui.TextUnformatted(t("Currency.Info", OwnedTimestoneCount, needed));
         }
 
         _rewardsTable?.Draw((ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y * 0.5f + ImGui.GetStyle().ItemSpacing.Y) * 2f - 1);

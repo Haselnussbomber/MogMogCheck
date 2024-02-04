@@ -12,6 +12,7 @@ using Lumina.Data.Files;
 using Lumina.Excel.GeneratedSheets;
 using MogMogCheck.Records;
 using MogMogCheck.Services;
+using MogMogCheck.Windows;
 using Companion = Lumina.Excel.GeneratedSheets.Companion;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using TripleTriadCard = Lumina.Excel.GeneratedSheets2.TripleTriadCard;
@@ -438,8 +439,10 @@ public class RewardsTable : Table<Reward>
             var item = row.GiveItems[0].Item!;
             var quantity = row.GiveItems[0].Quantity;
 
+            var hasEnoughTomestones = Service.WindowManager.GetWindow<MainWindow>()!.OwnedTimestoneCount >= quantity;
+
             ImGuiUtils.PushCursorY(paddingY);
-            Service.TextureManager.GetIcon(item.Icon).Draw(iconSize);
+            Service.TextureManager.GetIcon(item.Icon).Draw(iconSize, hasEnoughTomestones ? null : (Vector4)Colors.Grey);
 
             new ImGuiContextMenu($"##{row.Index}_ItemContextMenu{item.RowId}_Tooltip")
             {
@@ -452,7 +455,9 @@ public class RewardsTable : Table<Reward>
 
             ImGui.SameLine(iconSize + itemSpacing.X);
             ImGuiUtils.PushCursorY(paddingY);
-            ImGui.TextUnformatted(quantity.ToString());
+
+            using (ImRaii.Disabled(!hasEnoughTomestones))
+                ImGui.TextUnformatted(quantity.ToString());
         }
     }
 }
