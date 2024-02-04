@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.0] (2024-02-04)
 
 - **Added:** A context menu for the required quest icon was added with an option to open the quest on Garland Tools DB.
 - **Changed:** The tomestone icon and quantity in the "Tomestones Required" column will be darkened if you have fewer tombstones than needed for that item.
@@ -62,6 +62,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.1...v2.0.0
 [1.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.0...v1.1.1
