@@ -218,28 +218,31 @@ public class RewardsTable : Table<Reward>
 
                     if (cardRarity.Stars >= 1)
                     {
+                        var starTexture = Service.TextureManager.GetPart("CardTripleTriad", 1, 1);
+
                         ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 0, 5)); // top
-                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
-                    }
-                    if (cardRarity.Stars >= 2)
-                    {
-                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 4, 5)); // left
-                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
-                    }
-                    if (cardRarity.Stars >= 3)
-                    {
-                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 1, 5)); // right
-                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
-                    }
-                    if (cardRarity.Stars >= 4)
-                    {
-                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 2, 5)); // bottom left
-                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
-                    }
-                    if (cardRarity.Stars >= 5)
-                    {
-                        ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 3, 5)); // bottom right
-                        Service.TextureManager.GetPart("CardTripleTriad", 1, 1).Draw(starSize);
+                        starTexture.Draw(starSize);
+
+                        if (cardRarity.Stars >= 2)
+                        {
+                            ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 4, 5)); // left
+                            starTexture.Draw(starSize);
+                        }
+                        if (cardRarity.Stars >= 3)
+                        {
+                            ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 1, 5)); // right
+                            starTexture.Draw(starSize);
+                        }
+                        if (cardRarity.Stars >= 4)
+                        {
+                            ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 3, 5)); // bottom right
+                            starTexture.Draw(starSize);
+                        }
+                        if (cardRarity.Stars >= 5)
+                        {
+                            ImGui.SetCursorPos(starCenter + GetPosOnCircle(starRadius, 2, 5)); // bottom left
+                            starTexture.Draw(starSize);
+                        }
                     }
 
                     // type
