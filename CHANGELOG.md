@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** A context menu for the required quest icon was added with an option to open the quest on Garland Tools DB.
+- **Changed:** The tomestone icon and quantity in the "Tomestones Required" column will be darkened if you have fewer tombstones than needed for that item.
+- **Fixed:** In the Triple Triad Cards tooltip, the fourth and fifth stars were on opposite sides.
+
 ## [2.0.1] (2024-01-30)
 
 - **Fixed:** Tomestone count was always 0.
