@@ -12,7 +12,7 @@ https://raw.githubusercontent.com/Haselnussbomber/MyDalamudPlugins/main/repo.jso
 MogMogCheck automatically opens with the Mogpendium. Alternatively, you can open it with the `/mogmog` command.  
 Simply tick the checkboxes of the items you want to track and it shows you how many tomestones you still need to farm!
 
-![Screenshot of MogMogCheck](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/7e031e2a-ab4d-47ab-943f-447c59451b6f)
+![Screenshot of MogMogCheck](https://github.com/Haselnussbomber/MogMogCheck/assets/96642047/b982c332-9287-4dae-b4ec-ec02b5f9bde5)
 
 The configuration can be opened with the cog-button in the title bar, with the `/mogmog config` command, or via the Dalamud Plugin Installer.
 
