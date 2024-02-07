@@ -209,11 +209,11 @@ public class RewardsTable : Table<Reward>
 
                     static Vector2 GetPosOnCircle(float radius, int index, int numberOfPoints)
                     {
-                        var angleIncrement = 2 * Math.PI / numberOfPoints;
-                        var angle = index * angleIncrement - Math.PI / 2;
+                        var angleIncrement = 2 * MathF.PI / numberOfPoints;
+                        var angle = index * angleIncrement - MathF.PI / 2;
                         return new Vector2(
-                            radius * (float)Math.Cos(angle),
-                            radius * (float)Math.Sin(angle)
+                            radius * MathF.Cos(angle),
+                            radius * MathF.Sin(angle)
                         );
                     }
 
