@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.1] (2024-02-10)
+
+- **Fixed:** The barding unlock checkmark didn't work properly.
+
 ## [2.1.0] (2024-02-04)
 
 - **Added:** A context menu for the required quest icon was added with an option to open the quest on Garland Tools DB.
@@ -62,6 +66,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v1.1.1...v2.0.0
