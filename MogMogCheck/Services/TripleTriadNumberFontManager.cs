@@ -1,22 +1,15 @@
 using Dalamud.Interface.GameFonts;
+using Dalamud.Interface.ManagedFontAtlas;
 
 namespace MogMogCheck.Services;
 
 public class TripleTriadNumberFontManager : IDisposable
 {
-    private GameFontHandle? TripleTriadNumberFont;
-    private float TripleTriadNumberFontSize;
+    private IFontHandle? TripleTriadNumberFont;
 
-    public GameFontHandle GetFont(float size)
+    public IFontHandle GetFont()
     {
-        if (TripleTriadNumberFont == null || TripleTriadNumberFontSize != size)
-        {
-            TripleTriadNumberFont?.Dispose();
-            TripleTriadNumberFont = Service.PluginInterface.UiBuilder.GetGameFontHandle(new GameFontStyle(GameFontFamily.MiedingerMid, size));
-            TripleTriadNumberFontSize = size;
-        }
-
-        return TripleTriadNumberFont;
+        return TripleTriadNumberFont ??= Service.PluginInterface.UiBuilder.FontAtlas.NewGameFontHandle(new GameFontStyle(GameFontFamily.MiedingerMid, 208f / 10f));
     }
 
     public void Dispose()

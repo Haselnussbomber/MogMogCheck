@@ -254,9 +254,7 @@ public class RewardsTable : Table<Reward>
                     }
 
                     // numbers
-                    var numberSize = 208f / 10f;
-                    var fontHandle = Service.GetService<TripleTriadNumberFontManager>().GetFont(numberSize);
-                    using var font = ImRaii.PushFont(fontHandle.ImFont, fontHandle.Available);
+                    using var font = Service.GetService<TripleTriadNumberFontManager>().GetFont().Push();
 
                     var numberText = $"{cardResident.Top:X}";
                     var numberTextSize = ImGui.CalcTextSize(numberText);
