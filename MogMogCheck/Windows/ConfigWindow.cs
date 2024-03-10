@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Utils;
@@ -13,6 +15,8 @@ public unsafe class ConfigWindow : Window
         AllowClickthrough = false;
         AllowPinning = false;
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
+        Size = new Vector2(380, -1);
+        SizeCondition = ImGuiCond.Appearing;
     }
 
     public override void OnClose()
@@ -46,10 +50,22 @@ public unsafe class ConfigWindow : Window
                 config.Save();
             }
 
-            ImGuiUtils.PushCursorY(-3);
-            using var descriptionIndent = ImGuiUtils.ConfigIndent();
-            ImGuiHelpers.SafeTextColoredWrapped(Colors.Grey, t("Config.CheckboxMode.Tooltip"));
-            ImGuiUtils.PushCursorY(3);
+            if (config.TrackedItems.Any(kv => kv.Value > 1))
+            {
+                ImGuiUtils.PushCursorY(-3);
+                using var descriptionIndent = ImGuiUtils.ConfigIndent();
+                ImGuiHelpers.SafeTextColoredWrapped(Colors.Grey, t("Config.CheckboxMode.Tooltip"));
+                ImGuiUtils.PushCursorY(3);
+            }
+        }
+
+        // HidePreviousSeasons
+        {
+            if (ImGui.Checkbox(t("Config.HidePreviousSeasons"), ref config.HidePreviousSeasons))
+            {
+                config.Save();
+                Service.WindowManager.GetWindow<MainWindow>()?.MarkDirty();
+            }
         }
     }
 }

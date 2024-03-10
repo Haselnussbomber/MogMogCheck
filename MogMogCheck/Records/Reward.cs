@@ -9,16 +9,16 @@ public record Reward
     {
         this.Index = Index;
 
-        ReceiveItems = new (ExtendedItem?, uint)[] {
+        ReceiveItems = [
             (row.ReceiveItemId1 != 0 ? GetRow<ExtendedItem>((uint)row.ReceiveItemId1) : null, row.ReceiveCount1),
             (row.ReceiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.ReceiveItemId2) : null, row.ReceiveCount2)
-        };
+        ];
 
-        GiveItems = new (ExtendedItem?, uint)[] {
+        GiveItems = [
             (row.GiveItemId1 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId1) : null, row.GiveCount1),
             (row.GiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId2) : null, row.GiveCount2),
             (row.GiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId2) : null, row.GiveCount2)
-        };
+        ];
 
         RequiredQuest = row.UnlockQuest != 0 ? GetRow<Quest>((uint)row.UnlockQuest) : null;
     }

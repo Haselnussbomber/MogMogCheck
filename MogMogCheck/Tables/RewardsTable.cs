@@ -439,11 +439,12 @@ public class RewardsTable : Table<Reward>
             var iconSize = (textHeight + itemInnerSpacing.Y) * 1.5f;
             var paddingY = (rowHeight - iconSize) * 0.5f;
 
-            // TODO: add support for item 2 and 3
-            var item = row.GiveItems[0].Item!;
-            var quantity = row.GiveItems[0].Quantity;
+            // TODO: add support for items 2 and 3 whenever it becomes necessary
+            var (item, quantity) = row.GiveItems[0];
+            if (item == null)
+                return;
 
-            var hasEnoughTomestones = Service.WindowManager.GetWindow<MainWindow>()!.OwnedTimestoneCount >= quantity;
+            var hasEnoughTomestones = Service.WindowManager.GetWindow<MainWindow>()!.TomestoneItems.TryGetValue(item.RowId, out var trackedItem) && trackedItem.Quantity >= quantity;
 
             ImGuiUtils.PushCursorY(paddingY);
             Service.TextureManager.GetIcon(item.Icon).Draw(iconSize, hasEnoughTomestones ? null : (Vector4)Colors.Grey);

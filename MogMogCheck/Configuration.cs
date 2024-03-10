@@ -22,6 +22,7 @@ public partial class Configuration
     public Dictionary<uint, uint> TrackedItems = [];
     public bool CheckboxMode = true;
     public bool OpenWithMogpendium = true;
+    public bool HidePreviousSeasons = true;
 }
 
 // I really wish I could move this to HaselCommon, but I haven't found a way yet.

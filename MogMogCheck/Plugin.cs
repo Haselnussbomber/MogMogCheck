@@ -43,6 +43,12 @@ public sealed class Plugin : IDalamudPlugin
     {
         switch (arguments.ToLower())
         {
+#if DEBUG
+            case "debug":
+                Service.WindowManager.ToggleWindow<DebugWindow>();
+                break;
+#endif
+
             case "config":
                 Service.WindowManager.ToggleWindow<ConfigWindow>();
                 break;

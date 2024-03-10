@@ -20,8 +20,12 @@
     "de": "Checkbox-Modus"
   },
   "Config.CheckboxMode.Tooltip": {
-    "en": "Stacks that are greater than 1 are reset to 1!",
-    "de": "Stapel, die größer als 1 sind, werden auf 1 zurückgesetzt!"
+    "en": "Stacks larger than 1 are reset!",
+    "de": "Stapel, die größer als 1 sind, werden zurückgesetzt!"
+  },
+  "Config.HidePreviousSeasons": {
+    "en": "Hide previous seasons",
+    "de": "Vergangene Saisons ausblenden"
   },
 
   "TitleBarButton.ToggleConfig.Tooltip.OpenConfig": {
