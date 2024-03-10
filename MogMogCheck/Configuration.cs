@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 using Dalamud.Configuration;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Utility;
-using HaselCommon.Extensions;
 
 namespace MogMogCheck;
 
@@ -35,7 +34,7 @@ public partial class Configuration : IDisposable
     };
 
     [JsonIgnore]
-    public string LastSavedConfigHash = string.Empty;
+    public int LastSavedConfigHash;
 
     public static Configuration Load()
     {
@@ -121,7 +120,7 @@ public partial class Configuration : IDisposable
         try
         {
             var serialized = JsonSerializer.Serialize(this, DefaultJsonSerializerOptions);
-            var hash = serialized.GetHash();
+            var hash = serialized.GetHashCode();
 
             if (LastSavedConfigHash != hash)
             {
