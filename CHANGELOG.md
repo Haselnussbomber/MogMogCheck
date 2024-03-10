@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.0] (2024-03-10)
+
+**Update for The Second Hunt for Genesis.**  
+The rewards list *should* automatically switch over to the new items whenever the second hunt starts.  
+
+- **Added:** A new configuration option was added to hide previous seasons (default on).  
+  Reason: The game data lists all items in a single exchange shop. This option hides items using Irregular Tomestone of Genesis I whenever the second hunt starts.
+
 ## [2.1.1] (2024-02-10)
 
 - **Fixed:** The barding unlock checkmark didn't work properly.
@@ -17,7 +25,7 @@
 
 ## [2.0.0] (2024-01-26)
 
-Update for The First Hunt for Genesis.  
+**Update for The First Hunt for Genesis.**  
 I did my best to have this plugin updated prior to the start of the event. Please enjoy!
 
 - **Added:** A configuration window was added, accessible via Dalamuds Plugin Installer, the `/mogmog config` command, or via the cogwheel in the title bar of the MogMogCheck window. It allows you to change the following new settings:
@@ -66,6 +74,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.0...v2.0.1
