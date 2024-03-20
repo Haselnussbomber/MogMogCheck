@@ -1,4 +1,7 @@
 {
+  "Plugin.DisplayName": {
+    "en": "MogMogCheck"
+  },
   "CommandHandlerHelpMessage": {
     "en": "Open Window",
     "de": "Öffne Fenster"
