@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.1] (2024-03-20)
+
+The target framework has been updated to .NET 8, some code has been adjusted to take advantage of the additions it brings, and the NoAlloq dependency was removed.
+
+No further changes on the plugin itself.
+
 ## [2.2.0] (2024-03-10)
 
 **Update for The Second Hunt for Genesis.**  
@@ -74,6 +80,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.0.1...v2.1.0
