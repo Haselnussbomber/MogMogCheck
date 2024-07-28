@@ -1,70 +1,90 @@
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
+using HaselCommon.Services;
 using HaselCommon.Utils;
+using HaselCommon.Windowing;
 using ImGuiNET;
+using MogMogCheck.Config;
+using MogMogCheck.Services;
 
 namespace MogMogCheck.Windows;
 
-public unsafe class ConfigWindow : Window
+public unsafe class ConfigWindow : SimpleWindow
 {
-    public ConfigWindow() : base("MogMogCheck Configuration")
+    private readonly IDalamudPluginInterface PluginInterface;
+    private readonly PluginConfig PluginConfig;
+    private readonly TextService TextService;
+    private readonly SpecialShopService SpecialShopService;
+
+    public ConfigWindow(
+        WindowManager windowManager,
+        IDalamudPluginInterface pluginInterface,
+        PluginConfig pluginConfig,
+        TextService textService,
+        SpecialShopService specialShopService) : base(windowManager, "MogMogCheck Configuration")
     {
-        Namespace = "MogMogCheckConfig";
+        PluginInterface = pluginInterface;
+        PluginConfig = pluginConfig;
+        TextService = textService;
+        SpecialShopService = specialShopService;
+
         AllowClickthrough = false;
         AllowPinning = false;
+
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
+
         Size = new Vector2(380, -1);
         SizeCondition = ImGuiCond.Appearing;
+
+        PluginInterface.UiBuilder.OpenConfigUi += Toggle;
     }
 
-    public override void OnClose()
+    public new void Dispose()
     {
-        Service.WindowManager.CloseWindow<ConfigWindow>();
+        PluginInterface.UiBuilder.OpenConfigUi -= Toggle;
+        base.Dispose();
     }
 
     public override void Draw()
     {
-        var config = Service.GetService<Configuration>();
-
         // OpenWithMogpendium
-        if (ImGui.Checkbox($"{t("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref config.OpenWithMogpendium))
+        if (ImGui.Checkbox($"{TextService.Translate("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref PluginConfig.OpenWithMogpendium))
         {
-            config.Save();
+            PluginConfig.Save();
         }
 
         // CheckboxMode
         {
-            if (ImGui.Checkbox(t("Config.CheckboxMode"), ref config.CheckboxMode))
+            if (ImGui.Checkbox(TextService.Translate("Config.CheckboxMode"), ref PluginConfig.CheckboxMode))
             {
-                if (config.CheckboxMode)
+                if (PluginConfig.CheckboxMode)
                 {
-                    foreach (var (itemId, amount) in config.TrackedItems)
+                    foreach (var (itemId, amount) in PluginConfig.TrackedItems)
                     {
                         if (amount > 1)
-                            config.TrackedItems[itemId] = 1;
+                            PluginConfig.TrackedItems[itemId] = 1;
                     }
                 }
 
-                config.Save();
+                PluginConfig.Save();
             }
 
-            if (config.TrackedItems.Any(kv => kv.Value > 1))
+            if (PluginConfig.TrackedItems.Any(kv => kv.Value > 1))
             {
                 ImGuiUtils.PushCursorY(-3);
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                ImGuiHelpers.SafeTextColoredWrapped(Colors.Grey, t("Config.CheckboxMode.Tooltip"));
+                TextService.DrawWrapped(Colors.Grey, "Config.CheckboxMode.Tooltip");
                 ImGuiUtils.PushCursorY(3);
             }
         }
 
         // HidePreviousSeasons
         {
-            if (ImGui.Checkbox(t("Config.HidePreviousSeasons"), ref config.HidePreviousSeasons))
+            if (ImGui.Checkbox(TextService.Translate("Config.HidePreviousSeasons"), ref PluginConfig.HidePreviousSeasons))
             {
-                config.Save();
-                Service.WindowManager.GetWindow<MainWindow>()?.MarkDirty();
+                PluginConfig.Save();
+                SpecialShopService.IsDirty = true;
             }
         }
     }

@@ -1,30 +1,32 @@
-using HaselCommon.Sheets;
-using Lumina.Excel.GeneratedSheets;
+using HaselCommon.Services;
+using Item = Lumina.Excel.GeneratedSheets.Item;
+using Quest = Lumina.Excel.GeneratedSheets.Quest;
+using SpecialShop = Lumina.Excel.GeneratedSheets2.SpecialShop;
 
 namespace MogMogCheck.Records;
 
 public record Reward
 {
-    public Reward(int Index, ExtendedSpecialShop.SpecialShopItem row)
+    public Reward(int Index, SpecialShop.ItemStruct item, ExcelService excelService)
     {
         this.Index = Index;
 
         ReceiveItems = [
-            (row.ReceiveItemId1 != 0 ? GetRow<ExtendedItem>((uint)row.ReceiveItemId1) : null, row.ReceiveCount1),
-            (row.ReceiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.ReceiveItemId2) : null, row.ReceiveCount2)
+            (excelService.GetRow<Item>(item.Item[0].Row), item.ReceiveCount[0]),
+            (excelService.GetRow<Item>(item.Item[1].Row), item.ReceiveCount[1])
         ];
 
         GiveItems = [
-            (row.GiveItemId1 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId1) : null, row.GiveCount1),
-            (row.GiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId2) : null, row.GiveCount2),
-            (row.GiveItemId2 != 0 ? GetRow<ExtendedItem>((uint)row.GiveItemId2) : null, row.GiveCount2)
+            (excelService.GetRow<Item>((uint)item.ItemCost[0]), item.CurrencyCost[0]),
+            (excelService.GetRow<Item>((uint)item.ItemCost[1]), item.CurrencyCost[1]),
+            (excelService.GetRow<Item>((uint)item.ItemCost[2]), item.CurrencyCost[2])
         ];
 
-        RequiredQuest = row.UnlockQuest != 0 ? GetRow<Quest>((uint)row.UnlockQuest) : null;
+        RequiredQuest = excelService.GetRow<Quest>(item.Quest.Row);
     }
 
     public int Index { get; }
-    public (ExtendedItem? Item, uint Quantity)[] ReceiveItems { get; }
-    public (ExtendedItem? Item, uint Quantity)[] GiveItems { get; }
+    public (Item? Item, uint Quantity)[] ReceiveItems { get; }
+    public (Item? Item, uint Quantity)[] GiveItems { get; }
     public Quest? RequiredQuest { get; }
 }

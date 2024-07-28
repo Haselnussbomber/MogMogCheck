@@ -1,90 +1,81 @@
-using Dalamud.Game.Command;
+using System.IO;
+using Dalamud.Game;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
+using HaselCommon;
+using HaselCommon.Logger;
+using InteropGenerator.Runtime;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MogMogCheck.Caches;
+using MogMogCheck.Config;
+using MogMogCheck.Services;
 using MogMogCheck.Windows;
 
 namespace MogMogCheck;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    private readonly CommandInfo CommandInfo;
-
-    public Plugin(DalamudPluginInterface pluginInterface)
+    public Plugin(
+        IDalamudPluginInterface pluginInterface,
+        IFramework framework,
+        IPluginLog pluginLog,
+        ISigScanner sigScanner,
+        IDataManager dataManager)
     {
-        Service.Initialize(pluginInterface);
-        Service.AddService(Configuration.Load());
+        Service
+            // Dalamud & HaselCommon
+            .Initialize(pluginInterface)
 
-        Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
-        Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainUi;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
-        Service.AddonObserver.AddonOpen += AddonObserver_AddonOpen;
-        Service.AddonObserver.AddonClose += AddonObserver_AddonClose;
+            // Logging
+            .AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddProvider(new DalamudLoggerProvider(pluginLog));
+            })
 
-        CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
+            // Config
+            .AddSingleton(PluginConfig.Load(pluginInterface, pluginLog))
 
-        Service.CommandManager.AddHandler("/mogmog", CommandInfo);
-    }
+            // Caches
+            .AddSingleton<ItemQuantityCache>()
 
-    private void PluginInterface_LanguageChanged(string langCode)
-    {
-        CommandInfo.HelpMessage = t("CommandHandlerHelpMessage");
-    }
+            // Services
+            .AddSingleton<TripleTriadNumberFontManager>()
+            .AddSingleton<SpecialShopService>()
 
-    private void OpenMainUi()
-    {
-        Service.WindowManager.ToggleWindow<MainWindow>();
-    }
-
-    private void OpenConfigUi()
-    {
-        Service.WindowManager.ToggleWindow<ConfigWindow>();
-    }
-
-    private void OnCommand(string command, string arguments)
-    {
-        switch (arguments.ToLower())
-        {
+            // Windows
+            .AddSingleton<MainWindow>()
 #if DEBUG
-            case "debug":
-                Service.WindowManager.ToggleWindow<DebugWindow>();
-                break;
+            .AddSingleton<DebugWindow>()
 #endif
+            .AddSingleton<ConfigWindow>();
 
-            case "config":
-                Service.WindowManager.ToggleWindow<ConfigWindow>();
-                break;
+        Service.BuildProvider();
 
-            default:
-                Service.WindowManager.ToggleWindow<MainWindow>();
-                break;
-        }
-    }
+        // ---
 
-    private void AddonObserver_AddonOpen(string addonName)
-    {
-        if (Service.GetService<Configuration>().OpenWithMogpendium && addonName == "MoogleCollection")
+        FFXIVClientStructs.Interop.Generated.Addresses.Register();
+        Resolver.GetInstance.Setup(
+            sigScanner.SearchBase,
+            dataManager.GameData.Repositories["ffxiv"].Version,
+            new FileInfo(Path.Join(pluginInterface.ConfigDirectory.FullName, "SigCache.json")));
+        Resolver.GetInstance.Resolve();
+
+        // ---
+
+        framework.RunOnFrameworkThread(() =>
         {
-            Service.WindowManager.OpenWindow<MainWindow>().DisableWindowSounds = true;
-        }
-    }
-
-    private void AddonObserver_AddonClose(string addonName)
-    {
-        if (Service.GetService<Configuration>().OpenWithMogpendium && addonName == "MoogleCollection")
-        {
-            Service.WindowManager.CloseWindow<MainWindow>();
-        }
+            Service.Get<MainWindow>();
+#if DEBUG
+            //Service.Get<DebugWindow>().Open();
+#endif
+        });
     }
 
     void IDisposable.Dispose()
     {
-        Service.CommandManager.RemoveHandler("/mogmog");
-
-        Service.PluginInterface.LanguageChanged -= PluginInterface_LanguageChanged;
-        Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainUi;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
-        Service.AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
-        Service.AddonObserver.AddonClose -= AddonObserver_AddonClose;
-
         Service.Dispose();
     }
 }
