@@ -54,16 +54,14 @@ public sealed class Plugin : IDalamudPlugin
 
         Service.BuildProvider();
 
-        // ---
-
+#if HAS_LOCAL_CS
         FFXIVClientStructs.Interop.Generated.Addresses.Register();
         Resolver.GetInstance.Setup(
             sigScanner.SearchBase,
             dataManager.GameData.Repositories["ffxiv"].Version,
             new FileInfo(Path.Join(pluginInterface.ConfigDirectory.FullName, "SigCache.json")));
         Resolver.GetInstance.Resolve();
-
-        // ---
+#endif
 
         framework.RunOnFrameworkThread(() =>
         {
