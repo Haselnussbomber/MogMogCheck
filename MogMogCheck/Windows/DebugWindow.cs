@@ -2,8 +2,8 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Windowing;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets2;
 using MogMogCheck.Services;

@@ -10,11 +10,12 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using HaselCommon.Enums;
-using HaselCommon.Extensions;
+using HaselCommon.Extensions.Collections;
+using HaselCommon.Extensions.Strings;
+using HaselCommon.Game.Enums;
+using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Utils;
-using HaselCommon.Windowing;
 using ImGuiNET;
 using Lumina.Data.Files;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,6 @@ public unsafe class MainWindow : SimpleWindow
 {
     private readonly ILogger<MainWindow> Logger;
     private readonly PluginConfig PluginConfig;
-    private readonly WindowManager WindowManager;
     private readonly IDalamudPluginInterface PluginInterface;
     private readonly ICommandManager CommandManager;
     private readonly IClientState ClientState;
@@ -61,8 +61,6 @@ public unsafe class MainWindow : SimpleWindow
     private readonly CommandInfo CommandInfo;
 
     private readonly Dictionary<uint, Vector2?> IconSizeCache = [];
-
-    //private RewardsTable? RewardsTable = null;
 
     public MainWindow(
         ILogger<MainWindow> logger,
@@ -89,7 +87,6 @@ public unsafe class MainWindow : SimpleWindow
     {
         Logger = logger;
         PluginConfig = pluginConfig;
-        WindowManager = windowManager;
         PluginInterface = pluginInterface;
         CommandManager = commandManager;
         ClientState = clientState;
@@ -536,19 +533,13 @@ public unsafe class MainWindow : SimpleWindow
                     }
                 }
 
-                //! https://github.com/ufx/GarlandTools/blob/a241dd8/Garland.Data/Modules/NPCs.cs#L434-L464
+                // TODO: https://discord.com/channels/581875019861328007/653504487352303619/1268886862186152038
+                var numHair = 130;
                 var startIndex = tribeId switch
                 {
-                    1 => isMale ? 0 : 100, // Midlander
-                    2 => isMale ? 200 : 300, // Highlander
-                    3 or 4 => isMale ? 400 : 500, // Wildwood / Duskwight
-                    5 or 6 => isMale ? 600 : 700, // Plainsfolks / Dunesfolk
-                    7 or 8 => isMale ? 800 : 900, // Seeker of the Sun / Keeper of the Moon
-                    9 or 10 => isMale ? 1000 : 1100, // Sea Wolf / Hellsguard
-                    11 or 12 => isMale ? 1200 : 1300, // Raen / Xaela
-                    13 or 14 => isMale ? 1400 : 1500, // Helions / The Lost
-                    15 or 16 => isMale ? 1600 : 1700, // Rava / Veena
-                    _ => 0
+                    1 => isMale ? 0 : 1 * numHair, // Midlander
+                    2 => isMale ? 2 * numHair : 3 * numHair, // Highlander
+                    _ => (tribeId + 2) * numHair
                 };
 
                 var charaMakeCustomize = ExcelService.FindRow<CharaMakeCustomize>(row => row?.RowId >= startIndex && row.HintItem.Row == item.RowId);
@@ -606,7 +597,7 @@ public unsafe class MainWindow : SimpleWindow
 
         ImGui.SameLine(textOffsetX, 0);
         ImGui.SetCursorPosY(cursor.Y + textHeight);
-        using (ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Grey))
+        using (ImRaii.PushColor(ImGuiCol.Text, (uint)Color.Grey))
             ImGui.TextUnformatted(ExcelService.GetRow<ItemUICategory>(item.ItemUICategory.Row)!.Name.ExtractText());
 
         if (row.RequiredQuest != null)
@@ -654,7 +645,7 @@ public unsafe class MainWindow : SimpleWindow
             && ItemQuantityCache.GetValue(item.RowId) >= quantity;
 
         ImGuiUtils.PushCursorY(paddingY);
-        TextureService.DrawIcon(item.Icon, new DrawInfo(iconSize) { TintColor = hasEnoughTomestones ? null : (Vector4)Colors.Grey });
+        TextureService.DrawIcon(item.Icon, new DrawInfo(iconSize) { TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey });
 
         ImGuiContextMenuService.Draw($"##{row.Index}_ItemContextMenu{item.RowId}_Tooltip", builder =>
         {

@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Numerics;
 using Dalamud.Plugin;
+using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Utils;
-using HaselCommon.Windowing;
 using ImGuiNET;
 using MogMogCheck.Config;
 using MogMogCheck.Services;
@@ -74,7 +74,7 @@ public unsafe class ConfigWindow : SimpleWindow
             {
                 ImGuiUtils.PushCursorY(-3);
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                TextService.DrawWrapped(Colors.Grey, "Config.CheckboxMode.Tooltip");
+                TextService.DrawWrapped(Color.Grey, "Config.CheckboxMode.Tooltip");
                 ImGuiUtils.PushCursorY(3);
             }
         }

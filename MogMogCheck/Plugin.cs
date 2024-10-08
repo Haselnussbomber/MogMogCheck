@@ -1,12 +1,8 @@
-using System.IO;
 using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon;
-using HaselCommon.Logger;
-using InteropGenerator.Runtime;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 using MogMogCheck.Services;
@@ -25,15 +21,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         Service
             // Dalamud & HaselCommon
-            .Initialize(pluginInterface)
-
-            // Logging
-            .AddLogging(builder =>
-            {
-                builder.ClearProviders();
-                builder.SetMinimumLevel(LogLevel.Trace);
-                builder.AddProvider(new DalamudLoggerProvider(pluginLog));
-            })
+            .Initialize(pluginInterface, pluginLog)
 
             // Config
             .AddSingleton(PluginConfig.Load(pluginInterface, pluginLog))
