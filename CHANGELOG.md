@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.2] (2024-10-08)
+
+Update for Dawntrail.
+
 ## [2.2.1] (2024-03-20)
 
 The target framework has been updated to .NET 8, some code has been adjusted to take advantage of the additions it brings, and the NoAlloq dependency was removed.
@@ -80,6 +84,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[2.2.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.1.0...v2.1.1
