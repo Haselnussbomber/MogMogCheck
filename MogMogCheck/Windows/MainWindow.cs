@@ -53,6 +53,7 @@ public unsafe class MainWindow : SimpleWindow
     private readonly TextureService TextureService;
     private readonly ImGuiContextMenuService ImGuiContextMenuService;
     private readonly ItemQuantityCache ItemQuantityCache;
+    private readonly AddonObserver AddonObserver;
 #if DEBUG
     private readonly DebugWindow DebugWindow;
 #endif
@@ -80,6 +81,7 @@ public unsafe class MainWindow : SimpleWindow
         TextureService textureService,
         ImGuiContextMenuService imGuiContextMenuService,
         ItemQuantityCache itemQuantityCache,
+        AddonObserver addonObserver,
 #if DEBUG
         DebugWindow debugWindow,
 #endif
@@ -101,6 +103,7 @@ public unsafe class MainWindow : SimpleWindow
         TextureService = textureService;
         ImGuiContextMenuService = imGuiContextMenuService;
         ItemQuantityCache = itemQuantityCache;
+        AddonObserver = addonObserver;
 #if DEBUG
         DebugWindow = debugWindow;
 #endif
@@ -131,6 +134,8 @@ public unsafe class MainWindow : SimpleWindow
         PluginInterface.UiBuilder.OpenMainUi += Toggle;
         TextService.LanguageChanged += OnLanguageChanged;
         GameInventory.InventoryChangedRaw += OnInventoryChanged;
+        AddonObserver.AddonOpen += AddonObserver_AddonOpen;
+        AddonObserver.AddonClose += AddonObserver_AddonClose;
 
         CommandManager.AddHandler("/mogmog", CommandInfo = new CommandInfo(OnCommand)
         {
@@ -143,6 +148,8 @@ public unsafe class MainWindow : SimpleWindow
         GameInventory.InventoryChangedRaw -= OnInventoryChanged;
         PluginInterface.UiBuilder.OpenMainUi -= Toggle;
         TextService.LanguageChanged -= OnLanguageChanged;
+        AddonObserver.AddonOpen -= AddonObserver_AddonOpen;
+        AddonObserver.AddonClose -= AddonObserver_AddonClose;
         CommandManager.RemoveHandler("/mogmog");
         base.Dispose();
     }
@@ -169,6 +176,22 @@ public unsafe class MainWindow : SimpleWindow
             default:
                 Toggle();
                 break;
+        }
+    }
+
+    private void AddonObserver_AddonOpen(string addonName)
+    {
+        if (PluginConfig.OpenWithMogpendium && addonName == "MoogleCollection")
+        {
+            Open();
+        }
+    }
+
+    private void AddonObserver_AddonClose(string addonName)
+    {
+        if (PluginConfig.OpenWithMogpendium && addonName == "MoogleCollection")
+        {
+            Close();
         }
     }
 
