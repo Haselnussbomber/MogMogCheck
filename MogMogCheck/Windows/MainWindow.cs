@@ -9,7 +9,6 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using HaselCommon.Extensions.Collections;
 using HaselCommon.Extensions.Strings;
 using HaselCommon.Game.Enums;
@@ -543,33 +542,7 @@ public unsafe class MainWindow : SimpleWindow
             else if (item.ItemAction.Value?.Type == (uint)ItemActionType.UnlockLink && ExcelService.FindRow<CharaMakeCustomize>(row => row?.HintItem.Row == item.RowId) != null) // Hairstyles etc.
             {
                 using var tooltip = ImRaii.Tooltip();
-
-                var tribeId = 1;
-                var isMale = false;
-                unsafe
-                {
-                    var character = (Character*)(ClientState.LocalPlayer?.Address ?? 0);
-                    if (character != null)
-                    {
-                        tribeId = character->DrawData.CustomizeData.Tribe;
-                        isMale = character->DrawData.CustomizeData.Sex == 0;
-                    }
-                }
-
-                // TODO: https://discord.com/channels/581875019861328007/653504487352303619/1268886862186152038
-                var numHair = 130;
-                var startIndex = tribeId switch
-                {
-                    1 => isMale ? 0 : 1 * numHair, // Midlander
-                    2 => isMale ? 2 * numHair : 3 * numHair, // Highlander
-                    _ => (tribeId + 2) * numHair
-                };
-
-                var charaMakeCustomize = ExcelService.FindRow<CharaMakeCustomize>(row => row?.RowId >= startIndex && row.HintItem.Row == item.RowId);
-                if (charaMakeCustomize != null)
-                {
-                    TextureService.DrawIcon(charaMakeCustomize.Icon, 192);
-                }
+                TextureService.DrawIcon(ItemService.GetHairstyleIconId(item.RowId), 192);
             }
             else
             {
