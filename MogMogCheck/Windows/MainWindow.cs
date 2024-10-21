@@ -16,8 +16,6 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
-using Lumina.Data.Files;
-using Microsoft.Extensions.Logging;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
@@ -35,14 +33,12 @@ namespace MogMogCheck.Windows;
 
 public unsafe class MainWindow : SimpleWindow
 {
-    private readonly ILogger<MainWindow> Logger;
     private readonly PluginConfig PluginConfig;
     private readonly IDalamudPluginInterface PluginInterface;
     private readonly ICommandManager CommandManager;
     private readonly IClientState ClientState;
     private readonly IGameInventory GameInventory;
     private readonly ITextureProvider TextureProvider;
-    private readonly IDataManager DataManager;
     private readonly SpecialShopService SpecialShopService;
     private readonly TripleTriadNumberFontManager TripleTriadNumberFontManager;
     private readonly ItemService ItemService;
@@ -59,12 +55,9 @@ public unsafe class MainWindow : SimpleWindow
 
     private readonly CommandInfo CommandInfo;
 
-    private readonly Dictionary<uint, Vector2?> IconSizeCache = [];
-
     private TripleTriadCardTooltip? TripleTriadCardTooltip;
 
     public MainWindow(
-        ILogger<MainWindow> logger,
         PluginConfig pluginConfig,
         WindowManager windowManager,
         IDalamudPluginInterface pluginInterface,
@@ -72,7 +65,6 @@ public unsafe class MainWindow : SimpleWindow
         IClientState clientState,
         IGameInventory gameInventory,
         ITextureProvider textureProvider,
-        IDataManager dataManager,
         SpecialShopService specialShopService,
         TripleTriadNumberFontManager tripleTriadNumberFontManager,
         ItemService itemService,
@@ -87,14 +79,12 @@ public unsafe class MainWindow : SimpleWindow
 #endif
         ConfigWindow configWindow) : base(windowManager, "MogMogCheck")
     {
-        Logger = logger;
         PluginConfig = pluginConfig;
         PluginInterface = pluginInterface;
         CommandManager = commandManager;
         ClientState = clientState;
         GameInventory = gameInventory;
         TextureProvider = textureProvider;
-        DataManager = dataManager;
         SpecialShopService = specialShopService;
         TripleTriadNumberFontManager = tripleTriadNumberFontManager;
         ItemService = itemService;
@@ -439,27 +429,9 @@ public unsafe class MainWindow : SimpleWindow
             }
             else if (item.ItemUICategory.Row == 95) // Paintings
             {
+                using var tooltip = ImRaii.Tooltip();
                 var pictureId = (uint)ExcelService.GetRow<Picture>(item.AdditionalData)!.Image;
-
-                if (!IconSizeCache.TryGetValue(pictureId, out var size))
-                {
-                    var iconPath = TextureProvider.GetIconPath(pictureId);
-                    if (string.IsNullOrEmpty(iconPath))
-                    {
-                        IconSizeCache.Add(pictureId, null);
-                    }
-                    else
-                    {
-                        var file = DataManager.GetFile<TexFile>(iconPath);
-                        IconSizeCache.Add(pictureId, size = file != null ? new(file.Header.Width, file.Header.Height) : null);
-                    }
-                }
-
-                if (size != null)
-                {
-                    using var tooltip = ImRaii.Tooltip();
-                    TextureService.DrawIcon(pictureId, (Vector2)size * 0.5f);
-                }
+                TextureService.DrawIcon(pictureId, new DrawInfo() { Scale = 0.5f });
             }
             else if (item.ItemAction.Value?.Type == (uint)ItemActionType.UnlockLink && ExcelService.FindRow<CharaMakeCustomize>(row => row?.HintItem.Row == item.RowId) != null) // Hairstyles etc.
             {
