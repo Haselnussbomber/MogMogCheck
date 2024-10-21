@@ -589,7 +589,7 @@ public unsafe class MainWindow : SimpleWindow
 
         ImGuiUtils.PushCursorY(itemInnerSpacing.Y * 0.5f * scale);
         using (ImRaii.PushColor(ImGuiCol.Text, (uint)ItemService.GetItemRarityColor(item.Rarity)))
-            ImGui.TextUnformatted($"{(quantity > 1 ? quantity.ToString() + "x " : "")}{item.Name}");
+            ImGui.TextUnformatted($"{(quantity > 1 ? quantity.ToString() + "x " : "")}{ItemService.GetItemName(item)}");
 
         ImGui.SameLine(textOffsetX, 0);
         ImGui.SetCursorPosY(cursor.Y + textHeight);
