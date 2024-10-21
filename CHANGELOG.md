@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- **Changed:** The tooltip for Triple Triad cards has been completely revised to make the values easier to read. It also fixes the fourth and fifth stars being swapped and the left and bottom values being swapped.
+- **Fixed:** The item name didn't update when the language was changed in the Dalamud Settings.
+
 ## [2.2.2] (2024-10-08)
 
 Update for Dawntrail.
