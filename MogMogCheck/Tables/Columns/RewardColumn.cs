@@ -17,7 +17,7 @@ using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Records;
-using MogMogCheck.Windows.ItemTooltips;
+using MogMogCheck.Services;
 
 namespace MogMogCheck.Tables;
 
@@ -32,7 +32,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly IDataManager _dataManager;
     private readonly ITextureProvider _textureProvider;
     private readonly SeStringEvaluatorService _seStringEvaluator;
-    private readonly TripleTriadCardTooltip _tripleTriadCardTooltip;
+    private readonly TripleTriadNumberFont _tripleTriadNumberFont;
 
     private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
 
@@ -201,19 +201,191 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 ]).ExtractText().StripSoftHypen());
             }
 
-            DrawSeparator(marginTop: 3);
+            DrawTripleTriadCard(item);
 
+            /*
             _tripleTriadCardTooltip.MarginTop = ImGui.GetCursorPosY();
             _tripleTriadCardTooltip.MarginLeft = ImGui.GetContentRegionAvail().X / 2f - 208 * ImGuiHelpers.GlobalScale / 2f + ImGui.GetCursorPosX() - itemInnerSpacing.X;
             _tripleTriadCardTooltip?.SetItem(item);
             _tripleTriadCardTooltip?.CalculateLayout();
             _tripleTriadCardTooltip?.Update();
             _tripleTriadCardTooltip?.Draw();
+            */
         }
         else if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
         {
             _textureService.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
         }
+    }
+
+    private void DrawTripleTriadCard(Item item)
+    {
+        if (item.ItemAction.IsValid)
+            DrawTripleTriadCard(item.ItemAction.Value.Data[0]);
+    }
+
+    private void DrawTripleTriadCard(uint cardId)
+    {
+        if (!_excelService.TryGetRow<TripleTriadCard>(cardId, out var card))
+            return;
+
+        if (!_excelService.TryGetRow<TripleTriadCardResident>(cardId, out var cardResident))
+            return;
+
+        DrawSeparator(marginTop: 3);
+
+        var isEx = cardResident.UIPriority == 5;
+        var order = (uint)cardResident.Order;
+        var addonRowId = isEx ? 9773u : 9772;
+
+        var infoText = $"{_seStringEvaluator.EvaluateFromAddon(addonRowId, [order]).ExtractText()} - {card.Name}";
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() - ImGui.GetStyle().IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - ImGui.CalcTextSize(infoText).X / 2f);
+        ImGui.TextUnformatted(infoText);
+
+        var cardSizeScaled = ImGuiHelpers.ScaledVector2(208, 256);
+        var cardStartPosX = ImGui.GetCursorPosX() - ImGui.GetStyle().IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - cardSizeScaled.X / 2f;
+        var cardStartPos = new Vector2(cardStartPosX, ImGui.GetCursorPosY());
+
+        // draw background
+        ImGui.SetCursorPosX(cardStartPosX);
+        _textureService.DrawPart("CardTripleTriad", 1, 0, cardSizeScaled);
+
+        // draw card
+        ImGui.SetCursorPos(cardStartPos);
+        _textureService.DrawIcon(87000 + cardId, cardSizeScaled);
+
+        // draw numbers
+        using var font = _tripleTriadNumberFont.Push();
+
+        var letterSize = ImGui.CalcTextSize("A");
+        var scaledLetterSize = letterSize / 2f;
+        var pos = cardStartPos + new Vector2(cardSizeScaled.X / 2f, cardSizeScaled.Y - letterSize.Y * 1.5f) - letterSize;
+
+        var positionTop = pos + new Vector2(scaledLetterSize.X, -scaledLetterSize.Y);
+        var positionBottom = pos + new Vector2(scaledLetterSize.X, scaledLetterSize.Y);
+        var positionRight = pos + new Vector2(letterSize.X * 1.1f + scaledLetterSize.X, 0);
+        var positionLeft = pos + new Vector2(-(letterSize.X * 0.1f + scaledLetterSize.X), 0);
+
+        var textTop = $"{cardResident.Top:X}";
+        var textBottom = $"{cardResident.Bottom:X}";
+        var textRight = $"{cardResident.Right:X}";
+        var textLeft = $"{cardResident.Left:X}";
+
+        DrawTextShadow(positionTop, textTop);
+        DrawTextShadow(positionBottom, textBottom);
+        DrawTextShadow(positionRight, textRight);
+        DrawTextShadow(positionLeft, textLeft);
+
+        DrawText(positionTop, textTop);
+        DrawText(positionBottom, textBottom);
+        DrawText(positionRight, textRight);
+        DrawText(positionLeft, textLeft);
+
+        // draw stars
+        var cardRarity = cardResident.TripleTriadCardRarity.Value!;
+
+        var starSize = 32 * 0.75f * ImGuiHelpers.GlobalScale;
+        var starRadius = starSize / 1.666f;
+        var starCenter = cardStartPos + ImGuiHelpers.ScaledVector2(14) + new Vector2(starSize) / 2f;
+
+        if (cardRarity.Stars >= 1)
+        {
+            DrawStar(StarPosition.Top);
+
+            if (cardRarity.Stars >= 2)
+                DrawStar(StarPosition.Left);
+            if (cardRarity.Stars >= 3)
+                DrawStar(StarPosition.Right);
+            if (cardRarity.Stars >= 4)
+                DrawStar(StarPosition.BottomLeft);
+            if (cardRarity.Stars >= 5)
+                DrawStar(StarPosition.BottomRight);
+        }
+
+        // draw type
+        if (cardResident.TripleTriadCardType.RowId != 0)
+        {
+            var typeSize = 32 * ImGuiHelpers.GlobalScale;
+
+            var partIndex = cardResident.TripleTriadCardType.RowId switch
+            {
+                4 => 2u,
+                _ => cardResident.TripleTriadCardType.RowId + 2
+            };
+
+            ImGui.SetCursorPos(cardStartPos + new Vector2(cardSizeScaled.X - typeSize * 1.5f, typeSize / 2.5f));
+            _textureService.DrawPart("CardTripleTriad", 1, partIndex, typeSize);
+        }
+
+        // functions
+
+        void DrawStar(StarPosition pos)
+        {
+            var angleIncrement = 2 * MathF.PI / 5; // 5 = amount of stars
+            var angle = (int)pos * angleIncrement - MathF.PI / 2;
+
+            ImGui.SetCursorPos(starCenter + new Vector2(starRadius * MathF.Cos(angle), starRadius * MathF.Sin(angle)));
+            _textureService.DrawPart("CardTripleTriad", 1, 1, starSize);
+        }
+    }
+
+    private static void DrawTextShadow(Vector2 position, string text)
+    {
+        DrawShadow(position, ImGui.CalcTextSize(text), 8, Color.Black with { A = 0.1f });
+    }
+
+    private static void DrawText(Vector2 position, string text)
+    {
+        var outlineColor = Color.Black with { A = 0.5f };
+
+        // outline
+        ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(-1));
+        using (outlineColor.Push(ImGuiCol.Text))
+            ImGui.TextUnformatted(text);
+
+        ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(1));
+        using (outlineColor.Push(ImGuiCol.Text))
+            ImGui.TextUnformatted(text);
+
+        ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(1, -1));
+        using (outlineColor.Push(ImGuiCol.Text))
+            ImGui.TextUnformatted(text);
+
+        ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(-1, 1));
+        using (outlineColor.Push(ImGuiCol.Text))
+            ImGui.TextUnformatted(text);
+
+        // text
+        ImGui.SetCursorPos(position);
+        ImGui.TextUnformatted(text);
+    }
+
+    private static void DrawShadow(Vector2 pos, Vector2 size, int layers, Vector4 shadowColor)
+    {
+        var drawList = ImGui.GetWindowDrawList();
+
+        for (var i = 0; i < layers; i++)
+        {
+            var shadowOffset = i * 2.0f;
+            var transparency = shadowColor.W * (1.0f - (float)i / layers);
+            var currentShadowColor = new Vector4(shadowColor.X, shadowColor.Y, shadowColor.Z, transparency);
+
+            drawList.AddRectFilled(
+                pos - new Vector2(shadowOffset, shadowOffset),
+                pos + size + new Vector2(shadowOffset, shadowOffset),
+                ImGui.ColorConvertFloat4ToU32(currentShadowColor),
+                50
+            );
+        }
+    }
+
+    private enum StarPosition
+    {
+        Top = 0,
+        Right = 1,
+        Left = 4,
+        BottomLeft = 3,
+        BottomRight = 2
     }
 
     // TODO: move to TextureService?

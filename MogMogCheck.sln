@@ -6,8 +6,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MogMogCheck", "MogMogCheck\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon", "HaselCommon\HaselCommon\HaselCommon.csproj", "{FE3AAA26-306B-4FAE-841D-33CAA23382AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaselCommon.Yoga", "HaselCommon\HaselCommon.Yoga\HaselCommon.Yoga.csproj", "{F3984654-BC06-4933-A555-6346E3805A2E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,14 +30,6 @@ Global
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|Any CPU.Build.0 = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.ActiveCfg = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.Build.0 = Release|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Debug|Any CPU.Build.0 = Debug|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Debug|x64.ActiveCfg = Debug|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Debug|x64.Build.0 = Debug|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Release|Any CPU.ActiveCfg = Release|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Release|Any CPU.Build.0 = Release|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Release|x64.ActiveCfg = Release|x64
-		{F3984654-BC06-4933-A555-6346E3805A2E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
