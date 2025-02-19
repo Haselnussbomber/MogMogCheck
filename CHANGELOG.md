@@ -1,13 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [3.0.0] (2025-02-19)
 
-- **Changed:** The tooltip code for Triple Triad cards has been completely reworked.
-  - It's the first time one of my plugins uses the Yoga Layout engine, so I hope it works without issues. :)
-  - Added a background shadow and tweaked the outline of the card values, so that they are easier to read.
-  - Fixed the fourth and fifth stars being swapped. (I thought I did that before?!)
-  - Fixed the left and bottom values being swapped. (No idea how that happend!)
-- **Fixed:** The item names didn't update when the language was changed in the Dalamud Settings.
+Complete rework of the plugin.
+
+Please note that the game does not yet include shop data for the Hunt for Phantasmagoria, so the plugin can't display it yet.
 
 ## [2.2.2] (2024-10-08)
 
@@ -93,6 +90,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[3.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.3...v3.0.0
 [2.2.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.0...v2.2.1
