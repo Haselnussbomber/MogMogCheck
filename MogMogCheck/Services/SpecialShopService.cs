@@ -19,6 +19,7 @@ public partial class SpecialShopService : IDisposable
     private readonly ILogger<SpecialShopService> _logger;
     private readonly ExcelService _excelService;
     private readonly IFramework _framework;
+    private bool _isDirty = true;
 
     public uint? CurrentSeason { get; private set; }
     public uint CurrentShopId { get; private set; }
@@ -41,7 +42,10 @@ public partial class SpecialShopService : IDisposable
     private unsafe void Update(IFramework framework)
     {
         var manager = CSBonusManager.Instance();
-        if (CurrentSeason != null && CurrentSeason == manager->SeasonTarget)
+        if (manager == null)
+            return;
+
+        if (!_isDirty && CurrentSeason != null && CurrentSeason == manager->SeasonTarget)
             return;
 
         CurrentSeason = manager->SeasonTarget;
@@ -95,6 +99,14 @@ public partial class SpecialShopService : IDisposable
             ShopItems = [];
         }
 
-        Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
+        if (Service.TryGet<ShopItemTable>(out var shopItemTable))
+            shopItemTable.SetReloadPending();
+
+        _isDirty = false;
+    }
+
+    public void SetIsDirty()
+    {
+        _isDirty = true;
     }
 }

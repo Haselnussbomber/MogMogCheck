@@ -6,8 +6,8 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
-using Microsoft.Extensions.DependencyInjection;
 using MogMogCheck.Config;
+using MogMogCheck.Services;
 using MogMogCheck.Tables;
 
 namespace MogMogCheck.Windows;
@@ -51,8 +51,10 @@ public unsafe partial class ConfigWindow : SimpleWindow
                     }
                 }
 
-                Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
                 _pluginConfig.Save();
+
+                if (Service.TryGet<ShopItemTable>(out var shopItemTable))
+                    shopItemTable.SetReloadPending();
             }
 
             if (_pluginConfig.TrackedItems.Any(kv => kv.Value > 1))
@@ -69,7 +71,9 @@ public unsafe partial class ConfigWindow : SimpleWindow
             if (ImGui.Checkbox(_textService.Translate("Config.HidePreviousSeasons"), ref _pluginConfig.HidePreviousSeasons))
             {
                 _pluginConfig.Save();
-                Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
+
+                if (Service.TryGet<SpecialShopService>(out var specialShopService))
+                    specialShopService.SetIsDirty();
             }
         }
     }

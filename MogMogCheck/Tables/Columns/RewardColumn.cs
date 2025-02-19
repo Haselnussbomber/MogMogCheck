@@ -5,7 +5,6 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions.Strings;
 using HaselCommon.Game.Enums;
@@ -83,7 +82,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
             if (_textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var tex, out _))
             {
-                var pos = ImGui.GetCursorScreenPos() + new Vector2((float)iconSize / 2f);
+                var pos = ImGui.GetCursorScreenPos() + new Vector2((float)iconSize / 2.1f);
                 ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos, pos + new Vector2((float)iconSize / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
             }
         }
@@ -118,7 +117,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
             if (_textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var checkTex, out _))
             {
-                var pos = ImGui.GetCursorScreenPos() + new Vector2(40 * ImGuiHelpers.GlobalScale / 2f);
+                var pos = ImGui.GetCursorScreenPos() + ImGuiHelpers.ScaledVector2(40) / 2.1f;
                 ImGui.GetWindowDrawList().AddImage(checkTex.ImGuiHandle, pos, pos + new Vector2(40 * ImGuiHelpers.GlobalScale / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
             }
         }
@@ -152,48 +151,43 @@ public partial class RewardColumn : ColumnString<ShopItem>
         {
             if (_excelService.TryGetRow<Mount>(item.ItemAction.Value!.Data[0], out var mount))
             {
-                _textureService.DrawIcon(64000 + mount.Icon, 192);
+                _textureService.DrawIcon(64000 + mount.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
             }
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.Companion)
         {
             if (_excelService.TryGetRow<Companion>(item.ItemAction.Value!.Data[0], out var companion))
             {
-                _textureService.DrawIcon(64000 + companion.Icon, 192);
+                _textureService.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
             }
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.Ornament)
         {
             if (_excelService.TryGetRow<Ornament>(item.ItemAction.Value!.Data[0], out var ornament))
             {
-                _textureService.DrawIcon(59000 + ornament.Icon, 192);
+                _textureService.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
             }
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 5211) // Emotes
         {
             if (_excelService.TryGetRow<Emote>(item.ItemAction.Value!.Data[2], out var emote))
             {
-                _textureService.DrawIcon(emote.Icon, 80);
+                _textureService.DrawIcon(emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
             }
         }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 4659) // Hairstyles
+        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item.RowId) is { } hairStyleIconId && hairStyleIconId != 0) // Hairstyles
         {
-            var playerState = PlayerState.Instance();
-            if (playerState->IsLoaded == 1 &&
-                _excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType) &&
-                _excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.Data == item.ItemAction.Value.Data[0] && hairMakeType.CharaMakeStruct[0].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
-            {
-                _textureService.DrawIcon(charaMakeCustomize.Icon, 80);
-            }
+            _textureService.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 9390) // Face Paints
         {
+            // TODO: move to ItemService
             var playerState = PlayerState.Instance();
             if (playerState->IsLoaded == 1 &&
                 _excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType) &&
                 _excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.Data == item.ItemAction.Value.Data[0] && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
             {
-                _textureService.DrawIcon(charaMakeCustomize.Icon, 80);
+                _textureService.DrawIcon(charaMakeCustomize.Icon, new DrawInfo());
             }
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.TripleTriadCard)
@@ -245,24 +239,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     _textureService.DrawIcon(pictureId, (Vector2)size * 0.5f);
                 }
             }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && _excelService.TryFindRow<CharaMakeCustomize>(row => row.HintItem.RowId == item.RowId, out _)) // Hairstyles etc.
-        {
-            byte tribeId = 1;
-            byte sex = 1;
-            unsafe
-            {
-                var character = Control.GetLocalPlayer();
-                if (character != null)
-                {
-                    tribeId = character->DrawData.CustomizeData.Tribe;
-                    sex = character->DrawData.CustomizeData.Sex;
-                }
-            }
-
-            var hairStyleIconId = _itemService.GetHairstyleIconId(item.RowId, tribeId, sex);
-            if (hairStyleIconId != 0)
-                _textureService.DrawIcon(hairStyleIconId, 192);
         }
     }
 
