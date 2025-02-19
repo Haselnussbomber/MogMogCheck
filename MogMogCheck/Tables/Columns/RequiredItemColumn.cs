@@ -12,6 +12,8 @@ using MogMogCheck.Services;
 
 namespace MogMogCheck.Tables;
 
+// TODO: add some kind of filter logic
+
 [RegisterSingleton, AutoConstruct]
 public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 {

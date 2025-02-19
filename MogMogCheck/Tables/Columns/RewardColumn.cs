@@ -3,7 +3,6 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions.Strings;
@@ -18,7 +17,6 @@ using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Records;
-using MogMogCheck.Services;
 using MogMogCheck.Windows.ItemTooltips;
 
 namespace MogMogCheck.Tables;
@@ -33,12 +31,10 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly IDataManager _dataManager;
     private readonly ITextureProvider _textureProvider;
-    private readonly IDalamudPluginInterface _pluginInterface;
-    private readonly TripleTriadNumberFont _tripleTriadNumberFontManager;
     private readonly SeStringEvaluatorService _seStringEvaluator;
     private readonly TripleTriadCardTooltip _tripleTriadCardTooltip;
 
-    private readonly Dictionary<uint, Vector2?> _iconSizeCache = [];
+    private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
 
     public override string ToName(ShopItem row)
         => _textService.GetItemName(row.ReceiveItems[0].ItemId);
@@ -214,32 +210,37 @@ public partial class RewardColumn : ColumnString<ShopItem>
             _tripleTriadCardTooltip?.Update();
             _tripleTriadCardTooltip?.Draw();
         }
-        else if (item.ItemUICategory.RowId == 95) // Paintings
+        else if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
         {
-            if (_excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture))
-            {
-                var pictureId = (uint)picture.Image;
-
-                if (!_iconSizeCache.TryGetValue(pictureId, out var size))
-                {
-                    var iconPath = _textureProvider.GetIconPath(pictureId);
-                    if (string.IsNullOrEmpty(iconPath))
-                    {
-                        _iconSizeCache.Add(pictureId, null);
-                    }
-                    else
-                    {
-                        var file = _dataManager.GetFile<TexFile>(iconPath);
-                        _iconSizeCache.Add(pictureId, size = file != null ? new(file.Header.Width, file.Header.Height) : null);
-                    }
-                }
-
-                if (size != null)
-                {
-                    _textureService.DrawIcon(pictureId, (Vector2)size * 0.5f);
-                }
-            }
+            _textureService.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
         }
+    }
+
+    // TODO: move to TextureService?
+    private Vector2 GetIconSize(uint iconId)
+    {
+        if (_iconSizeCache.TryGetValue(iconId, out var size))
+            return size;
+
+        var iconPath = _textureProvider.GetIconPath(iconId);
+        if (string.IsNullOrEmpty(iconPath))
+        {
+            _iconSizeCache.Add(iconId, size = Vector2.Zero);
+            return size;
+        }
+
+        var file = _dataManager.GetFile<TexFile>(iconPath);
+        _iconSizeCache.Add(iconId, size = file != null ? new Vector2(file.Header.Width, file.Header.Height) : Vector2.Zero);
+        return size;
+    }
+
+    private static Vector2 ResizeToFit(Vector2 imageSize, float outerWidth)
+    {
+        if (imageSize.X <= outerWidth)
+            return new Vector2(imageSize.X, imageSize.Y);
+
+        var aspectRatio = imageSize.Y / imageSize.X;
+        return new Vector2(outerWidth, outerWidth * aspectRatio);
     }
 
     private static void DrawSeparator(float marginTop = 2, float marginBottom = 5)
