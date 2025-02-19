@@ -34,7 +34,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
     public override void DrawColumn(ShopItem row)
     {
-        ImGuiUtils.PushCursorY(ImGui.GetStyle().FramePadding.Y / 2f); // my cell padding
+        ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
 
         // TODO: add support for items 2 and 3 whenever it becomes necessary
         var (itemId, quantity) = row.GiveItems[0];

@@ -43,7 +43,7 @@ public partial class TrackColumn : Column<ShopItem>
         if (!_excelService.TryGetRow<Item>(itemId, out var itemRow))
             return;
 
-        ImGuiUtils.PushCursorY(ImGui.GetStyle().FramePadding.Y / 2f); // my cell padding
+        ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
 
         ImGui.SetNextItemWidth(-1);
 

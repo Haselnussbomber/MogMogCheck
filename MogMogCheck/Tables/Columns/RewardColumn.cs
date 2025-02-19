@@ -41,7 +41,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
     public override void DrawColumn(ShopItem row)
     {
-        ImGuiUtils.PushCursorY(ImGui.GetStyle().FramePadding.Y / 2f); // my cell padding
+        ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
 
         var (itemId, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
