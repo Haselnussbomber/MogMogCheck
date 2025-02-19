@@ -4,7 +4,6 @@ using HaselCommon;
 using Microsoft.Extensions.DependencyInjection;
 using MogMogCheck.Config;
 using MogMogCheck.Services;
-using MogMogCheck.Windows;
 
 namespace MogMogCheck;
 
@@ -23,7 +22,6 @@ public sealed class Plugin : IDalamudPlugin
         framework.RunOnFrameworkThread(() =>
         {
             Service.Get<CommandManager>();
-            Service.Get<MainWindow>().Open();
         });
     }
 
