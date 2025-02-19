@@ -64,7 +64,7 @@ public partial class SpecialShopService : IDisposable
                 .ToArray();
 
             ShopItems = currentShop.Item
-                .Select((item, index) =>
+                .Select(item =>
                 {
                     var receiveItems = item.ReceiveItems
                         .Where(ri => ri.ReceiveCount > 0 && ri.Item.RowId != 0 && ri.Item.IsValid)
@@ -82,9 +82,10 @@ public partial class SpecialShopService : IDisposable
                     if (giveItems.Length == 0)
                         return default;
 
-                    return new ShopItem(index, receiveItems, giveItems);
+                    return new ShopItem(item.Unknown1[5], receiveItems, giveItems);
                 })
                 .Where(item => item != default)
+                .OrderBy(item => item.Index)
                 .ToArray();
 
             // clear old untracked items
