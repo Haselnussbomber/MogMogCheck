@@ -21,6 +21,7 @@ public unsafe partial class MainWindow : SimpleWindow
 {
     private readonly WindowManager _windowManager;
     private readonly IGameInventory _gameInventory;
+    private readonly IClientState _clientState;
     private readonly TextService _textService;
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly TextureService _textureService;
@@ -74,6 +75,13 @@ public unsafe partial class MainWindow : SimpleWindow
         _itemQuantityCache.Clear();
     }
 
+    public override bool DrawConditions()
+        => _clientState.IsLoggedIn
+            && _specialShopService.CurrentSeason != null
+            && _specialShopService.CurrentShop != null
+            && _specialShopService.ShopItems.Length != 0
+            && _specialShopService.TomestoneItemIds.Length != 0;
+
     public override void Draw()
     {
         if (!_specialShopService.CurrentShop.HasValue)
@@ -125,14 +133,4 @@ public unsafe partial class MainWindow : SimpleWindow
             }
         }
     }
-
-    /*
-    public override bool DrawConditions()
-        => _clientState.IsLoggedIn
-            && _specialShopService.CurrentSeason != null
-            && _specialShopService.CurrentShop != null
-            && _specialShopService.RewardsItems != null
-            // && RewardsTable?.TotalItems > 0
-            && _specialShopService.TomestoneItems.Count != 0;
-    */
 }
