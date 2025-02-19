@@ -177,7 +177,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         }
         else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 9390) // Face Paints
         {
-            // TODO: move to ItemService
+            // TODO: move to ItemService?
             var playerState = PlayerState.Instance();
             if (playerState->IsLoaded == 1 &&
                 _excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType) &&
@@ -202,15 +202,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
             }
 
             DrawTripleTriadCard(item);
-
-            /*
-            _tripleTriadCardTooltip.MarginTop = ImGui.GetCursorPosY();
-            _tripleTriadCardTooltip.MarginLeft = ImGui.GetContentRegionAvail().X / 2f - 208 * ImGuiHelpers.GlobalScale / 2f + ImGui.GetCursorPosX() - itemInnerSpacing.X;
-            _tripleTriadCardTooltip?.SetItem(item);
-            _tripleTriadCardTooltip?.CalculateLayout();
-            _tripleTriadCardTooltip?.Update();
-            _tripleTriadCardTooltip?.Draw();
-            */
         }
         else if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
         {

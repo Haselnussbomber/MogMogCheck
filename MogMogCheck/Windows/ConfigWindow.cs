@@ -32,7 +32,7 @@ public unsafe partial class ConfigWindow : SimpleWindow
     public override void Draw()
     {
         // OpenWithMogpendium
-        if (ImGui.Checkbox($"{_textService.Translate("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref _pluginConfig.OpenWithMogpendium))
+        if (ImGui.Checkbox(_textService.Translate("Config.OpenWithMogpendium"), ref _pluginConfig.OpenWithMogpendium))
         {
             _pluginConfig.Save();
         }

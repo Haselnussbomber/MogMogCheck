@@ -17,11 +17,7 @@
     "en": "Could not load the configuration file. Creating a new one.",
     "de": "Die Konfigurationsdatei konnte nicht geladen werden. Es wird eine neue erstellt."
   },
-  "Config.LanguageNote": {
-    "en": "- Item names are always in the client's language, as they are properly formatted by the game's localization system.\n- At the moment, the plugin is only translated into English and German.",
-    "de": "- Die Gegenstandsnamen sind immer in der Sprache des Clients, da sie vom Lokalisierungssystem des Spiels richtig formatiert werden.\n- Im Moment ist das Plugin nur in Englisch und Deutsch übersetzt."
-  },
-  "Config.OpenWithMogpendium.Label": {
+  "Config.OpenWithMogpendium": {
     "en": "Open/Close with Mogpendium",
     "de": "Mit Mogpendium öffnen/schließen"
   },
