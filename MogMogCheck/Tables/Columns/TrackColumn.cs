@@ -70,7 +70,7 @@ public partial class TrackColumn : Column<ShopItem>
                 _pluginConfig.Save();
             }
 
-            if (isChecked && (ImGui.IsItemHovered() || ImGui.IsItemActive()))
+            if (ImGui.IsItemHovered() || ImGui.IsItemActive())
             {
                 ImGui.BeginTooltip();
                 ImGui.TextUnformatted(_textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", row.GiveItems[0].Quantity));

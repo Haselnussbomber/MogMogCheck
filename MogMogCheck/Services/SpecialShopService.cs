@@ -5,7 +5,6 @@ using HaselCommon;
 using HaselCommon.Extensions.Collections;
 using HaselCommon.Services;
 using Lumina.Excel.Sheets;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
@@ -18,6 +17,7 @@ public partial class SpecialShopService : IDisposable
 {
     private readonly ILogger<SpecialShopService> _logger;
     private readonly ExcelService _excelService;
+    private readonly PluginConfig _pluginConfig;
     private readonly IFramework _framework;
     private bool _isDirty = true;
 
@@ -82,16 +82,15 @@ public partial class SpecialShopService : IDisposable
                     if (giveItems.Length == 0)
                         return default;
 
-                    return new ShopItem(item.Unknown1[5], receiveItems, giveItems);
+                    return new ShopItem(item.Unknown1[5], receiveItems, giveItems); // while I support multiple items here, it's not supported in the table
                 })
                 .Where(item => item != default)
                 .OrderBy(item => item.Index)
                 .ToArray();
 
             // clear old untracked items
-            var pluginConfig = Service.Provider?.GetService<PluginConfig>();
-            if (pluginConfig != null && pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
-                pluginConfig.Save();
+            if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
+                _pluginConfig.Save();
         }
         else
         {

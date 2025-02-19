@@ -29,9 +29,9 @@
     "en": "Checkbox-Mode",
     "de": "Checkbox-Modus"
   },
-  "Config.CheckboxMode.Tooltip": {
-    "en": "Stacks larger than 1 are reset!",
-    "de": "Stapel, die größer als 1 sind, werden zurückgesetzt!"
+  "Config.CheckboxMode.ResetInfo": {
+    "en": "Stacks that are greater than 1 are reset when this option is activated!",
+    "de": "Stapel, die größer als 1 sind, werden beim Aktivieren dieser Option zurückgesetzt!"
   },
   "Config.HidePreviousSeasons": {
     "en": "Hide previous seasons",

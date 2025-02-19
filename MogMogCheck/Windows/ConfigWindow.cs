@@ -7,7 +7,6 @@ using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
 using MogMogCheck.Config;
-using MogMogCheck.Services;
 using MogMogCheck.Tables;
 
 namespace MogMogCheck.Windows;
@@ -61,13 +60,15 @@ public unsafe partial class ConfigWindow : SimpleWindow
             {
                 ImGuiUtils.PushCursorY(-3);
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                ImGuiHelpers.SafeTextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.Tooltip"));
-                ImGuiUtils.PushCursorY(3);
+                ImGuiHelpers.SafeTextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.ResetInfo"));
             }
         }
 
+        /*
         // HidePreviousSeasons
+        // Not implemented anymore with the rework. Might have to add this back at some time.
         {
+            ImGuiUtils.PushCursorY(3);
             if (ImGui.Checkbox(_textService.Translate("Config.HidePreviousSeasons"), ref _pluginConfig.HidePreviousSeasons))
             {
                 _pluginConfig.Save();
@@ -76,5 +77,6 @@ public unsafe partial class ConfigWindow : SimpleWindow
                     specialShopService.SetIsDirty();
             }
         }
+        */
     }
 }
