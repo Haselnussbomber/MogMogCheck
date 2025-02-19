@@ -1,71 +1,100 @@
-using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using HaselCommon;
+using HaselCommon.Extensions.Collections;
 using HaselCommon.Services;
+using Lumina.Excel.Sheets;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
-using Item = Lumina.Excel.GeneratedSheets.Item;
-using SpecialShop = Lumina.Excel.GeneratedSheets2.SpecialShop;
+using MogMogCheck.Tables;
 
 namespace MogMogCheck.Services;
 
-public class SpecialShopService(
-    ILogger<SpecialShopService> Logger,
-    ExcelService ExcelService,
-    PluginConfig PluginConfig)
+[RegisterSingleton, AutoConstruct]
+public partial class SpecialShopService : IDisposable
 {
-    public bool IsDirty { get; set; }
+    private readonly ILogger<SpecialShopService> _logger;
+    private readonly ExcelService _excelService;
+    private readonly IFramework _framework;
+
     public uint? CurrentSeason { get; private set; }
     public uint CurrentShopId { get; private set; }
     public SpecialShop? CurrentShop { get; private set; }
-    public Reward[] RewardsItems { get; private set; } = [];
-    public Dictionary<uint, Item> TomestoneItems { get; private set; } = [];
+    public ShopItem[] ShopItems { get; private set; } = [];
+    public uint[] TomestoneItemIds { get; private set; } = [];
 
-    public unsafe bool Update()
+    [AutoPostConstruct]
+    private void Initialize()
+    {
+        _framework.Update += Update;
+    }
+
+    public void Dispose()
+    {
+        _framework.Update -= Update;
+        GC.SuppressFinalize(this);
+    }
+
+    private unsafe void Update(IFramework framework)
     {
         var manager = CSBonusManager.Instance();
-        if (!IsDirty && CurrentSeason != null && CurrentSeason == manager->SeasonTarget)
-            return false;
+        if (CurrentSeason != null && CurrentSeason == manager->SeasonTarget)
+            return;
 
         CurrentSeason = manager->SeasonTarget;
         CurrentShopId = CurrentSeason == 0 ? 1770710u : 1769929;
 
-        Logger.LogDebug("Update: Season {season}, Shop Id {shopId}", CurrentSeason, CurrentShopId);
+        _logger.LogDebug("Update: Season {season}, Shop Id {shopId}", CurrentSeason, CurrentShopId);
 
-        CurrentShop = ExcelService.GetRow<SpecialShop>(CurrentShopId);
-        if (CurrentShop == null)
-            return true;
-
-        var rewards = new List<Reward>();
-        var lastGiveItemId = 0;
-        var index = 0;
-        foreach (var row in CurrentShop.Item
-            .Where(row => row.Item[0].Row != 0 && row.ItemCost[0] != 0)
-            .OrderBy(row => row.Unknown1[5]))
+        if (_excelService.TryGetRow<SpecialShop>(CurrentShopId, out var currentShop))
         {
-            if (lastGiveItemId != 0 && lastGiveItemId != row.ItemCost[0] && PluginConfig.HidePreviousSeasons)
-                break;
+            CurrentShop = currentShop;
 
-            rewards.Add(new Reward(index++, row, ExcelService));
-            lastGiveItemId = row.ItemCost[0];
+            TomestoneItemIds = currentShop.Item
+                .Select(item => item.ItemCosts[0].ItemCost.RowId)
+                .Where(itemId => itemId != 0)
+                .Distinct()
+                .ToArray();
+
+            ShopItems = currentShop.Item
+                .Select((item, index) =>
+                {
+                    var receiveItems = item.ReceiveItems
+                        .Where(ri => ri.ReceiveCount > 0 && ri.Item.RowId != 0 && ri.Item.IsValid)
+                        .Select(ri => new ItemEntry(ri.Item.RowId, ri.ReceiveCount))
+                        .ToArray();
+
+                    if (receiveItems.Length == 0)
+                        return default;
+
+                    var giveItems = item.ItemCosts
+                        .Where(gi => gi.ItemCost.RowId != 0 && gi.ItemCost.IsValid)
+                        .Select(gi => new ItemEntry(gi.ItemCost.RowId, gi.CurrencyCost))
+                        .ToArray();
+
+                    if (giveItems.Length == 0)
+                        return default;
+
+                    return new ShopItem(index, receiveItems, giveItems);
+                })
+                .Where(item => item != default)
+                .ToArray();
+
+            // clear old untracked items
+            var pluginConfig = Service.Provider?.GetService<PluginConfig>();
+            if (pluginConfig != null && pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
+                pluginConfig.Save();
+        }
+        else
+        {
+            CurrentShop = null;
+            TomestoneItemIds = [];
+            ShopItems = [];
         }
 
-        RewardsItems = [.. rewards];
-
-        TomestoneItems.Clear();
-        foreach (var reward in RewardsItems)
-        {
-            foreach (var (item, quantity) in reward.GiveItems)
-            {
-                if (item == null || item.RowId == 0)
-                    continue;
-
-                TomestoneItems.TryAdd(item.RowId, item);
-            }
-        }
-
-        IsDirty = false;
-        return true;
+        Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
     }
 }

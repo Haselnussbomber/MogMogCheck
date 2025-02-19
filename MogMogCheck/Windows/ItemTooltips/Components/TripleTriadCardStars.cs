@@ -1,20 +1,31 @@
 using System.Numerics;
 using Dalamud.Interface.Utility;
-using HaselCommon.Gui.Yoga;
 using HaselCommon.Services;
+using HaselCommon.Yoga;
 using ImGuiNET;
+using YogaSharp;
 
 namespace MogMogCheck.Windows.ItemTooltips.Components;
 
-public class TripleTriadCardStars(TextureService textureService) : Node()
+[RegisterTransient, AutoConstruct]
+public partial class TripleTriadCardStars : Node
 {
+    private readonly TextureService _textureService;
+
     public int Stars { get; set; }
+
+    [AutoPostConstruct]
+    private void Initialize()
+    {
+        FlexGrow = 1;
+        Overflow = YGOverflow.Hidden;
+    }
 
     public override void DrawContent()
     {
         var starSize = 32 * 0.75f * ImGuiHelpers.GlobalScale;
         var starRadius = starSize / 1.666f;
-        var starCenter = AbsolutePosition + new Vector2(ComputedMarginLeft, ComputedMarginTop) + new Vector2(starSize) / 2f;
+        var starCenter = new Vector2(ComputedMarginLeft, ComputedMarginTop) + new Vector2(starSize) / 2f;
 
         void DrawStar(StarPosition pos)
         {
@@ -22,7 +33,7 @@ public class TripleTriadCardStars(TextureService textureService) : Node()
             var angle = (int)pos * angleIncrement - MathF.PI / 2;
 
             ImGui.SetCursorPos(starCenter + new Vector2(starRadius * MathF.Cos(angle), starRadius * MathF.Sin(angle)));
-            textureService.DrawPart("CardTripleTriad", 1, 1, starSize);
+            _textureService.DrawPart("CardTripleTriad", 1, 1, starSize);
         }
 
         if (Stars >= 1)

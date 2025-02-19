@@ -2,6 +2,13 @@
   "Plugin.DisplayName": {
     "en": "MogMogCheck"
   },
+  "MainWindow.Title": {
+    "en": "MogMogCheck"
+  },
+  "ConfigWindow.Title": {
+    "en": "MogMogCheck Configuration",
+    "de": "MogMogCheck Konfiguration"
+  },
   "CommandHandlerHelpMessage": {
     "en": "Open Window",
     "de": "Öffne Fenster"
@@ -49,17 +56,17 @@
     "de": "{0} im Besitz, {1} benötigt, {2} verbleibend"
   },
 
-  "Table.Rewards.Header.Track": {
+  "MogMogCheck.Tables.TrackColumn.Label": {
     "en": "Track",
     "de": "Verfolgen"
   },
-  "Table.Rewards.Header.Reward": {
+  "MogMogCheck.Tables.RewardColumn.Label": {
     "ja": "交換できるアイテム",
     "en": "Exchangeable Items",
     "de": "Eintauschbare Gegenstände",
     "fr": "Objets échangeables"
   },
-  "Table.Rewards.Header.RequiredItem": {
+  "MogMogCheck.Tables.RequiredItemColumn.Label": {
     "ja": "交換必要数",
     "en": "Tomestones Required",
     "de": "Benötigte Steine",

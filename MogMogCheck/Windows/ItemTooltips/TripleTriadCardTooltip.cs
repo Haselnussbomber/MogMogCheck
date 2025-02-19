@@ -1,48 +1,56 @@
-using HaselCommon.Gui.Yoga;
 using HaselCommon.Services;
-using Lumina.Excel.GeneratedSheets;
-using MogMogCheck.Services;
+using HaselCommon.Yoga;
+using Lumina.Excel.Sheets;
 using MogMogCheck.Windows.ItemTooltips.Components;
 using YogaSharp;
 
 namespace MogMogCheck.Windows.ItemTooltips;
 
-public class TripleTriadCardTooltip : Node
+[RegisterTransient, AutoConstruct]
+public partial class TripleTriadCardTooltip : Node
 {
     private readonly ExcelService _excelService;
-    private readonly TextNode _infoLine;
+    private readonly SeStringEvaluatorService _seStringEvaluator;
     private readonly TripleTriadCardNode _card;
-    private Item? _item;
+    private TextNode _infoLine;
+    private uint _cardRowId;
 
-    public TripleTriadCardTooltip(
-        TextureService textureService,
-        ExcelService excelService,
-        TripleTriadNumberFontManager tripleTriadNumberFontManager) : base()
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _excelService = excelService;
-
         Margin = 8;
         AlignItems = YGAlign.Center;
         RowGap = 4;
 
         Add(
             _infoLine = new TextNode(),
-            _card = new TripleTriadCardNode(textureService, excelService, tripleTriadNumberFontManager)
+            _card
         );
     }
 
     public void SetItem(Item item)
     {
-        if (_item != item)
-        {
-            _item = item;
+        SetCard(item.ItemAction.Value!.Data[0]);
+    }
 
-            var cardId = _item.ItemAction.Value!.Data[0];
-            var cardRow = _excelService.GetRow<TripleTriadCard>(cardId)!;
-            var cardResident = _excelService.GetRow<TripleTriadCardResident>(cardId)!;
+    public void SetCard(uint cardId)
+    {
+        if (_cardRowId == cardId)
+            return;
 
-            _infoLine.Text = $"{(cardResident.TripleTriadCardRarity.Row == 5 ? "Ex" : "No")}. {cardResident.Order} - {cardRow.Name}";
-            _card.SetItem(item);
-        }
+        if (!_excelService.TryGetRow<TripleTriadCard>(cardId, out var cardRow))
+            return;
+
+        if (!_excelService.TryGetRow<TripleTriadCardResident>(cardId, out var cardResident))
+            return;
+
+        _cardRowId = cardId;
+
+        var isEx = cardResident.UIPriority == 5;
+        var order = (uint)cardResident.Order;
+        var addonRowId = isEx ? 9773u : 9772;
+
+        _infoLine.Text = $"{_seStringEvaluator.EvaluateFromAddon(addonRowId, [order]).ExtractText()} - {cardRow.Name}";
+        _card.SetCard(_cardRowId, cardResident);
     }
 }

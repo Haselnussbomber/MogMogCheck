@@ -1,24 +1,38 @@
 using System.Numerics;
 using Dalamud.Interface.Utility;
 using HaselCommon.Graphics;
-using HaselCommon.Gui.Yoga;
+using HaselCommon.Yoga;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using MogMogCheck.Services;
+using YogaSharp;
 
 namespace MogMogCheck.Windows.ItemTooltips.Components;
 
-public class TripleTriadCardNumbers(TripleTriadNumberFontManager tripleTriadNumberFontManager) : Node()
+[RegisterTransient, AutoConstruct]
+public partial class TripleTriadCardNumbers : Node
 {
-    private TripleTriadCardResident? _card;
+    private readonly TripleTriadNumberFont _tripleTriadNumberFont;
+    private TripleTriadCardResident _card;
     private string _textTop = string.Empty;
     private string _textBottom = string.Empty;
     private string _textRight = string.Empty;
     private string _textLeft = string.Empty;
 
+    [AutoPostConstruct]
+    private void Initialize()
+    {
+        Display = YGDisplay.None;
+        PositionType = YGPositionType.Absolute;
+        PositionTop = YGValue.Percent(75);
+        Width = YGValue.Percent(100);
+        Height = YGValue.Percent(25);
+        Overflow = YGOverflow.Hidden;
+    }
+
     public void SetCard(TripleTriadCardResident card)
     {
-        if (_card != card)
+        if (_card.RowId != card.RowId)
         {
             _card = card;
 
@@ -31,18 +45,14 @@ public class TripleTriadCardNumbers(TripleTriadNumberFontManager tripleTriadNumb
 
     public override void DrawContent()
     {
-        if (_card == null)
+        if (_card.RowId == 0)
             return;
 
-        using var font = tripleTriadNumberFontManager.GetFont().Push();
+        using var font = _tripleTriadNumberFont.Push();
 
         var letterSize = ImGui.CalcTextSize("A");
-        Width = letterSize.X * 2;
-        Height = letterSize.Y * 2;
-
-        var pos = AbsolutePosition;
-        var scale = 2.25f;
-        var scaledLetterSize = letterSize / scale;
+        var scaledLetterSize = letterSize / 2.25f;
+        var pos = ComputedSize / 2f - letterSize;
 
         var positionTop = pos + new Vector2(scaledLetterSize.X, -scaledLetterSize.Y);
         var positionBottom = pos + new Vector2(scaledLetterSize.X, scaledLetterSize.Y);
@@ -62,7 +72,7 @@ public class TripleTriadCardNumbers(TripleTriadNumberFontManager tripleTriadNumb
 
     private static void DrawTextShadow(Vector2 position, string text)
     {
-        DrawShadow(ImGui.GetWindowPos() + position, ImGui.CalcTextSize(text), 8, Color.Black with { A = 0.1f });
+        DrawShadow(position, ImGui.CalcTextSize(text), 8, Color.Black with { A = 0.1f });
     }
 
     private static void DrawText(Vector2 position, string text)

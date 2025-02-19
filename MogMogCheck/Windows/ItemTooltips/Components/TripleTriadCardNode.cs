@@ -1,94 +1,85 @@
 using Dalamud.Interface.Utility;
-using HaselCommon.Gui.Yoga;
-using HaselCommon.Gui.Yoga.Components;
 using HaselCommon.Services;
+using HaselCommon.Yoga;
+using HaselCommon.Yoga.Components;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using MogMogCheck.Services;
+using Lumina.Excel.Sheets;
 using YogaSharp;
 
 namespace MogMogCheck.Windows.ItemTooltips.Components;
 
-public class TripleTriadCardNode : Node
+[RegisterTransient, AutoConstruct]
+public partial class TripleTriadCardNode : Node
 {
     private readonly TextureService _textureService;
-    private readonly ExcelService _excelService;
-    private readonly TripleTriadNumberFontManager _tripleTriadNumberFontManager;
     private readonly TripleTriadCardStars _cardStars;
-    private readonly UldImage _cardType;
     private readonly TripleTriadCardNumbers _cardNumbers;
-    private Item? _item;
+    private UldImage _cardType;
     private uint _cardRowId;
 
-    public TripleTriadCardNode(
-        TextureService textureService,
-        ExcelService excelService,
-        TripleTriadNumberFontManager tripleTriadNumberFontManager) : base()
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _textureService = textureService;
-        _excelService = excelService;
-        _tripleTriadNumberFontManager = tripleTriadNumberFontManager;
-
-        Width = 208;
-        Height = 256;
         JustifyContent = YGJustify.SpaceBetween;
+        PositionType = YGPositionType.Relative;
 
         Add(new Node()
         {
-            Margin = YGValue.Percent(4),
+            PositionType = YGPositionType.Absolute,
+            Width = YGValue.Percent(100),
+            Height = YGValue.Percent(25),
+            Padding = YGValue.Percent(6),
             FlexDirection = YGFlexDirection.Row,
             JustifyContent = YGJustify.SpaceBetween,
             Children = [
-                _cardStars = new TripleTriadCardStars(textureService)
-                {
-                    Margin = YGValue.Percent(2),
-                },
+                _cardStars,
                 _cardType = new UldImage()
                 {
+                    AlignSelf = YGAlign.FlexStart,
                     UldName = "CardTripleTriad",
                     PartListId = 1,
                     PartIndex = 1,
                     Scale = 0.75f,
-                    Display = YGDisplay.None
+                    Display = YGDisplay.None,
+                    Overflow = YGOverflow.Hidden
                 }
             ]
         });
 
-        Add(_cardNumbers = new TripleTriadCardNumbers(tripleTriadNumberFontManager)
-        {
-            Display = YGDisplay.None,
-            AlignSelf = YGAlign.Center,
-            MarginBottom = YGValue.Percent(4)
-        });
+        Add(_cardNumbers);
     }
 
-    public void SetItem(Item item)
+    public override void ApplyGlobalScale(float globalFontScale)
     {
-        if (_item != item)
+        Width = 208 * globalFontScale;
+        Height = 256 * globalFontScale;
+    }
+
+    internal void SetCard(uint cardRowId, TripleTriadCardResident cardResident)
+    {
+        var cardSizeScaled = ImGuiHelpers.ScaledVector2(208, 256);
+        Width = cardSizeScaled.X;
+        Height = cardSizeScaled.Y;
+
+        _cardRowId = cardRowId;
+        var cardRarity = cardResident.TripleTriadCardRarity.Value!;
+
+        _cardStars.Stars = cardRarity.Stars;
+
+        _cardType.Display = cardResident.TripleTriadCardType.RowId != 0 ? YGDisplay.Flex : YGDisplay.None;
+        _cardType.PartIndex = cardResident.TripleTriadCardType.RowId switch
         {
-            _item = item;
+            4 => 2,
+            _ => cardResident.TripleTriadCardType.RowId + 2
+        };
 
-            var cardSizeScaled = ImGuiHelpers.ScaledVector2(208, 256);
-            Width = cardSizeScaled.X;
-            Height = cardSizeScaled.Y;
-
-            _cardRowId = _item.ItemAction.Value!.Data[0];
-            var cardResident = _excelService.GetRow<TripleTriadCardResident>(_cardRowId)!;
-            var cardRarity = cardResident.TripleTriadCardRarity.Value!;
-
-            _cardStars.Stars = cardRarity.Stars;
-
-            _cardType.Display = cardResident.TripleTriadCardType.Row != 0 ? YGDisplay.Flex : YGDisplay.None;
-            _cardType.PartIndex = cardResident.TripleTriadCardType.Row + 2;
-
-            _cardNumbers.SetCard(cardResident);
-            _cardNumbers.Display = YGDisplay.Flex;
-        }
+        _cardNumbers.SetCard(cardResident);
+        _cardNumbers.Display = YGDisplay.Flex;
     }
 
     public override void DrawContent()
     {
-        if (_item == null)
+        if (_cardRowId == 0)
             return;
 
         var cardSize = ComputedSize;

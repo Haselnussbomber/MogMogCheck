@@ -1,8 +1,9 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
-using HaselCommon.Caching;
+using HaselCommon.Cache;
 
 namespace MogMogCheck.Caches;
 
+[RegisterSingleton]
 public class ItemQuantityCache : MemoryCache<uint, uint>
 {
     public override unsafe uint CreateEntry(uint itemId)

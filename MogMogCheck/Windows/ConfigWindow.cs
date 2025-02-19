@@ -1,34 +1,26 @@
 using System.Linq;
 using System.Numerics;
-using Dalamud.Plugin;
+using Dalamud.Interface.Utility;
+using HaselCommon;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using MogMogCheck.Config;
-using MogMogCheck.Services;
+using MogMogCheck.Tables;
 
 namespace MogMogCheck.Windows;
 
-public unsafe class ConfigWindow : SimpleWindow
+[RegisterSingleton, AutoConstruct]
+public unsafe partial class ConfigWindow : SimpleWindow
 {
-    private readonly IDalamudPluginInterface PluginInterface;
-    private readonly PluginConfig PluginConfig;
-    private readonly TextService TextService;
-    private readonly SpecialShopService SpecialShopService;
+    private readonly PluginConfig _pluginConfig;
+    private readonly TextService _textService;
 
-    public ConfigWindow(
-        WindowManager windowManager,
-        IDalamudPluginInterface pluginInterface,
-        PluginConfig pluginConfig,
-        TextService textService,
-        SpecialShopService specialShopService) : base(windowManager, "MogMogCheck Configuration")
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        PluginInterface = pluginInterface;
-        PluginConfig = pluginConfig;
-        TextService = textService;
-        SpecialShopService = specialShopService;
-
         AllowClickthrough = false;
         AllowPinning = false;
 
@@ -36,55 +28,48 @@ public unsafe class ConfigWindow : SimpleWindow
 
         Size = new Vector2(380, -1);
         SizeCondition = ImGuiCond.Appearing;
-
-        PluginInterface.UiBuilder.OpenConfigUi += Toggle;
-    }
-
-    public new void Dispose()
-    {
-        PluginInterface.UiBuilder.OpenConfigUi -= Toggle;
-        base.Dispose();
     }
 
     public override void Draw()
     {
         // OpenWithMogpendium
-        if (ImGui.Checkbox($"{TextService.Translate("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref PluginConfig.OpenWithMogpendium))
+        if (ImGui.Checkbox($"{_textService.Translate("Config.OpenWithMogpendium.Label")}##OpenWithMogpendium", ref _pluginConfig.OpenWithMogpendium))
         {
-            PluginConfig.Save();
+            _pluginConfig.Save();
         }
 
         // CheckboxMode
         {
-            if (ImGui.Checkbox(TextService.Translate("Config.CheckboxMode"), ref PluginConfig.CheckboxMode))
+            if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode"), ref _pluginConfig.CheckboxMode))
             {
-                if (PluginConfig.CheckboxMode)
+                if (_pluginConfig.CheckboxMode)
                 {
-                    foreach (var (itemId, amount) in PluginConfig.TrackedItems)
+                    foreach (var (itemId, amount) in _pluginConfig.TrackedItems)
                     {
                         if (amount > 1)
-                            PluginConfig.TrackedItems[itemId] = 1;
+                            _pluginConfig.TrackedItems[itemId] = 1;
                     }
                 }
 
-                PluginConfig.Save();
+                Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
+                _pluginConfig.Save();
             }
 
-            if (PluginConfig.TrackedItems.Any(kv => kv.Value > 1))
+            if (_pluginConfig.TrackedItems.Any(kv => kv.Value > 1))
             {
                 ImGuiUtils.PushCursorY(-3);
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                TextService.DrawWrapped(Color.Grey, "Config.CheckboxMode.Tooltip");
+                ImGuiHelpers.SafeTextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.Tooltip"));
                 ImGuiUtils.PushCursorY(3);
             }
         }
 
         // HidePreviousSeasons
         {
-            if (ImGui.Checkbox(TextService.Translate("Config.HidePreviousSeasons"), ref PluginConfig.HidePreviousSeasons))
+            if (ImGui.Checkbox(_textService.Translate("Config.HidePreviousSeasons"), ref _pluginConfig.HidePreviousSeasons))
             {
-                PluginConfig.Save();
-                SpecialShopService.IsDirty = true;
+                _pluginConfig.Save();
+                Service.Provider?.GetService<ShopItemTable>()?.SetReloadPending();
             }
         }
     }
