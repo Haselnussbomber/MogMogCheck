@@ -35,6 +35,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
 
     private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
+    private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
         => _textService.GetItemName(row.ReceiveItems[0].ItemId);
@@ -143,70 +144,84 @@ public partial class RewardColumn : ColumnString<ShopItem>
             ImGuiHelpers.SafeTextWrapped(description);
         }
 
-        if (item.ItemAction.Value.Type == (uint)ItemActionType.Mount)
+        switch ((ItemActionType)item.ItemAction.Value.Type)
         {
-            if (_excelService.TryGetRow<Mount>(item.ItemAction.Value!.Data[0], out var mount))
-            {
+            case ItemActionType.Mount when _excelService.TryGetRow<Mount>(item.ItemAction.Value.Data[0], out var mount):
                 _textureService.DrawIcon(64000 + mount.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
-            }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.Companion)
-        {
-            if (_excelService.TryGetRow<Companion>(item.ItemAction.Value!.Data[0], out var companion))
-            {
-                _textureService.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
-            }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.Ornament)
-        {
-            if (_excelService.TryGetRow<Ornament>(item.ItemAction.Value!.Data[0], out var ornament))
-            {
-                _textureService.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
-            }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 5211) // Emotes
-        {
-            if (_excelService.TryGetRow<Emote>(item.ItemAction.Value!.Data[2], out var emote))
-            {
-                _textureService.DrawIcon(emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
-            }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item.RowId) is { } hairStyleIconId && hairStyleIconId != 0) // Hairstyles
-        {
-            _textureService.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.UnlockLink && item.ItemAction.Value.Data[1] == 9390) // Face Paints
-        {
-            // TODO: move to ItemService?
-            var playerState = PlayerState.Instance();
-            if (playerState->IsLoaded == 1 &&
-                _excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType) &&
-                _excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.Data == item.ItemAction.Value.Data[0] && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
-            {
-                _textureService.DrawIcon(charaMakeCustomize.Icon, new DrawInfo());
-            }
-        }
-        else if (item.ItemAction.Value.Type == (uint)ItemActionType.TripleTriadCard)
-        {
-            if (_excelService.TryGetRow<TripleTriadCardResident>(item.ItemAction.Value.Data[0], out var residentRow) &&
-                _excelService.TryGetRow<TripleTriadCardObtain>(residentRow.AcquisitionType, out var obtainRow) &&
-                obtainRow.Unknown1 != 0)
-            {
-                DrawSeparator();
-                _textureService.DrawIcon(obtainRow.Unknown0, 40 * ImGuiHelpers.GlobalScale);
-                ImGui.SameLine();
-                ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Unknown1, [
-                    residentRow.Acquisition.RowId,
-                    residentRow.Location.RowId
-                ]).ExtractText().StripSoftHypen());
-            }
+                break;
 
-            DrawTripleTriadCard(item);
+            case ItemActionType.Companion when _excelService.TryGetRow<Companion>(item.ItemAction.Value.Data[0], out var companion):
+                _textureService.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                break;
+
+            case ItemActionType.Ornament when _excelService.TryGetRow<Ornament>(item.ItemAction.Value.Data[0], out var ornament):
+                _textureService.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                break;
+
+            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 5211 && _excelService.TryGetRow<Emote>(item.ItemAction.Value.Data[2], out var emote):
+                _textureService.DrawIcon(emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                break;
+
+            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item.RowId) is { } hairStyleIconId && hairStyleIconId != 0:
+                _textureService.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
+                break;
+
+            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 9390 && TryGetFacePaintIconId(item.ItemAction.Value.Data[0], out var facePaintIconId):
+                _textureService.DrawIcon(facePaintIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
+                break;
+
+            case ItemActionType.TripleTriadCard:
+                if (_excelService.TryGetRow<TripleTriadCardResident>(item.ItemAction.Value.Data[0], out var residentRow) &&
+                    _excelService.TryGetRow<TripleTriadCardObtain>(residentRow.AcquisitionType, out var obtainRow) &&
+                    obtainRow.Unknown1 != 0)
+                {
+                    DrawSeparator();
+                    _textureService.DrawIcon(obtainRow.Unknown0, 40 * ImGuiHelpers.GlobalScale);
+                    ImGui.SameLine();
+                    ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Unknown1, [
+                        residentRow.Acquisition.RowId,
+                    residentRow.Location.RowId
+                    ]).ExtractText().StripSoftHypen());
+                }
+
+                DrawTripleTriadCard(item);
+                break;
+
+            default:
+                if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
+                {
+                    _textureService.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
+                }
+                break;
         }
-        else if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
+    }
+
+    private unsafe bool TryGetFacePaintIconId(ushort dataId, out uint iconId)
+    {
+        if (_facePaintIconCache.TryGetValue(dataId, out iconId))
+            return true;
+
+        var playerState = PlayerState.Instance();
+        if (playerState == null || playerState->IsLoaded == 0)
         {
-            _textureService.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
+            _facePaintIconCache.Add(dataId, iconId = 0);
+            return false;
         }
+
+        if (!_excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType))
+        {
+            _facePaintIconCache.Add(dataId, iconId = 0);
+            return false;
+        }
+
+        if (!_excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.Data == dataId && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
+        {
+            _facePaintIconCache.Add(dataId, iconId = 0);
+            return false;
+        }
+
+        _facePaintIconCache.Add(dataId, iconId = charaMakeCustomize.Icon);
+        return true;
     }
 
     private void DrawTripleTriadCard(Item item)
