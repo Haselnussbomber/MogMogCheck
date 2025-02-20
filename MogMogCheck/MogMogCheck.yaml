@@ -6,3 +6,4 @@ icon_url: https://raw.githubusercontent.com/Haselnussbomber/MogMogCheck/main/Mog
 description: MogMogCheck is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).
 load_required_state: 1
 can_unload_async: true
+accepts_feedback: false
