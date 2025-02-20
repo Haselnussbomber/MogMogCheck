@@ -14,9 +14,9 @@ Simply tick the checkboxes of the items you want to track and it shows you how m
 
 ![Screenshot of MogMogCheck](https://github.com/user-attachments/assets/dd22eb21-1d6f-4917-ba2c-20afe73f051e)
 
-When hovering over a reward, it will show an item tooltip with the description and - if possible - an icon, like the mount, minion or picture preview, the hairstyle or even the Triple Triad Card and how it's unlocked:
+And if you disable the Checkbox-Mode in the settings, you can track non-unique items multiple times:
 
-![Screenshot of MogMogChecks Triple Triad Card Tooltip](https://github.com/user-attachments/assets/afbf75da-c301-4a3e-97c2-fba48300e634)
+![Screenshot of Checkbox-Mode off](https://github.com/user-attachments/assets/d029c0aa-4fc0-4d5b-940d-e2c849f6d684)
 
 ---
 
