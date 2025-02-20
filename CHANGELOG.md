@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.1] (2025-02-20)
+
+- **Fixed:** When "Enable sound effects for plugin windows" is enabled in Dalamud, the window open sound effect would play twice - for the MogMogCheck window and the Mogpendium.
+- **Fixed:** A potential issue when drawing icons for high quality items.
+
 ## [3.0.0] (2025-02-19)
 
 Complete rework of the plugin.
@@ -90,6 +95,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[3.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.3...v3.0.0
 [2.2.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.1...v2.2.2
