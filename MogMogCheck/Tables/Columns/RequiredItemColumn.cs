@@ -46,7 +46,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
             TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey
         });
 
-        _imGuiContextMenuService.Draw($"##{row.Index}_ItemContextMenu{itemId}_Tooltip", builder =>
+        _imGuiContextMenuService.Draw($"##RequiredItemColumnContextMenu{itemId}", builder =>
         {
             builder.AddItemFinder(itemId);
             builder.AddCopyItemName(itemId);

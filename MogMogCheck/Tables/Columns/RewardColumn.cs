@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
@@ -46,25 +47,21 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         var (itemId, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
-        var isHovered = false;
 
-        // Icon
-        _textureService.DrawIcon(_itemService.GetIconId(itemId) + (itemId.IsHighQuality() ? 1_000_000u : 0), iconSize);
-        isHovered |= ImGui.IsItemHovered();
+        ImGui.BeginGroup();
 
-        // Name
+        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), itemId.IsHighQuality()), iconSize);
         ImGui.SameLine();
-        ImGui.Selectable($"##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
-        isHovered |= ImGui.IsItemHovered();
-        ImGui.SameLine(iconSize + ImGui.GetStyle().ItemSpacing.X, 0);
-        ImGui.TextUnformatted((quantity > 1 ? $"{quantity}x " : string.Empty) + _textService.GetItemName(itemId));
+        ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_textService.GetItemName(itemId)}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
 
-        if (isHovered && !ImGui.IsKeyDown(ImGuiKey.LeftAlt) && _excelService.TryGetRow<Item>(itemId, out var item))
+        ImGui.EndGroup();
+
+        if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt) && _excelService.TryGetRow<Item>(itemId, out var item))
         {
             DrawItemTooltip(item);
         }
 
-        _imGuiContextMenuService.Draw($"##ShopItemReward{row.Index}_ItemContextMenu{itemId}_IconTooltip", builder =>
+        _imGuiContextMenuService.Draw($"##RewardColumnContextMenu{itemId}", builder =>
         {
             builder.AddTryOn(itemId);
             builder.AddItemFinder(itemId);
@@ -90,7 +87,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!_textureProvider.TryGetFromGameIcon((uint)item.Icon, out var tex) || !tex.TryGetWrap(out var icon, out _))
             return;
 
-        using var id = ImRaii.PushId($"ItemTooltip{item.RowId}");
+        using var id = ImRaii.PushId("##ItemTooltip");
 
         using var tooltip = ImRaii.Tooltip();
         if (!tooltip) return;
@@ -180,7 +177,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     ImGui.SameLine();
                     ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Unknown1, [
                         residentRow.Acquisition.RowId,
-                    residentRow.Location.RowId
+                        residentRow.Location.RowId
                     ]).ExtractText().StripSoftHypen());
                 }
 
