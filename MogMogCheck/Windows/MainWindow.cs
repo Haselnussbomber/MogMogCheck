@@ -4,6 +4,7 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using HaselCommon;
 using HaselCommon.Gui;
@@ -73,6 +74,12 @@ public unsafe partial class MainWindow : SimpleWindow
     private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
     {
         _itemQuantityCache.Clear();
+    }
+
+    public override void OnClose()
+    {
+        DisableWindowSounds = false;
+        base.OnClose();
     }
 
     public override bool DrawConditions()

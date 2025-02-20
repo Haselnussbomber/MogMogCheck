@@ -94,7 +94,8 @@ public partial class CommandManager : IDisposable
     {
         if (_pluginConfig.OpenWithMogpendium && addonName == "MoogleCollection")
         {
-            _windowManager.CreateOrOpen(Service.Get<MainWindow>);
+            var window = _windowManager.CreateOrOpen(Service.Get<MainWindow>);
+            window.DisableWindowSounds = true;
         }
     }
 
