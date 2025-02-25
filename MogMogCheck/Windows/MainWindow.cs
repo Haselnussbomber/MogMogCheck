@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface;
@@ -7,6 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using HaselCommon;
+using HaselCommon.Extensions.Collections;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
@@ -74,6 +76,15 @@ public unsafe partial class MainWindow : SimpleWindow
     private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
     {
         _itemQuantityCache.Clear();
+    }
+
+    public override void OnOpen()
+    {
+        base.OnOpen();
+
+        // clear old untracked items
+        if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
+            _pluginConfig.Save();
     }
 
     public override void OnClose()

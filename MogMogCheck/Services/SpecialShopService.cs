@@ -2,7 +2,6 @@ using System.Linq;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon;
-using HaselCommon.Extensions.Collections;
 using HaselCommon.Services;
 using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Logging;
@@ -87,10 +86,6 @@ public partial class SpecialShopService : IDisposable
                 .Where(item => item != default)
                 .OrderBy(item => item.Index)
                 .ToArray();
-
-            // clear old untracked items
-            if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
-                _pluginConfig.Save();
         }
         else
         {
