@@ -2,9 +2,7 @@
 
 **MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).
 
-This plugin was submitted to Dalamuds main repository, is being reviewed and will hopefully be available soon after Patch 7.18.  
-In the mean time it's still available via my custom repo:  
-https://raw.githubusercontent.com/Haselnussbomber/MyDalamudPlugins/main/repo.json
+This plugin is available in the Dalamud plugin repository!
 
 MogMogCheck automatically opens with the Mogpendium. Alternatively, you can open it with the `/mogmog` command.
 
