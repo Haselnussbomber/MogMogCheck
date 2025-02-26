@@ -5,7 +5,6 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using HaselCommon;
 using HaselCommon.Extensions.Collections;
@@ -33,6 +32,7 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly SpecialShopService _specialShopService;
     private readonly ItemService _itemService;
     private readonly ShopItemTable _table;
+    private bool _hasClearedUntrackedItems;
 
     private bool IsConfigWindowOpen => _windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen;
 
@@ -43,7 +43,7 @@ public unsafe partial class MainWindow : SimpleWindow
         SizeCondition = ImGuiCond.FirstUseEver;
         SizeConstraints = new WindowSizeConstraints()
         {
-            MinimumSize = new Vector2(300, 200),
+            MinimumSize = new Vector2(350, 68),
             MaximumSize = new Vector2(4069),
         };
 
@@ -78,13 +78,18 @@ public unsafe partial class MainWindow : SimpleWindow
         _itemQuantityCache.Clear();
     }
 
-    public override void OnOpen()
+    public override void Update()
     {
-        base.OnOpen();
+        base.Update();
 
-        // clear old untracked items
-        if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
-            _pluginConfig.Save();
+        if (!_hasClearedUntrackedItems && _specialShopService.CurrentShop.HasValue)
+        {
+            // clear old untracked items
+            if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
+                _pluginConfig.Save();
+
+            _hasClearedUntrackedItems = true;
+        }
     }
 
     public override void OnClose()
@@ -94,17 +99,19 @@ public unsafe partial class MainWindow : SimpleWindow
     }
 
     public override bool DrawConditions()
-        => _clientState.IsLoggedIn
-            && _specialShopService.CurrentSeason != null
-            && _specialShopService.CurrentShop != null
-            && _specialShopService.ShopItems.Length != 0
-            && _specialShopService.TomestoneItemIds.Length != 0;
+        => _clientState.IsLoggedIn;
 
     public override void Draw()
     {
         if (!_specialShopService.CurrentShop.HasValue)
         {
-            ImGui.TextUnformatted("Shop not open.");
+            // The Moogle Treasure Trove is not currently underway.
+
+            foreach (var line in _textService.GetAddonText(15909).Split("\n"))
+            {
+                ImGuiHelpers.CenteredText(line);
+            }
+
             return;
         }
 

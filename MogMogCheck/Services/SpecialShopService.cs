@@ -41,7 +41,7 @@ public partial class SpecialShopService : IDisposable
     private unsafe void Update(IFramework framework)
     {
         var manager = CSBonusManager.Instance();
-        if (manager == null)
+        if (manager == null || manager->IsOpenShop == 0)
             return;
 
         if (!_isDirty && CurrentSeason != null && CurrentSeason == manager->SeasonTarget)
