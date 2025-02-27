@@ -82,7 +82,7 @@ public unsafe partial class MainWindow : SimpleWindow
     {
         base.Update();
 
-        if (!_hasClearedUntrackedItems && _specialShopService.CurrentShop.HasValue)
+        if (!_hasClearedUntrackedItems && _specialShopService.HasData)
         {
             // clear old untracked items
             if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
@@ -103,7 +103,7 @@ public unsafe partial class MainWindow : SimpleWindow
 
     public override void Draw()
     {
-        if (!_specialShopService.CurrentShop.HasValue)
+        if (!_specialShopService.HasData)
         {
             // The Moogle Treasure Trove is not currently underway.
 
@@ -121,41 +121,38 @@ public unsafe partial class MainWindow : SimpleWindow
 
     private void DrawTomestoneCount()
     {
-        var items = _specialShopService.ShopItems;
-
         var scale = ImGuiHelpers.GlobalScale;
+        var items = _specialShopService.ShopItems;
+        var tomestoneItemId = _specialShopService.TomestoneItemId;
 
-        foreach (var tomestoneItemId in _specialShopService.TomestoneItemIds)
+        _textureService.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
+
+        _imGuiContextMenuService.Draw($"##Tomestone_ItemContextMenu{tomestoneItemId}", builder =>
         {
-            _textureService.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
+            builder.AddItemFinder(tomestoneItemId);
+            builder.AddCopyItemName(tomestoneItemId);
+            builder.AddItemSearch(tomestoneItemId);
+            builder.AddOpenOnGarlandTools("item", tomestoneItemId);
+        });
 
-            _imGuiContextMenuService.Draw($"##Tomestone_ItemContextMenu{tomestoneItemId}", builder =>
-            {
-                builder.AddItemFinder(tomestoneItemId);
-                builder.AddCopyItemName(tomestoneItemId);
-                builder.AddItemSearch(tomestoneItemId);
-                builder.AddOpenOnGarlandTools("item", tomestoneItemId);
-            });
+        ImGui.SameLine(45 * scale);
+        ImGuiUtils.PushCursorY(6 * scale);
 
-            ImGui.SameLine(45 * scale);
-            ImGuiUtils.PushCursorY(6 * scale);
+        var needed = 0u;
+        for (var i = 0; i < items.Length; i++)
+        {
+            needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].ItemId, out var amount) ? amount * items[i].GiveItems[0].Quantity : 0u;
+        }
 
-            var needed = 0u;
-            for (var i = 0; i < items.Length; i++)
-            {
-                needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].ItemId, out var amount) ? amount * items[i].GiveItems[0].Quantity : 0u;
-            }
-
-            var quantity = _itemQuantityCache.GetValue(tomestoneItemId);
-            if (needed > quantity)
-            {
-                var remaining = needed - quantity;
-                ImGui.TextUnformatted(_textService.Translate("Currency.InfoWithRemaining", quantity, needed, remaining));
-            }
-            else
-            {
-                ImGui.TextUnformatted(_textService.Translate("Currency.Info", quantity, needed));
-            }
+        var quantity = _itemQuantityCache.GetValue(tomestoneItemId);
+        if (needed > quantity)
+        {
+            var remaining = needed - quantity;
+            ImGui.TextUnformatted(_textService.Translate("Currency.InfoWithRemaining", quantity, needed, remaining));
+        }
+        else
+        {
+            ImGui.TextUnformatted(_textService.Translate("Currency.Info", quantity, needed));
         }
     }
 }

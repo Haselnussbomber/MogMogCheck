@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon.Graphics;
@@ -8,7 +7,6 @@ using HaselCommon.Services;
 using ImGuiNET;
 using MogMogCheck.Caches;
 using MogMogCheck.Records;
-using MogMogCheck.Services;
 
 namespace MogMogCheck.Tables;
 
@@ -21,7 +19,6 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
     private readonly ItemService _itemService;
     private readonly TextureService _textureService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
-    private readonly SpecialShopService _specialShopService;
 
     [AutoPostConstruct]
     private void Initialize()
@@ -39,7 +36,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
         // TODO: add support for items 2 and 3 whenever it becomes necessary
         var (itemId, quantity) = row.GiveItems[0];
 
-        var hasEnoughTomestones = _specialShopService.TomestoneItemIds.Contains((uint)itemId) && _itemQuantityCache.GetValue(itemId) >= quantity;
+        var hasEnoughTomestones = _itemQuantityCache.GetValue(itemId) >= quantity;
 
         _textureService.DrawIcon(_itemService.GetIconId(itemId), new DrawInfo(ImGui.GetFrameHeight())
         {

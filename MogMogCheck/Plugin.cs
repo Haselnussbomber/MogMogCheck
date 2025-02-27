@@ -19,10 +19,7 @@ public sealed class Plugin : IDalamudPlugin
 
         Service.BuildProvider();
 
-        framework.RunOnFrameworkThread(() =>
-        {
-            Service.Get<CommandManager>();
-        });
+        framework.RunOnFrameworkThread(Service.Get<CommandManager>);
     }
 
     void IDisposable.Dispose()
