@@ -65,6 +65,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         {
             builder.AddTryOn(itemId);
             builder.AddItemFinder(itemId);
+            builder.AddLinkItem(itemId);
             builder.AddCopyItemName(itemId);
             builder.AddItemSearch(itemId);
             builder.AddOpenOnGarlandTools("item", itemId);

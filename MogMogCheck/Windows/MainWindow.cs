@@ -127,11 +127,11 @@ public unsafe partial class MainWindow : SimpleWindow
 
         _textureService.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
 
-        _imGuiContextMenuService.Draw($"##Tomestone_ItemContextMenu{tomestoneItemId}", builder =>
+        _imGuiContextMenuService.Draw("##Tomestone_ItemContextMenu", builder =>
         {
             builder.AddItemFinder(tomestoneItemId);
+            builder.AddLinkItem(tomestoneItemId);
             builder.AddCopyItemName(tomestoneItemId);
-            builder.AddItemSearch(tomestoneItemId);
             builder.AddOpenOnGarlandTools("item", tomestoneItemId);
         });
 

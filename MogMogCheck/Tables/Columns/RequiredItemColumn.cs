@@ -46,8 +46,8 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
         _imGuiContextMenuService.Draw($"##RequiredItemColumnContextMenu{itemId}", builder =>
         {
             builder.AddItemFinder(itemId);
+            builder.AddLinkItem(itemId);
             builder.AddCopyItemName(itemId);
-            builder.AddItemSearch(itemId);
             builder.AddOpenOnGarlandTools("item", itemId);
         });
 
