@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.3] (2025-02-28)
+
+- **Added:** Items can now be linked in chat.
+
 ## [3.0.2] (2025-02-26)
 
 - **Changed:** The plugin now only shows the reward list when the game allows the shop to be opened.
@@ -99,6 +103,7 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[3.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v2.2.3...v3.0.0
