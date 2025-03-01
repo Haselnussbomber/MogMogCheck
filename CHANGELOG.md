@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.0] (2025-03-02)
+
+- **Added:** Equippable items for "All Classes" will now show a checkmark if they are in any Inventory or the Glamour Dresser.
+
 ## [3.0.3] (2025-02-28)
 
 - **Added:** Items can now be linked in chat.
