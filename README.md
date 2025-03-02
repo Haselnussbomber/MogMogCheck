@@ -1,6 +1,8 @@
-# MogMogCheck
+<img align="left" src="https://raw.githubusercontent.com/Haselnussbomber/MogMogCheck/refs/heads/dev/MogMogCheck/Assets/Icon.png" height="60px" alt="MogMogCheck"/>
 
-**MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).
+**MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event.<br/>
+<br/>
+<hr>
 
 This plugin is available in the Dalamud plugin repository!
 
