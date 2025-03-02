@@ -78,9 +78,9 @@ public unsafe partial class MainWindow : SimpleWindow
         _itemQuantityCache.Clear();
     }
 
-    public override void Update()
+    public override void PreDraw()
     {
-        base.Update();
+        base.PreDraw();
 
         if (!_hasClearedUntrackedItems && _specialShopService.HasData)
         {
