@@ -61,20 +61,17 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
 
         var count = (uint)inventoryManager->GetInventoryItemCount(itemId) + (uint)inventoryManager->GetInventoryItemCount(itemId, true);
 
-        if (itemFinderModule->IsSaddleBagCached)
+        if (itemFinderModule->SaddleBagItemIds.IndexOf(itemId) is { } saddleBagIndex && saddleBagIndex != -1)
         {
-            if (itemFinderModule->SaddleBagItemIds.IndexOf(itemId) is { } saddleBagIndex && saddleBagIndex != -1)
-            {
-                count += itemFinderModule->SaddleBagItemCount[saddleBagIndex];
-            }
-
-            if (itemFinderModule->PremiumSaddleBagItemIds.IndexOf(itemId) is { } premiumSaddleBagIndex && premiumSaddleBagIndex != -1)
-            {
-                count += itemFinderModule->PremiumSaddleBagItemCount[premiumSaddleBagIndex];
-            }
+            count += itemFinderModule->SaddleBagItemCount[saddleBagIndex];
         }
 
-        if (itemFinderModule->IsGlamourDresserCached && itemFinderModule->GlamourDresserItemIds.Contains(itemId))
+        if (itemFinderModule->PremiumSaddleBagItemIds.IndexOf(itemId) is { } premiumSaddleBagIndex && premiumSaddleBagIndex != -1)
+        {
+            count += itemFinderModule->PremiumSaddleBagItemCount[premiumSaddleBagIndex];
+        }
+
+        if (itemFinderModule->GlamourDresserItemIds.Contains(itemId))
         {
             count += 1;
         }
