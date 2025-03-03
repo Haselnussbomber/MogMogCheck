@@ -18,6 +18,7 @@ using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
+using MogMogCheck.Config;
 using MogMogCheck.Records;
 using MogMogCheck.Services;
 
@@ -37,6 +38,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly ShopItemService _shopItemService;
+    private readonly PluginConfig _pluginConfig;
 
     private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
@@ -50,12 +52,20 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         var (itemId, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
+        var isCollected = _shopItemService.IsUnlockedOrCollected(itemId);
+        var grayOut = _pluginConfig.GrayOutCollectedItems && isCollected;
 
         ImGui.BeginGroup();
 
-        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), itemId.IsHighQuality()), iconSize);
+        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), itemId.IsHighQuality()), new DrawInfo(iconSize)
+        {
+            TintColor = grayOut ? (Vector4)Color.Grey : null
+        });
+
         ImGui.SameLine();
-        ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_textService.GetItemName(itemId)}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
+
+        using (Color.From(ImGuiCol.TextDisabled).Push(ImGuiCol.Text, grayOut))
+            ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_textService.GetItemName(itemId)}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
 
         ImGui.EndGroup();
 
@@ -74,7 +84,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             builder.AddOpenOnGarlandTools("item", itemId);
         });
 
-        if (_shopItemService.IsUnlockedOrCollected(itemId))
+        if (isCollected)
         {
             ImGui.SameLine(1, 0);
 

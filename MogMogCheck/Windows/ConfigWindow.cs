@@ -43,6 +43,12 @@ public unsafe partial class ConfigWindow : SimpleWindow
             _pluginConfig.Save();
         }
 
+        // GrayOutCollectedItems
+        if (ImGui.Checkbox(_textService.Translate("Config.GrayOutCollectedItems"), ref _pluginConfig.GrayOutCollectedItems))
+        {
+            _pluginConfig.Save();
+        }
+
         // CheckboxMode
         {
             if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode"), ref _pluginConfig.CheckboxMode))

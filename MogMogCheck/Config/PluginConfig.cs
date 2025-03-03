@@ -84,5 +84,6 @@ public partial class PluginConfig
     public bool CheckboxMode = true;
     public bool OpenWithMogpendium = true;
     public bool OpenWithShop = true;
+    public bool GrayOutCollectedItems = false;
     public bool HidePreviousSeasons = true;
 }

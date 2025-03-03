@@ -25,6 +25,10 @@
     "en": "Open/Close with Shop window",
     "de": "Mit Handelsfenster öffnen/schließen"
   },
+  "Config.GrayOutCollectedItems": {
+    "en": "Gray out collected items",
+    "de": "Gesammelte Gegenstände ausgrauen"
+  },
   "Config.CheckboxMode": {
     "en": "Checkbox-Mode",
     "de": "Checkbox-Modus"
