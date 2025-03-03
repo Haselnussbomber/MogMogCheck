@@ -37,6 +37,12 @@ public unsafe partial class ConfigWindow : SimpleWindow
             _pluginConfig.Save();
         }
 
+        // OpenWithShop
+        if (ImGui.Checkbox(_textService.Translate("Config.OpenWithShop"), ref _pluginConfig.OpenWithShop))
+        {
+            _pluginConfig.Save();
+        }
+
         // CheckboxMode
         {
             if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode"), ref _pluginConfig.CheckboxMode))

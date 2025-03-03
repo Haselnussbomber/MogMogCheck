@@ -22,6 +22,7 @@ public partial class SpecialShopService : IDisposable
     private uint? _seasonTarget;
 
     public bool HasData { get; private set; }
+    public uint ShopId { get; private set; }
     public ExcelRowId<Item> TomestoneItemId { get; private set; }
     public ShopItem[] ShopItems { get; private set; } = [];
 
@@ -50,7 +51,7 @@ public partial class SpecialShopService : IDisposable
             return;
 
         if (!_excelService.TryGetRow<CSBonusSeason>(manager->State, out var seasonRow) ||
-            !_excelService.TryGetRow<SpecialShop>(manager->SeasonTarget == 0 ? 1770710u : 1769929, out var currentShop))
+            !_excelService.TryGetRow<SpecialShop>(ShopId = manager->SeasonTarget == 0 ? 1770710u : 1769929, out var currentShop))
         {
             if (HasData)
                 HasData = false;

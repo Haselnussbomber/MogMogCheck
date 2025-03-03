@@ -21,6 +21,10 @@
     "en": "Open/Close with Mogpendium",
     "de": "Mit Mogpendium öffnen/schließen"
   },
+  "Config.OpenWithShop": {
+    "en": "Open/Close with Shop window",
+    "de": "Mit Handelsfenster öffnen/schließen"
+  },
   "Config.CheckboxMode": {
     "en": "Checkbox-Mode",
     "de": "Checkbox-Modus"

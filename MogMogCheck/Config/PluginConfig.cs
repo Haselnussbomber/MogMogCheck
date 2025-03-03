@@ -83,5 +83,6 @@ public partial class PluginConfig
     public Dictionary<uint, uint> TrackedItems = [];
     public bool CheckboxMode = true;
     public bool OpenWithMogpendium = true;
+    public bool OpenWithShop = true;
     public bool HidePreviousSeasons = true;
 }
