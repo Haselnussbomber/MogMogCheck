@@ -71,7 +71,7 @@ public unsafe partial class ConfigWindow : SimpleWindow
             }
 
             using var indent = ImGuiUtils.ConfigIndent();
-            using var disable = ImRaii.Disabled(_pluginConfig.CheckboxMode);
+            using var disable = ImRaii.Disabled(!_pluginConfig.CheckboxMode);
             
             if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode.AutoUntrack"), ref _pluginConfig.AutoUntrack))
             {
