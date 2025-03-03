@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.2.0] (2025-03-03)
 
 - **Added:** The MogMogCheck window now automatically opens when the Item Exchange Shop is opened (only for the current event). This can be disabled with the new config option "Open/Close with Shop window" (default on).
 - **Added:** An option to "Automatically turn off tracking for purchased rewards" (default on). This requires the Checkbox-Mode to be enabled.
@@ -116,6 +116,8 @@ Update for Patch 6.5.
 First release. 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[3.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.0...v3.0.1
