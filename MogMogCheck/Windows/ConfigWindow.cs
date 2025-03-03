@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using HaselCommon;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
@@ -70,7 +71,8 @@ public unsafe partial class ConfigWindow : SimpleWindow
             }
 
             using var indent = ImGuiUtils.ConfigIndent();
-
+            using var disable = ImRaii.Disabled(_pluginConfig.CheckboxMode);
+            
             if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode.AutoUntrack"), ref _pluginConfig.AutoUntrack))
             {
                 _pluginConfig.Save();
