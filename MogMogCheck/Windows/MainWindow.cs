@@ -60,7 +60,7 @@ public unsafe partial class MainWindow : SimpleWindow
                     ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
                     : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig"));
             },
-            Click = (button) => _windowManager.CreateOrToggle(Service.Get<ConfigWindow>)
+            Click = (button) => _windowManager.CreateOrToggle<ConfigWindow>()
         });
 
         _gameInventory.InventoryChangedRaw += OnInventoryChanged;
