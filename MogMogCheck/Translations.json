@@ -33,6 +33,10 @@
     "en": "Checkbox-Mode",
     "de": "Checkbox-Modus"
   },
+  "Config.CheckboxMode.AutoUntrack": {
+    "en": "Automatically turn off tracking for purchased rewards",
+    "de": "Gekaufte Belohnungen automatisch nicht mehr verfolgen"
+  },
   "Config.CheckboxMode.ResetInfo": {
     "en": "Stacks that are greater than 1 are reset when this option is activated!",
     "de": "Stapel, die größer als 1 sind, werden beim Aktivieren dieser Option zurückgesetzt!"

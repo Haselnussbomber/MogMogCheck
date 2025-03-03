@@ -82,6 +82,7 @@ public partial class PluginConfig
     public int Version { get; set; } = CURRENT_CONFIG_VERSION;
     public Dictionary<uint, uint> TrackedItems = [];
     public bool CheckboxMode = true;
+    public bool AutoUntrack = true;
     public bool OpenWithMogpendium = true;
     public bool OpenWithShop = true;
     public bool GrayOutCollectedItems = false;
