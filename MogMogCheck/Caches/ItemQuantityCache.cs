@@ -13,6 +13,7 @@ namespace MogMogCheck.Caches;
 [RegisterSingleton, AutoConstruct]
 public partial class ItemQuantityCache : MemoryCache<uint, uint>
 {
+    private readonly IClientState _clientState;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
     private CancellationTokenSource? _cancellationTokenSource;
@@ -20,14 +21,21 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
     [AutoPostConstruct]
     private void Initialize()
     {
+        _clientState.Login -= ClientState_Login;
         _gameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
     }
 
     public override void Dispose()
     {
+        _clientState.Login -= ClientState_Login;
         _gameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
         _cancellationTokenSource?.Cancel();
         base.Dispose();
+    }
+
+    private void ClientState_Login()
+    {
+        Clear();
     }
 
     private void GameInventory_InventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
