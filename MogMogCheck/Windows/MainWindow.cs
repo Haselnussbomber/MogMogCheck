@@ -6,7 +6,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using HaselCommon;
 using HaselCommon.Extensions.Collections;
 using HaselCommon.Gui;
 using HaselCommon.Services;
@@ -90,6 +89,12 @@ public unsafe partial class MainWindow : SimpleWindow
 
             _hasClearedUntrackedItems = true;
         }
+    }
+
+    public override void OnOpen()
+    {
+        _itemQuantityCache.Clear();
+        base.OnOpen();
     }
 
     public override void OnClose()
