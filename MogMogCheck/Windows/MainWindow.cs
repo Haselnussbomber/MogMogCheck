@@ -29,6 +29,7 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
+    private readonly AutoUntrackService _autoUntrackService;
     private readonly ItemService _itemService;
     private readonly ShopItemTable _table;
     private bool _hasClearedUntrackedItems;
@@ -86,6 +87,8 @@ public unsafe partial class MainWindow : SimpleWindow
             // clear old untracked items
             if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
                 _pluginConfig.Save();
+
+            _autoUntrackService.Check();
 
             _hasClearedUntrackedItems = true;
         }

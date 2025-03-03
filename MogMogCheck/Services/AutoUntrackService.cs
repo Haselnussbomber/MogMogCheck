@@ -29,6 +29,11 @@ public partial class AutoUntrackService : IDisposable
 
     private void GameInventory_InventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
     {
+        Check();
+    }
+
+    public void Check()
+    {
         if (!_clientState.IsLoggedIn || !_specialShopService.HasData || !_pluginConfig.CheckboxMode || !_pluginConfig.AutoUntrack)
             return;
 
