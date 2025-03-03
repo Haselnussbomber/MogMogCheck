@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - **Added:** The MogMogCheck window now automatically opens when the Item Exchange Shop is opened (only for the current event). This can be disabled with the new config option "Open/Close with Shop window" (default on).
+- **Added:** An option to "Automatically turn off tracking for purchased rewards" (default on).
 - **Added:** An option to "Gray out collected items" (default off).
 - **Fixed:** The checkmark for collected equippable items for "All Classes" will also show when the data is not fresh.
 - **Fixed:** To get an accurate collected status the item quantity cache is now cleared when logged in and when opening the MogMogCheck window.
