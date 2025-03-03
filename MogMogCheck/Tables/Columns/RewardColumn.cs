@@ -18,7 +18,6 @@ using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
-using MogMogCheck.Extensions;
 using MogMogCheck.Records;
 using MogMogCheck.Services;
 
@@ -37,6 +36,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly SeStringEvaluatorService _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly ItemQuantityCache _itemQuantityCache;
+    private readonly ShopItemService _shopItemService;
 
     private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
@@ -74,7 +74,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             builder.AddOpenOnGarlandTools("item", itemId);
         });
 
-        if (itemId.IsUnlockedOrCollected())
+        if (_shopItemService.IsUnlockedOrCollected(itemId))
         {
             ImGui.SameLine(1, 0);
 
@@ -108,7 +108,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.TableNextColumn(); // Icon
         ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(40));
 
-        var isUnlocked = new ExcelRowId<Item>(item.RowId).IsUnlockedOrCollected(); // bleh
+        var isUnlocked = _shopItemService.IsUnlockedOrCollected(item.RowId);
         if (isUnlocked)
         {
             ImGui.SameLine(1 + ImGui.GetStyle().CellPadding.X + itemInnerSpacing.X, 0);
