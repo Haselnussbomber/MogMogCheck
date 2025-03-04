@@ -115,7 +115,7 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/main...dev
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.0...main
 [3.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.2...v3.0.3
