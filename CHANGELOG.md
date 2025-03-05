@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.2] (2025-03-05)
+
+Hotfix plugin not working.
+
 ## [3.2.1] (2025-03-05)
 
 Replaced some obsolete functions and resubmitting as stable.
@@ -119,7 +123,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.1...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.2...main
+[3.2.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.1...v3.2.2
 [3.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.3...v3.1.0
