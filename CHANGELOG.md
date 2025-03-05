@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.1] (2025-03-05)
+
+Replaced some obsolete functions and resubmitting as stable.
+
 ## [3.2.0] (2025-03-03)
 
 - **Added:** The MogMogCheck window now automatically opens when the Item Exchange Shop is opened (only for the current event). This can be disabled with the new config option "Open/Close with Shop window" (default on).
@@ -115,7 +119,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.0...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.1...main
+[3.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.0.2...v3.0.3
