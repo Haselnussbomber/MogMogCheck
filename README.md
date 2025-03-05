@@ -23,4 +23,7 @@ And if you disable the Checkbox-Mode in the settings, you can track non-unique i
 The configuration can be opened with the cog-button in the title bar, with the `/mogmog config` command, or via the Dalamud Plugin Installer, and contains the following settings:
 
 - Open/Close with Mogpendium (default: on)
+- Open/Close with Shop window (default: on)
 - Enable/Disable Checkbox-Mode (default: on): This mode displays a checkbox, so that you simply track an items required tomestones. When Checkbox-Mode is off however, it displays a slider instead. This is useful for non-unique items which can be purchased multiple times, for example the MGP Card.
+  - Automatically turn off tracking for purchased rewards (default: on)
+- Gray out collected items (default: off)
