@@ -76,7 +76,7 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
             count += 1;
         }
 
-        if (retainerManager->Ready == 1)
+        if (retainerManager->IsReady)
         {
             foreach (var (_, retainerInventory) in itemFinderModule->RetainerInventories)
             {
@@ -85,7 +85,7 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
                     foreach (var type in Enumerable.Range((int)InventoryType.RetainerPage1, 7))
                     {
                         var container = inventoryManager->GetInventoryContainer((InventoryType)type);
-                        if (container != null && container->Loaded == 1)
+                        if (container != null && container->IsLoaded)
                         {
                             foreach (ref var item in new Span<InventoryItem>(container->Items, (int)container->Size))
                             {

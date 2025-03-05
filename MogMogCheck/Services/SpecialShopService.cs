@@ -40,25 +40,25 @@ public partial class SpecialShopService : IDisposable
     private unsafe void Update(IFramework framework)
     {
         var manager = CSBonusManager.Instance();
-        if (manager == null || manager->IsOpenShop == 0)
+        if (manager == null || manager->EventInfo.IsOpenShop)
         {
             if (HasData)
                 HasData = false;
             return;
         }
 
-        if (_seasonTarget != null && _seasonTarget == manager->SeasonTarget)
+        if (_seasonTarget != null && _seasonTarget == manager->EventInfo.SeasonTarget)
             return;
 
-        if (!_excelService.TryGetRow<CSBonusSeason>(manager->State, out var seasonRow) ||
-            !_excelService.TryGetRow<SpecialShop>(ShopId = manager->SeasonTarget == 0 ? 1770710u : 1769929, out var currentShop))
+        if (!_excelService.TryGetRow<CSBonusSeason>(manager->EventInfo.Season, out var seasonRow) ||
+            !_excelService.TryGetRow<SpecialShop>(ShopId = manager->EventInfo.Season == 0 ? 1770710u : 1769929, out var currentShop))
         {
             if (HasData)
                 HasData = false;
             return;
         }
 
-        _seasonTarget = manager->SeasonTarget;
+        _seasonTarget = manager->EventInfo.SeasonTarget;
         TomestoneItemId = seasonRow.Item.RowId;
 
         ShopItems = currentShop.Item
