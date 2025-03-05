@@ -40,7 +40,7 @@ public partial class SpecialShopService : IDisposable
     private unsafe void Update(IFramework framework)
     {
         var manager = CSBonusManager.Instance();
-        if (manager == null || manager->EventInfo.IsOpenShop)
+        if (manager == null || !manager->EventInfo.IsOpenShop)
         {
             if (HasData)
                 HasData = false;
