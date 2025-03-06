@@ -42,8 +42,7 @@ public partial class SpecialShopService : IDisposable
         var manager = CSBonusManager.Instance();
         if (manager == null || !manager->EventInfo.IsOpenShop)
         {
-            if (HasData)
-                HasData = false;
+            Reset();
             return;
         }
 
@@ -53,8 +52,7 @@ public partial class SpecialShopService : IDisposable
         if (!_excelService.TryGetRow<CSBonusSeason>(manager->EventInfo.Season, out var seasonRow) ||
             !_excelService.TryGetRow<SpecialShop>(ShopId = manager->EventInfo.Season == 0 ? 1770710u : 1769929, out var currentShop))
         {
-            if (HasData)
-                HasData = false;
+            Reset();
             return;
         }
 
@@ -92,5 +90,23 @@ public partial class SpecialShopService : IDisposable
             shopItemTable.SetReloadPending();
 
         HasData = true;
+    }
+
+    private unsafe void Reset()
+    {
+        if (HasData)
+            HasData = false;
+
+        if (_seasonTarget != null)
+            _seasonTarget = null;
+
+        if (ShopId != 0)
+            ShopId = 0;
+
+        if (TomestoneItemId != 0)
+            TomestoneItemId = 0;
+
+        if (ShopItems.Length > 0)
+            ShopItems = [];
     }
 }
