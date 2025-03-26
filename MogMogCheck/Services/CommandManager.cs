@@ -116,7 +116,7 @@ public partial class CommandManager : IDisposable
 
             foreach (var eventHandler in EventFramework.Instance()->EventHandlerModule.EventHandlerMap.Values)
             {
-                if (eventHandler.Value == null || eventHandler.Value->Info.EventId.ContentId != EventHandlerType.SpecialShop)
+                if (eventHandler.Value == null || eventHandler.Value->Info.EventId.ContentId != EventHandlerContent.SpecialShop)
                     continue;
 
                 foreach (var eventObject in eventHandler.Value->EventObjects)

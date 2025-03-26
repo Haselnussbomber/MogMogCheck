@@ -3,7 +3,6 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon;
 using HaselCommon.Services;
-using HaselCommon.Utils;
 using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Config;
@@ -23,7 +22,7 @@ public partial class SpecialShopService : IDisposable
 
     public bool HasData { get; private set; }
     public uint ShopId { get; private set; }
-    public ExcelRowId<Item> TomestoneItemId { get; private set; }
+    public uint TomestoneItemId { get; private set; }
     public ShopItem[] ShopItems { get; private set; } = [];
 
     [AutoPostConstruct]
@@ -78,7 +77,7 @@ public partial class SpecialShopService : IDisposable
                 if (giveItems.Length == 0)
                     return default;
 
-                return new ShopItem(item.Unknown1[5], receiveItems, giveItems); // while I support multiple items here, it's not supported in the table
+                return new ShopItem(item.Order, receiveItems, giveItems); // while I support multiple items here, it's not supported in the table
             })
             .Where(item => item != default)
             .OrderBy(item => item.Index)

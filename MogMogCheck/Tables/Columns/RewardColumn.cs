@@ -5,15 +5,13 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using HaselCommon.Extensions.Strings;
 using HaselCommon.Game.Enums;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using HaselCommon.Sheets;
-using HaselCommon.Utils;
 using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
@@ -34,7 +32,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly IDataManager _dataManager;
     private readonly ITextureProvider _textureProvider;
-    private readonly SeStringEvaluatorService _seStringEvaluator;
+    private readonly SeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly ShopItemService _shopItemService;
@@ -57,7 +55,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         ImGui.BeginGroup();
 
-        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), itemId.IsHighQuality()), new DrawInfo(iconSize)
+        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), IsHighQuality(itemId)), new DrawInfo(iconSize)
         {
             TintColor = grayOut ? (Vector4)Color.Grey : null
         });
@@ -139,7 +137,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (isUnlocked)
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 40 * ImGuiHelpers.GlobalScale / 2f - 3); // wtf
 
-        var category = item.ItemUICategory.IsValid ? item.ItemUICategory.Value.Name.ExtractText().StripSoftHypen() : null;
+        var category = item.ItemUICategory.IsValid ? item.ItemUICategory.Value.Name.ExtractText().StripSoftHyphen() : null;
         if (!string.IsNullOrEmpty(category))
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
@@ -147,7 +145,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 ImGui.TextUnformatted(category);
         }
 
-        var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ExtractText().StripSoftHypen() : null);
+        var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ExtractText().StripSoftHyphen() : null);
         if (!string.IsNullOrEmpty(description))
         {
             DrawSeparator(marginTop: 1, marginBottom: 4);
@@ -183,16 +181,16 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
             case ItemActionType.TripleTriadCard:
                 if (_excelService.TryGetRow<TripleTriadCardResident>(item.ItemAction.Value.Data[0], out var residentRow) &&
-                    _excelService.TryGetRow<TripleTriadCardObtain>(residentRow.AcquisitionType, out var obtainRow) &&
-                    obtainRow.Unknown1 != 0)
+                    _excelService.TryGetRow<TripleTriadCardObtain>(residentRow.AcquisitionType.RowId, out var obtainRow) &&
+                    obtainRow.Text.RowId != 0)
                 {
                     DrawSeparator();
-                    _textureService.DrawIcon(obtainRow.Unknown0, 40 * ImGuiHelpers.GlobalScale);
+                    _textureService.DrawIcon(obtainRow.Icon, 40 * ImGuiHelpers.GlobalScale);
                     ImGui.SameLine();
-                    ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Unknown1, [
+                    ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Text.RowId, [
                         residentRow.Acquisition.RowId,
                         residentRow.Location.RowId
-                    ]).ExtractText().StripSoftHypen());
+                    ]).ExtractText().StripSoftHyphen());
                 }
 
                 DrawTripleTriadCard(item);
@@ -219,13 +217,13 @@ public partial class RewardColumn : ColumnString<ShopItem>
             return false;
         }
 
-        if (!_excelService.TryFindRow<CustomHairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType))
+        if (!_excelService.TryFindRow<HairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType))
         {
             _facePaintIconCache.Add(dataId, iconId = 0);
             return false;
         }
 
-        if (!_excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.Data == dataId && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
+        if (!_excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.UnlockLink == dataId && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
         {
             _facePaintIconCache.Add(dataId, iconId = 0);
             return false;
