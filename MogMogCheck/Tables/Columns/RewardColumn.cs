@@ -141,7 +141,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!string.IsNullOrEmpty(category))
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
-            using (ImRaii.PushColor(ImGuiCol.Text, (uint)Color.Grey))
+            using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
                 ImGui.TextUnformatted(category);
         }
 
