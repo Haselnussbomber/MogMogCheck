@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
-using HaselCommon.Extensions.Collections;
+using HaselCommon.Extensions;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 

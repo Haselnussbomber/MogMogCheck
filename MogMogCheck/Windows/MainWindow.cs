@@ -6,7 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using HaselCommon.Extensions.Collections;
+using HaselCommon.Extensions;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;

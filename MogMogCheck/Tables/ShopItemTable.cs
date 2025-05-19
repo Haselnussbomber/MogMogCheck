@@ -27,17 +27,17 @@ public partial class ShopItemTable : Table<ShopItem>
             _requiredItemColumn,
         ];
 
-        _globalScaleObserver.ScaleChange += OnGlobalScaleChange;
+        _globalScaleObserver.ScaleChanged += OnGlobalScaleChanged;
     }
 
     public override void Dispose()
     {
-        _globalScaleObserver.ScaleChange -= OnGlobalScaleChange;
+        _globalScaleObserver.ScaleChanged -= OnGlobalScaleChanged;
         base.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    private void OnGlobalScaleChange(float scale)
+    private void OnGlobalScaleChanged(float scale)
     {
         UpdateSizes();
     }

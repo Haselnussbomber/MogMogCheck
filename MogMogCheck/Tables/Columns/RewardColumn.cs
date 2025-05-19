@@ -55,7 +55,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         ImGui.BeginGroup();
 
-        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), IsHighQuality(itemId)), new DrawInfo(iconSize)
+        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), ItemUtil.IsHighQuality(itemId)), new DrawInfo(iconSize)
         {
             TintColor = grayOut ? (Vector4)Color.Grey : null
         });

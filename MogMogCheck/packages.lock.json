@@ -4,9 +4,9 @@
     "net9.0-windows7.0": {
       "AutoCtor": {
         "type": "Direct",
-        "requested": "[2.6.0, )",
-        "resolved": "2.6.0",
-        "contentHash": "swRsv9BVX3Fj7Ph5fnZsIXiHIMfNP9IFbGIlOqyLdjq8gu5BlHZ7RRbP71oSCE57qEfZtnKF5PxmpygPg8TK6w=="
+        "requested": "[2.8.0, )",
+        "resolved": "2.8.0",
+        "contentHash": "0Cj86LZfA/6FmbsCWvlgcK/V2DSD/OS5RCs9CCGXcXglS/ZRavULDUShFxCP/b8P/ziYtawXjYKBGQ2+uznrbQ=="
       },
       "DalamudPackager": {
         "type": "Direct",
@@ -22,11 +22,11 @@
       },
       "Injectio": {
         "type": "Direct",
-        "requested": "[4.1.0, )",
-        "resolved": "4.1.0",
-        "contentHash": "GBxpmh/LOKkN6NK6jdI/1XGtQ/ZzuWAb7tBftT4tcrKuhJO6ybaYKmmsXXTrTspJsJKI4eN/vUYcHYLuMaVDYw==",
+        "requested": "[5.0.0, )",
+        "resolved": "5.0.0",
+        "contentHash": "vobNqxNLUSri8ESae2FSzPuuwJGsQ1s1IAhCE/Orxq+uyvoW91dS+GP4EX5hRRFuu2QXIaSgVzrMb0AgFjfIQg==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "9.0.2"
+          "Microsoft.Extensions.DependencyInjection": "9.0.4"
         }
       },
       "Microsoft.Extensions.DependencyInjection": {
