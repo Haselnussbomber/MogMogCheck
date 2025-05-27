@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Version>3.2.3</Version>
     <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="!Exists('$(ProjectDir)..\FFXIVClientStructs')">
@@ -28,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" />
+    <PackageReference Include="AutoCtor" Version="2.8.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 

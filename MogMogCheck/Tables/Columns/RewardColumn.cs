@@ -42,7 +42,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
-        => _textService.GetItemName(row.ReceiveItems[0].ItemId);
+        => _textService.GetItemName(row.ReceiveItems[0].ItemId).ExtractText().StripSoftHyphen();
 
     public override void DrawColumn(ShopItem row)
     {
@@ -108,7 +108,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!popuptable) return;
 
         var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing * ImGuiHelpers.GlobalScale;
-        var title = _textService.GetItemName(item.RowId);
+        var title = _textService.GetItemName(item.RowId).ExtractText().StripSoftHyphen();
 
         ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, 40 * ImGuiHelpers.GlobalScale + itemInnerSpacing.X);
         ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
