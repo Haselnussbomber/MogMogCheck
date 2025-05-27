@@ -5,9 +5,25 @@
   "MainWindow.Title": {
     "en": "MogMogCheck"
   },
+  "LicensesWindow.Title": {
+    "en": "MogMogCheck - Licenses",
+    "de": "MogMogCheck - Lizenzen"
+  },
   "ConfigWindow.Title": {
     "en": "MogMogCheck Configuration",
     "de": "MogMogCheck Konfiguration"
+  },
+  "ConfigWindow.GitHubLink.Tooltip": {
+    "en": "Visit the MogMogCheck GitHub Repository",
+    "de": "Zum MogMogCheck GitHub Repository"
+  },
+  "ConfigWindow.KoFiLink.Tooltip": {
+    "en": "Support me on Ko-fi",
+    "de": "Unterstütze mich auf Ko-fi"
+  },
+  "ConfigWindow.Licenses": {
+    "en": "Licenses",
+    "de": "Lizenzen"
   },
   "CommandHandlerHelpMessage": {
     "en": "Open Window",

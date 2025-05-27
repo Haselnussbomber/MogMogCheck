@@ -6,26 +6,9 @@
     <DefineConstants>AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="!Exists('$(ProjectDir)..\FFXIVClientStructs')">
-    <Reference Include="InteropGenerator.Runtime" Private="false" />
-    <Reference Include="FFXIVClientStructs" Private="false" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="Exists('$(ProjectDir)..\FFXIVClientStructs')">
-    <Use_Dalamud_FFXIVClientStructs>false</Use_Dalamud_FFXIVClientStructs>
-    <InteropGenerator_InteropNamespace>HaselDebug</InteropGenerator_InteropNamespace>
-    <DefineConstants>HAS_LOCAL_CS</DefineConstants>
-  </PropertyGroup>
-
-  <ItemGroup Condition="Exists('$(ProjectDir)..\FFXIVClientStructs')">
-    <CompilerVisibleProperty Include="InteropGenerator_InteropNamespace" />
-    <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True" />
-    <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True" />
-  </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Translations.json" />
+    <EmbeddedResource Include="LICENSES.md" />
   </ItemGroup>
 
   <ItemGroup>

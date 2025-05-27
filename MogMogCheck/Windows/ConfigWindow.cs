@@ -1,11 +1,14 @@
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Threading.Tasks;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
+using HaselCommon.Windows;
 using ImGuiNET;
 using MogMogCheck.Config;
 using MogMogCheck.Tables;
@@ -99,5 +102,38 @@ public unsafe partial class ConfigWindow : SimpleWindow
             }
         }
         */
+
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+
+        var cursorPos = ImGui.GetCursorPos();
+        var contentAvail = ImGui.GetContentRegionAvail();
+
+        ImGuiUtils.DrawLink("GitHub", _textService.Translate("ConfigWindow.GitHubLink.Tooltip"), "https://github.com/Haselnussbomber/MogMogCheck");
+        ImGui.SameLine();
+        ImGui.TextUnformatted("•");
+        ImGui.SameLine();
+        ImGuiUtils.DrawLink("Ko-fi", _textService.Translate("ConfigWindow.KoFiLink.Tooltip"), "https://ko-fi.com/haselnussbomber");
+        ImGui.SameLine();
+        ImGui.TextUnformatted("•");
+        ImGui.SameLine();
+        ImGui.TextUnformatted(_textService.Translate("ConfigWindow.Licenses"));
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && Service.TryGet<LicensesWindow>(out var licensesWindow))
+            {
+                Task.Run(licensesWindow.Toggle);
+            }
+        }
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        if (version != null)
+        {
+            var versionString = "v" + version.ToString(3);
+            ImGui.SetCursorPos(cursorPos + contentAvail - ImGui.CalcTextSize(versionString));
+            ImGuiUtils.TextUnformattedDisabled(versionString);
+        }
     }
 }
