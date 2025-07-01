@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.4] (2025-07-01)
+
+Update for Patch 7.25.
+
 ## [3.2.3] (2025-03-05)
 
 - **Fixed:** The plugin would report that the Moogle Treasure Trove is not underway under certain circumstances.
@@ -127,7 +131,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.3...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.4...main
+[3.2.4]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.3...v3.2.4
 [3.2.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.2...v3.2.3
 [3.2.2]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.1...v3.2.2
 [3.2.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.0...v3.2.1
