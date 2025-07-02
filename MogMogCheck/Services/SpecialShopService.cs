@@ -1,7 +1,7 @@
 using System.Linq;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using HaselCommon;
+using HaselCommon.Extensions;
 using HaselCommon.Services;
 using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Logging;
@@ -15,6 +15,7 @@ namespace MogMogCheck.Services;
 public partial class SpecialShopService : IDisposable
 {
     private readonly ILogger<SpecialShopService> _logger;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ExcelService _excelService;
     private readonly PluginConfig _pluginConfig;
     private readonly IFramework _framework;
@@ -85,7 +86,7 @@ public partial class SpecialShopService : IDisposable
 
         _logger.LogDebug("Update: SeasonTarget {seasonTarget}, Shop Id {shopId}", _seasonTarget, currentShop.RowId);
 
-        if (Service.TryGet<ShopItemTable>(out var shopItemTable))
+        if (_serviceProvider.TryGetService<ShopItemTable>(out var shopItemTable))
             shopItemTable.SetReloadPending();
 
         HasData = true;

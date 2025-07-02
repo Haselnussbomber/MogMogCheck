@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using HaselCommon;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
@@ -18,6 +18,7 @@ namespace MogMogCheck.Windows;
 [RegisterSingleton, AutoConstruct]
 public unsafe partial class ConfigWindow : SimpleWindow
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly PluginConfig _pluginConfig;
     private readonly TextService _textService;
 
@@ -62,7 +63,7 @@ public unsafe partial class ConfigWindow : SimpleWindow
 
                 _pluginConfig.Save();
 
-                if (Service.TryGet<ShopItemTable>(out var shopItemTable))
+                if (_serviceProvider.TryGetService<ShopItemTable>(out var shopItemTable))
                     shopItemTable.SetReloadPending();
             }
 
@@ -122,7 +123,7 @@ public unsafe partial class ConfigWindow : SimpleWindow
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && Service.TryGet<LicensesWindow>(out var licensesWindow))
+            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _serviceProvider.TryGetService<LicensesWindow>(out var licensesWindow))
             {
                 Task.Run(licensesWindow.Toggle);
             }

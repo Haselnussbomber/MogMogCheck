@@ -17,6 +17,7 @@ public partial class ShopItemTable : Table<ShopItem>
     private readonly RequiredItemColumn _requiredItemColumn;
     private readonly SpecialShopService _specialShopService;
     private readonly GlobalScaleObserver _globalScaleObserver;
+    private readonly PluginConfig _pluginConfig;
 
     [AutoPostConstruct]
     private void Initialize()
@@ -45,7 +46,7 @@ public partial class ShopItemTable : Table<ShopItem>
     private void UpdateSizes()
     {
         LineHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().CellPadding.Y * 2f;
-        _trackColumn.Width = ImGui.GetFrameHeight() / ImGuiHelpers.GlobalScale * (Service.Get<PluginConfig>().CheckboxMode ? 1 : 3);
+        _trackColumn.Width = ImGui.GetFrameHeight() / ImGuiHelpers.GlobalScale * (_pluginConfig.CheckboxMode ? 1 : 3);
     }
 
     public override void LoadRows()

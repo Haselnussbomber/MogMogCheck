@@ -1,5 +1,6 @@
 using Dalamud.Plugin;
-using HaselCommon;
+using Dalamud.Plugin.Services;
+using HaselCommon.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using MogMogCheck.Config;
 using MogMogCheck.Services;
@@ -8,23 +9,26 @@ namespace MogMogCheck;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public Plugin(IDalamudPluginInterface pluginInterface)
+    private readonly ServiceProvider _serviceProvider;
+
+    public Plugin(IDalamudPluginInterface pluginInterface, IFramework framework)
     {
-        Service.Collection
+        _serviceProvider = new ServiceCollection()
             .AddDalamud(pluginInterface)
             .AddSingleton(PluginConfig.Load)
             .AddHaselCommon()
-            .AddMogMogCheck();
+            .AddMogMogCheck()
+            .BuildServiceProvider();
 
-        Service.Initialize(() =>
+        framework.RunOnFrameworkThread(() =>
         {
-            Service.Get<CommandManager>();
-            Service.Get<AutoUntrackService>();
+            _serviceProvider.GetRequiredService<CommandManager>();
+            _serviceProvider.GetRequiredService<AutoUntrackService>();
         });
     }
 
     void IDisposable.Dispose()
     {
-        Service.Dispose();
+        _serviceProvider.Dispose();
     }
 }
