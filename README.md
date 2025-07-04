@@ -1,4 +1,4 @@
-<img align="left" src="https://raw.githubusercontent.com/Haselnussbomber/MogMogCheck/refs/heads/main/MogMogCheck/Assets/Icon.png" height="60px" alt="MogMogCheck"/>
+<img align="left" src="MogMogCheck/Assets/Icon.png" width="60px" height="60px" alt="MogMogCheck"/>
 
 **MogMogCheck** is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event.<br/>
 <br/>
