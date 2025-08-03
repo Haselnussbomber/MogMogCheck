@@ -1,5 +1,4 @@
 using Dalamud.Interface.Utility;
-using HaselCommon;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
 using ImGuiNET;
@@ -40,19 +39,23 @@ public partial class ShopItemTable : Table<ShopItem>
 
     private void OnGlobalScaleChanged(float scale)
     {
-        UpdateSizes();
+        UpdateColumnWidth();
     }
 
-    private void UpdateSizes()
+    private void UpdateColumnWidth()
     {
-        LineHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().CellPadding.Y * 2f;
         _trackColumn.Width = ImGui.GetFrameHeight() / ImGuiHelpers.GlobalScale * (_pluginConfig.CheckboxMode ? 1 : 3);
+    }
+
+    public override float CalculateLineHeight()
+    {
+        return ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().CellPadding.Y * 2f;
     }
 
     public override void LoadRows()
     {
         Rows = [.. _specialShopService.ShopItems];
-        UpdateSizes();
+        UpdateColumnWidth();
     }
 
     // I should probably rework this...
