@@ -4,7 +4,6 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using MogMogCheck.Caches;
 using MogMogCheck.Records;
 

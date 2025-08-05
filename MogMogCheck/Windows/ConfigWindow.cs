@@ -9,7 +9,6 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using HaselCommon.Windows;
-using ImGuiNET;
 using MogMogCheck.Config;
 using MogMogCheck.Tables;
 

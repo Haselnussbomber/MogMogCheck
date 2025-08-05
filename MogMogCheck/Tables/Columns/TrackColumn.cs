@@ -2,7 +2,6 @@ using System.Numerics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Config;
 using MogMogCheck.Records;

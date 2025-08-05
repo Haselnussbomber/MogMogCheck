@@ -9,7 +9,6 @@ using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using HaselCommon.Gui;
 using HaselCommon.Services;
-using ImGuiNET;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 using MogMogCheck.Services;

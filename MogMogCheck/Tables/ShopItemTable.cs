@@ -1,7 +1,6 @@
 using Dalamud.Interface.Utility;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
 using MogMogCheck.Services;

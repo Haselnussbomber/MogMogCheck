@@ -12,7 +12,6 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
@@ -89,7 +88,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             if (_textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var tex, out _))
             {
                 var pos = ImGui.GetCursorScreenPos() + new Vector2((float)iconSize / 2.1f);
-                ImGui.GetWindowDrawList().AddImage(tex.ImGuiHandle, pos, pos + new Vector2((float)iconSize / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
+                ImGui.GetWindowDrawList().AddImage(tex.Handle, pos, pos + new Vector2((float)iconSize / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
             }
         }
     }
@@ -114,7 +113,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
 
         ImGui.TableNextColumn(); // Icon
-        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(40));
+        ImGui.Image(icon.Handle, ImGuiHelpers.ScaledVector2(40));
 
         var isUnlocked = _shopItemService.IsUnlockedOrCollected(item.RowId);
         if (isUnlocked)
@@ -124,7 +123,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             if (_textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var checkTex, out _))
             {
                 var pos = ImGui.GetCursorScreenPos() + ImGuiHelpers.ScaledVector2(40) / 2.1f;
-                ImGui.GetWindowDrawList().AddImage(checkTex.ImGuiHandle, pos, pos + new Vector2(40 * ImGuiHelpers.GlobalScale / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
+                ImGui.GetWindowDrawList().AddImage(checkTex.Handle, pos, pos + new Vector2(40 * ImGuiHelpers.GlobalScale / 1.5f), new Vector2(0.6818182f, 0.21538462f), new Vector2(1, 0.4f));
             }
         }
 
