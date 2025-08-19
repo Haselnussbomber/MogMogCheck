@@ -1,6 +1,6 @@
 using Dalamud.Interface.Utility;
+using Dalamud.Plugin;
 using HaselCommon.Gui.ImGuiTable;
-using HaselCommon.Services;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
 using MogMogCheck.Services;
@@ -14,7 +14,7 @@ public partial class ShopItemTable : Table<ShopItem>
     private readonly RewardColumn _rewardColumn;
     private readonly RequiredItemColumn _requiredItemColumn;
     private readonly SpecialShopService _specialShopService;
-    private readonly GlobalScaleObserver _globalScaleObserver;
+    private readonly IDalamudPluginInterface _pluginInterface;
     private readonly PluginConfig _pluginConfig;
 
     [AutoPostConstruct]
@@ -26,17 +26,17 @@ public partial class ShopItemTable : Table<ShopItem>
             _requiredItemColumn,
         ];
 
-        _globalScaleObserver.ScaleChanged += OnGlobalScaleChanged;
+        _pluginInterface.UiBuilder.DefaultGlobalScaleChanged += OnGlobalScaleChanged;
     }
 
     public override void Dispose()
     {
-        _globalScaleObserver.ScaleChanged -= OnGlobalScaleChanged;
+        _pluginInterface.UiBuilder.DefaultGlobalScaleChanged -= OnGlobalScaleChanged;
         base.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    private void OnGlobalScaleChanged(float scale)
+    private void OnGlobalScaleChanged()
     {
         UpdateColumnWidth();
     }

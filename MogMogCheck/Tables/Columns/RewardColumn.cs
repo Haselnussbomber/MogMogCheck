@@ -31,7 +31,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly IDataManager _dataManager;
     private readonly ITextureProvider _textureProvider;
-    private readonly SeStringEvaluator _seStringEvaluator;
+    private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly ShopItemService _shopItemService;
@@ -41,7 +41,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
-        => _textService.GetItemName(row.ReceiveItems[0].ItemId).ExtractText().StripSoftHyphen();
+        => _textService.GetItemName(row.ReceiveItems[0].ItemId).ToString();
 
     public override void DrawColumn(ShopItem row)
     {
@@ -107,7 +107,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!popuptable) return;
 
         var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing * ImGuiHelpers.GlobalScale;
-        var title = _textService.GetItemName(item.RowId).ExtractText().StripSoftHyphen();
+        var title = _textService.GetItemName(item.RowId).ToString();
 
         ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, 40 * ImGuiHelpers.GlobalScale + itemInnerSpacing.X);
         ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
@@ -136,7 +136,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (isUnlocked)
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 40 * ImGuiHelpers.GlobalScale / 2f - 3); // wtf
 
-        var category = item.ItemUICategory.IsValid ? item.ItemUICategory.Value.Name.ExtractText().StripSoftHyphen() : null;
+        var category = item.ItemUICategory.IsValid ? item.ItemUICategory.Value.Name.ToString() : null;
         if (!string.IsNullOrEmpty(category))
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
@@ -144,12 +144,12 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 ImGui.Text(category);
         }
 
-        var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ExtractText().StripSoftHyphen() : null);
+        var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ToString() : null);
         if (!string.IsNullOrEmpty(description))
         {
             DrawSeparator(marginTop: 1, marginBottom: 4);
 
-            ImGuiHelpers.SafeTextWrapped(description);
+            ImGui.TextWrapped(description);
         }
 
         switch ((ItemActionType)item.ItemAction.Value.Type)
@@ -186,10 +186,10 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     DrawSeparator();
                     _textureService.DrawIcon(obtainRow.Icon, 40 * ImGuiHelpers.GlobalScale);
                     ImGui.SameLine();
-                    ImGuiHelpers.SafeTextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Text.RowId, [
+                    ImGui.TextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Text.RowId, [
                         residentRow.Acquisition.RowId,
                         residentRow.Location.RowId
-                    ]).ExtractText().StripSoftHyphen());
+                    ]).ToString());
                 }
 
                 DrawTripleTriadCard(item);
@@ -210,7 +210,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             return true;
 
         var playerState = PlayerState.Instance();
-        if (playerState == null || playerState->IsLoaded == 0)
+        if (playerState == null || playerState->IsLoaded)
         {
             _facePaintIconCache.Add(dataId, iconId = 0);
             return false;

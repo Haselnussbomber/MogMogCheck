@@ -2,7 +2,6 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon.Extensions;
 using HaselCommon.Graphics;
@@ -70,12 +69,12 @@ public unsafe partial class ConfigWindow : SimpleWindow
             {
                 ImGuiUtils.PushCursorY(-3);
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                ImGuiHelpers.SafeTextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.ResetInfo"));
+                ImGui.TextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.ResetInfo"));
             }
 
             using var indent = ImGuiUtils.ConfigIndent();
             using var disable = ImRaii.Disabled(!_pluginConfig.CheckboxMode);
-            
+
             if (ImGui.Checkbox(_textService.Translate("Config.CheckboxMode.AutoUntrack"), ref _pluginConfig.AutoUntrack))
             {
                 _pluginConfig.Save();
