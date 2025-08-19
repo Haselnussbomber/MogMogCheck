@@ -53,6 +53,6 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
         ImGui.SameLine();
 
         using (ImRaii.Disabled(!hasEnoughTomestones))
-            ImGui.TextUnformatted(quantity.ToString());
+            ImGui.Text(quantity.ToString());
     }
 }

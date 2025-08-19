@@ -112,13 +112,13 @@ public unsafe partial class ConfigWindow : SimpleWindow
 
         ImGuiUtils.DrawLink("GitHub", _textService.Translate("ConfigWindow.GitHubLink.Tooltip"), "https://github.com/Haselnussbomber/MogMogCheck");
         ImGui.SameLine();
-        ImGui.TextUnformatted("•");
+        ImGui.Text("•");
         ImGui.SameLine();
         ImGuiUtils.DrawLink("Ko-fi", _textService.Translate("ConfigWindow.KoFiLink.Tooltip"), "https://ko-fi.com/haselnussbomber");
         ImGui.SameLine();
-        ImGui.TextUnformatted("•");
+        ImGui.Text("•");
         ImGui.SameLine();
-        ImGui.TextUnformatted(_textService.Translate("ConfigWindow.Licenses"));
+        ImGui.Text(_textService.Translate("ConfigWindow.Licenses"));
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);

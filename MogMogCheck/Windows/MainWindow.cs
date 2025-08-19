@@ -55,7 +55,7 @@ public unsafe partial class MainWindow : SimpleWindow
             ShowTooltip = () =>
             {
                 using var tooltip = ImRaii.Tooltip();
-                ImGui.TextUnformatted(_textService.Translate(IsConfigWindowOpen
+                ImGui.Text(_textService.Translate(IsConfigWindowOpen
                     ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
                     : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig"));
             },
@@ -155,11 +155,11 @@ public unsafe partial class MainWindow : SimpleWindow
         if (needed > quantity)
         {
             var remaining = needed - quantity;
-            ImGui.TextUnformatted(_textService.Translate("Currency.InfoWithRemaining", quantity, needed, remaining));
+            ImGui.Text(_textService.Translate("Currency.InfoWithRemaining", quantity, needed, remaining));
         }
         else
         {
-            ImGui.TextUnformatted(_textService.Translate("Currency.Info", quantity, needed));
+            ImGui.Text(_textService.Translate("Currency.Info", quantity, needed));
         }
     }
 }

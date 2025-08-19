@@ -131,7 +131,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         using var indentSpacing = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, itemInnerSpacing.X);
         using var indent = ImRaii.PushIndent(1);
 
-        ImGui.TextUnformatted(title);
+        ImGui.Text(title);
 
         if (isUnlocked)
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 40 * ImGuiHelpers.GlobalScale / 2f - 3); // wtf
@@ -141,7 +141,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
             using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
-                ImGui.TextUnformatted(category);
+                ImGui.Text(category);
         }
 
         var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ExtractText().StripSoftHyphen() : null);
@@ -254,7 +254,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         var infoText = $"{_seStringEvaluator.EvaluateFromAddon(addonRowId, [order]).ExtractText()} - {card.Name}";
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() - ImGui.GetStyle().IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - ImGui.CalcTextSize(infoText).X / 2f);
-        ImGui.TextUnformatted(infoText);
+        ImGui.Text(infoText);
 
         var cardSizeScaled = ImGuiHelpers.ScaledVector2(208, 256);
         var cardStartPosX = ImGui.GetCursorPosX() - ImGui.GetStyle().IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - cardSizeScaled.X / 2f;
@@ -355,23 +355,23 @@ public partial class RewardColumn : ColumnString<ShopItem>
         // outline
         ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(-1));
         using (outlineColor.Push(ImGuiCol.Text))
-            ImGui.TextUnformatted(text);
+            ImGui.Text(text);
 
         ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(1));
         using (outlineColor.Push(ImGuiCol.Text))
-            ImGui.TextUnformatted(text);
+            ImGui.Text(text);
 
         ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(1, -1));
         using (outlineColor.Push(ImGuiCol.Text))
-            ImGui.TextUnformatted(text);
+            ImGui.Text(text);
 
         ImGui.SetCursorPos(position + ImGuiHelpers.ScaledVector2(-1, 1));
         using (outlineColor.Push(ImGuiCol.Text))
-            ImGui.TextUnformatted(text);
+            ImGui.Text(text);
 
         // text
         ImGui.SetCursorPos(position);
-        ImGui.TextUnformatted(text);
+        ImGui.Text(text);
     }
 
     private static void DrawShadow(Vector2 pos, Vector2 size, int layers, Vector4 shadowColor)

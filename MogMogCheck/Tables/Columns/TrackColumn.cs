@@ -72,7 +72,7 @@ public partial class TrackColumn : Column<ShopItem>
             if (ImGui.IsItemHovered() || ImGui.IsItemActive())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", row.GiveItems[0].Quantity));
+                ImGui.Text(_textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", row.GiveItems[0].Quantity));
                 ImGui.EndTooltip();
             }
         }
@@ -108,7 +108,7 @@ public partial class TrackColumn : Column<ShopItem>
             {
                 ImGui.BeginTooltip();
 
-                ImGui.TextUnformatted(inputAmount <= 1
+                ImGui.Text(inputAmount <= 1
                     ? _textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Quantity)
                     : _textService.Translate("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Quantity, inputAmount * row.GiveItems[0].Quantity));
 
