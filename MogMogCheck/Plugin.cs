@@ -13,6 +13,10 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin(IDalamudPluginInterface pluginInterface, IFramework framework)
     {
+#if CUSTOM_CS
+        pluginInterface.InitializeCustomClientStructs();
+#endif
+
         _serviceProvider = new ServiceCollection()
             .AddDalamud(pluginInterface)
             .AddSingleton(PluginConfig.Load)

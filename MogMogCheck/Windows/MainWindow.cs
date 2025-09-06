@@ -23,8 +23,8 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly IGameInventory _gameInventory;
     private readonly IClientState _clientState;
     private readonly TextService _textService;
+    private readonly ITextureProvider _textureProvider;
     private readonly ItemQuantityCache _itemQuantityCache;
-    private readonly TextureService _textureService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
@@ -132,7 +132,7 @@ public unsafe partial class MainWindow : SimpleWindow
         var items = _specialShopService.ShopItems;
         var tomestoneItemId = _specialShopService.TomestoneItemId;
 
-        _textureService.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
+        _textureProvider.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
 
         _imGuiContextMenuService.Draw("##Tomestone_ItemContextMenu", builder =>
         {

@@ -7,11 +7,13 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using HaselCommon.Extensions;
 using HaselCommon.Game.Enums;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
@@ -26,7 +28,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 {
     private readonly ExcelService _excelService;
     private readonly TextService _textService;
-    private readonly TextureService _textureService;
+    private readonly UldService _uldService;
     private readonly ItemService _itemService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly IDataManager _dataManager;
@@ -54,7 +56,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         ImGui.BeginGroup();
 
-        _textureService.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), ItemUtil.IsHighQuality(itemId)), new DrawInfo(iconSize)
+        _textureProvider.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), ItemUtil.IsHighQuality(itemId)), new DrawInfo(iconSize)
         {
             TintColor = grayOut ? (Vector4)Color.Grey : null
         });
@@ -155,27 +157,27 @@ public partial class RewardColumn : ColumnString<ShopItem>
         switch ((ItemActionType)item.ItemAction.Value.Type)
         {
             case ItemActionType.Mount when _excelService.TryGetRow<Mount>(item.ItemAction.Value.Data[0], out var mount):
-                _textureService.DrawIcon(64000 + mount.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon(64000 + mount.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.Companion when _excelService.TryGetRow<Companion>(item.ItemAction.Value.Data[0], out var companion):
-                _textureService.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.Ornament when _excelService.TryGetRow<Ornament>(item.ItemAction.Value.Data[0], out var ornament):
-                _textureService.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 5211 && _excelService.TryGetRow<Emote>(item.ItemAction.Value.Data[2], out var emote):
-                _textureService.DrawIcon(emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon((uint)emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item.RowId) is { } hairStyleIconId && hairStyleIconId != 0:
-                _textureService.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 9390 && TryGetFacePaintIconId(item.ItemAction.Value.Data[0], out var facePaintIconId):
-                _textureService.DrawIcon(facePaintIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
+                _textureProvider.DrawIcon(facePaintIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.TripleTriadCard:
@@ -184,7 +186,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     obtainRow.Text.RowId != 0)
                 {
                     DrawSeparator();
-                    _textureService.DrawIcon(obtainRow.Icon, 40 * ImGuiHelpers.GlobalScale);
+                    _textureProvider.DrawIcon(obtainRow.Icon, 40 * ImGuiHelpers.GlobalScale);
                     ImGui.SameLine();
                     ImGui.TextWrapped(_seStringEvaluator.EvaluateFromAddon(obtainRow.Text.RowId, [
                         residentRow.Acquisition.RowId,
@@ -198,7 +200,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             default:
                 if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
                 {
-                    _textureService.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
+                    _textureProvider.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
                 }
                 break;
         }
@@ -262,11 +264,11 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         // draw background
         ImGui.SetCursorPosX(cardStartPosX);
-        _textureService.DrawPart("CardTripleTriad", 1, 0, cardSizeScaled);
+        _uldService.DrawPart("CardTripleTriad", 1, 0, cardSizeScaled);
 
         // draw card
         ImGui.SetCursorPos(cardStartPos);
-        _textureService.DrawIcon(87000 + cardId, cardSizeScaled);
+        _textureProvider.DrawIcon(87000 + cardId, cardSizeScaled);
 
         // draw numbers
         using var font = _tripleTriadNumberFont.Push();
@@ -328,7 +330,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             };
 
             ImGui.SetCursorPos(cardStartPos + new Vector2(cardSizeScaled.X - typeSize * 1.5f, typeSize / 2.5f));
-            _textureService.DrawPart("CardTripleTriad", 1, partIndex, typeSize);
+            _uldService.DrawPart("CardTripleTriad", 1, partIndex, typeSize);
         }
 
         // functions
@@ -339,7 +341,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             var angle = (int)pos * angleIncrement - MathF.PI / 2;
 
             ImGui.SetCursorPos(starCenter + new Vector2(starRadius * MathF.Cos(angle), starRadius * MathF.Sin(angle)));
-            _textureService.DrawPart("CardTripleTriad", 1, 1, starSize);
+            _uldService.DrawPart("CardTripleTriad", 1, 1, starSize);
         }
     }
 

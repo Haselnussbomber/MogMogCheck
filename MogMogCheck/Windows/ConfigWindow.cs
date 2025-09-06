@@ -132,7 +132,7 @@ public unsafe partial class ConfigWindow : SimpleWindow
         {
             var versionString = "v" + version.ToString(3);
             ImGui.SetCursorPos(cursorPos + contentAvail - ImGui.CalcTextSize(versionString));
-            ImGuiUtils.TextUnformattedDisabled(versionString);
+            ImGui.TextDisabled(versionString);
         }
     }
 }

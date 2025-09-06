@@ -1,9 +1,12 @@
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin.Services;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using MogMogCheck.Caches;
 using MogMogCheck.Records;
 
@@ -14,9 +17,9 @@ namespace MogMogCheck.Tables;
 [RegisterSingleton, AutoConstruct]
 public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 {
+    private readonly ITextureProvider _textureProvider;
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly ItemService _itemService;
-    private readonly TextureService _textureService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
 
     [AutoPostConstruct]
@@ -37,7 +40,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
         var hasEnoughTomestones = _itemQuantityCache.GetValue(itemId) >= quantity;
 
-        _textureService.DrawIcon(_itemService.GetIconId(itemId), new DrawInfo(ImGui.GetFrameHeight())
+        _textureProvider.DrawIcon(_itemService.GetIconId(itemId), new DrawInfo(ImGui.GetFrameHeight())
         {
             TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey
         });
