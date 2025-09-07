@@ -4,6 +4,7 @@
   <!-- Project settings -->
   <PropertyGroup>
     <AssemblyName>MogMogCheck</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
     <Version>3.2.4</Version>
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
@@ -40,6 +41,7 @@
   <!-- FFXIVClientStructs -->
   <PropertyGroup>
     <InteropGenerator_InteropNamespace>$(AssemblyName)</InteropGenerator_InteropNamespace>
+    <DefineConstants>$(DefineConstants);CUSTOM_CS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
