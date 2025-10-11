@@ -84,7 +84,7 @@ public unsafe partial class MainWindow : SimpleWindow
         if (!_hasClearedUntrackedItems && _specialShopService.HasData)
         {
             // clear old untracked items
-            if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.ItemId == itemId))))
+            if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 0 || !_specialShopService.ShopItems.Any(entry => entry.ReceiveItems.Any(ri => ri.Item.ItemId == itemId))))
                 _pluginConfig.Save();
 
             _autoUntrackService.Check();
@@ -130,28 +130,28 @@ public unsafe partial class MainWindow : SimpleWindow
     {
         var scale = ImGuiHelpers.GlobalScale;
         var items = _specialShopService.ShopItems;
-        var tomestoneItemId = _specialShopService.TomestoneItemId;
+        var tomestoneItem = _specialShopService.TomestoneItem;
 
-        _textureProvider.DrawIcon(_itemService.GetIconId(tomestoneItemId), 32 * scale);
+        _textureProvider.DrawIcon(tomestoneItem.Icon, 32 * scale);
 
         _imGuiContextMenuService.Draw("##Tomestone_ItemContextMenu", builder =>
         {
-            builder.AddItemFinder(tomestoneItemId);
-            builder.AddLinkItem(tomestoneItemId);
-            builder.AddCopyItemName(tomestoneItemId);
-            builder.AddOpenOnGarlandTools("item", tomestoneItemId);
+            builder.AddItemFinder(tomestoneItem);
+            builder.AddLinkItem(tomestoneItem);
+            builder.AddCopyItemName(tomestoneItem);
+            builder.AddOpenOnGarlandTools("item", tomestoneItem);
         });
 
         ImGui.SameLine(45 * scale);
         ImGuiUtils.PushCursorY(6 * scale);
 
         var needed = 0u;
-        for (var i = 0; i < items.Length; i++)
+        for (var i = 0; i < items.Count; i++)
         {
-            needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].ItemId, out var amount) ? amount * items[i].GiveItems[0].Quantity : 0u;
+            needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].Item, out var amount) ? amount * items[i].GiveItems[0].Amount : 0u;
         }
 
-        var quantity = _itemQuantityCache.GetValue(tomestoneItemId);
+        var quantity = _itemQuantityCache.GetValue(tomestoneItem);
         if (needed > quantity)
         {
             var remaining = needed - quantity;

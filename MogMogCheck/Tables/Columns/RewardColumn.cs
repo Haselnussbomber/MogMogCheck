@@ -5,7 +5,6 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions;
 using HaselCommon.Game.Enums;
@@ -43,20 +42,20 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
-        => _textService.GetItemName(row.ReceiveItems[0].ItemId).ToString();
+        => row.ReceiveItems[0].Item.Name.ToString();
 
     public override void DrawColumn(ShopItem row)
     {
         ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
 
-        var (itemId, quantity) = row.ReceiveItems[0];
+        var (item, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
-        var isCollected = _shopItemService.IsUnlockedOrCollected(itemId);
+        var isCollected = _shopItemService.IsUnlockedOrCollected(item);
         var grayOut = _pluginConfig.GrayOutCollectedItems && isCollected;
 
         ImGui.BeginGroup();
 
-        _textureProvider.DrawIcon(new GameIconLookup(_itemService.GetIconId(itemId), ItemUtil.IsHighQuality(itemId)), new DrawInfo(iconSize)
+        _textureProvider.DrawIcon(new GameIconLookup(item.Icon, item.IsHighQuality), new DrawInfo(iconSize)
         {
             TintColor = grayOut ? (Vector4)Color.Grey : null
         });
@@ -64,23 +63,23 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.SameLine();
 
         using (Color.From(ImGuiCol.TextDisabled).Push(ImGuiCol.Text, grayOut))
-            ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_textService.GetItemName(itemId)}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
+            ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{item.Name}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
 
         ImGui.EndGroup();
 
-        if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt) && _excelService.TryGetRow<Item>(itemId, out var item))
+        if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt) && item.TryGetItem(out var itemRow))
         {
-            DrawItemTooltip(item);
+            DrawItemTooltip(itemRow);
         }
 
-        _imGuiContextMenuService.Draw($"##RewardColumnContextMenu{itemId}", builder =>
+        _imGuiContextMenuService.Draw($"##RewardColumnContextMenu{item}", builder =>
         {
-            builder.AddTryOn(itemId);
-            builder.AddItemFinder(itemId);
-            builder.AddLinkItem(itemId);
-            builder.AddCopyItemName(itemId);
-            builder.AddItemSearch(itemId);
-            builder.AddOpenOnGarlandTools("item", itemId);
+            builder.AddTryOn(item);
+            builder.AddItemFinder(item);
+            builder.AddLinkItem(item);
+            builder.AddCopyItemName(item);
+            builder.AddItemSearch(item);
+            builder.AddOpenOnGarlandTools("item", item);
         });
 
         if (isCollected)

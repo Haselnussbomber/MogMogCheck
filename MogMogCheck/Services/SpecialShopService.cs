@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Extensions;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Config;
@@ -23,8 +25,8 @@ public partial class SpecialShopService : IDisposable
 
     public bool HasData { get; private set; }
     public uint ShopId { get; private set; }
-    public uint TomestoneItemId { get; private set; }
-    public ShopItem[] ShopItems { get; private set; } = [];
+    public ItemHandle TomestoneItem { get; private set; }
+    public IReadOnlyList<ShopItem> ShopItems { get; private set; } = [];
 
     [AutoPostConstruct]
     private void Initialize()
@@ -57,14 +59,14 @@ public partial class SpecialShopService : IDisposable
         }
 
         _seasonTarget = manager->EventInfo.SeasonTarget;
-        TomestoneItemId = seasonRow.Item.RowId;
+        TomestoneItem = seasonRow.Item.RowId;
 
         ShopItems = currentShop.Item
             .Select(item =>
             {
                 var receiveItems = item.ReceiveItems
                     .Where(ri => ri.ReceiveCount > 0 && ri.Item.RowId != 0 && ri.Item.IsValid)
-                    .Select(ri => new ItemEntry(ri.Item.RowId, ri.ReceiveCount))
+                    .Select(ri => new ItemAmount(ri.Item, ri.ReceiveCount))
                     .ToArray();
 
                 if (receiveItems.Length == 0)
@@ -72,7 +74,7 @@ public partial class SpecialShopService : IDisposable
 
                 var giveItems = item.ItemCosts
                     .Where(gi => gi.ItemCost.RowId != 0 && gi.ItemCost.IsValid)
-                    .Select(gi => new ItemEntry(gi.ItemCost.RowId, gi.CurrencyCost))
+                    .Select(gi => new ItemAmount(gi.ItemCost, gi.CurrencyCost))
                     .ToArray();
 
                 if (giveItems.Length == 0)
@@ -103,10 +105,10 @@ public partial class SpecialShopService : IDisposable
         if (ShopId != 0)
             ShopId = 0;
 
-        if (TomestoneItemId != 0)
-            TomestoneItemId = 0;
+        if (TomestoneItem != 0)
+            TomestoneItem = 0;
 
-        if (ShopItems.Length > 0)
+        if (ShopItems.Count > 0)
             ShopItems = [];
     }
 }

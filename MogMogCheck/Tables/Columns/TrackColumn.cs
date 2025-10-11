@@ -2,7 +2,6 @@ using System.Numerics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using Lumina.Excel.Sheets;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
 
@@ -32,14 +31,14 @@ public partial class TrackColumn : Column<ShopItem>
 
     public override void DrawColumn(ShopItem row)
     {
-        var itemId = row.ReceiveItems[0].ItemId;
+        var item = row.ReceiveItems[0].Item;
 
         // Ensure LineHeight???
         var pos = ImGui.GetCursorPos();
         ImGui.Dummy(new Vector2(ImGui.GetFrameHeightWithSpacing()));
         ImGui.SetCursorPos(pos);
 
-        if (!_excelService.TryGetRow<Item>(itemId, out var itemRow))
+        if (!item.TryGetItem(out var itemRow))
             return;
 
         ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
@@ -48,7 +47,7 @@ public partial class TrackColumn : Column<ShopItem>
 
         if (_pluginConfig.CheckboxMode)
         {
-            if (!_pluginConfig.TrackedItems.TryGetValue(itemId, out var savedAmount))
+            if (!_pluginConfig.TrackedItems.TryGetValue(item, out var savedAmount))
                 savedAmount = 0;
 
             var isChecked = savedAmount > 0;
@@ -56,14 +55,14 @@ public partial class TrackColumn : Column<ShopItem>
             {
                 if (isChecked)
                 {
-                    if (!_pluginConfig.TrackedItems.ContainsKey(itemId))
-                        _pluginConfig.TrackedItems.Add(itemId, 1);
+                    if (!_pluginConfig.TrackedItems.ContainsKey(item))
+                        _pluginConfig.TrackedItems.Add(item, 1);
                     else
-                        _pluginConfig.TrackedItems[itemId] = 1;
+                        _pluginConfig.TrackedItems[item] = 1;
                 }
                 else
                 {
-                    _pluginConfig.TrackedItems.Remove(itemId);
+                    _pluginConfig.TrackedItems.Remove(item);
                 }
 
                 _pluginConfig.Save();
@@ -72,7 +71,7 @@ public partial class TrackColumn : Column<ShopItem>
             if (ImGui.IsItemHovered() || ImGui.IsItemActive())
             {
                 ImGui.BeginTooltip();
-                ImGui.Text(_textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", row.GiveItems[0].Quantity));
+                ImGui.Text(_textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", row.GiveItems[0].Amount));
                 ImGui.EndTooltip();
             }
         }
@@ -81,7 +80,7 @@ public partial class TrackColumn : Column<ShopItem>
             var canSell = !itemRow.IsUnique && !itemRow.IsUntradable && !itemRow.IsCollectable;
             var stackSize = canSell ? 999 : itemRow.StackSize;
 
-            if (!_pluginConfig.TrackedItems.TryGetValue(itemId, out var savedAmount))
+            if (!_pluginConfig.TrackedItems.TryGetValue(item, out var savedAmount))
                 savedAmount = 0;
 
             var inputAmount = (int)savedAmount;
@@ -91,14 +90,14 @@ public partial class TrackColumn : Column<ShopItem>
             {
                 if (inputAmount > 0)
                 {
-                    if (!_pluginConfig.TrackedItems.ContainsKey(itemId))
-                        _pluginConfig.TrackedItems.Add(itemId, (uint)inputAmount);
+                    if (!_pluginConfig.TrackedItems.ContainsKey(item))
+                        _pluginConfig.TrackedItems.Add(item, (uint)inputAmount);
                     else
-                        _pluginConfig.TrackedItems[itemId] = (uint)inputAmount;
+                        _pluginConfig.TrackedItems[item] = (uint)inputAmount;
                 }
                 else
                 {
-                    _pluginConfig.TrackedItems.Remove(itemId);
+                    _pluginConfig.TrackedItems.Remove(item);
                 }
 
                 _pluginConfig.Save();
@@ -109,8 +108,8 @@ public partial class TrackColumn : Column<ShopItem>
                 ImGui.BeginTooltip();
 
                 ImGui.Text(inputAmount <= 1
-                    ? _textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Quantity)
-                    : _textService.Translate("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Quantity, inputAmount * row.GiveItems[0].Quantity));
+                    ? _textService.Translate("Reward.AmountInput.Tooltip.ResultOnly", inputAmount * row.GiveItems[0].Amount)
+                    : _textService.Translate("Reward.AmountInput.Tooltip.Calculation", inputAmount, row.GiveItems[0].Amount, inputAmount * row.GiveItems[0].Amount));
 
                 ImGui.EndTooltip();
             }

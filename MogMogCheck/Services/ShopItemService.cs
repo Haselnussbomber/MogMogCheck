@@ -1,5 +1,4 @@
-using HaselCommon.Services;
-using Lumina.Excel.Sheets;
+using HaselCommon.Utils;
 using MogMogCheck.Caches;
 
 namespace MogMogCheck.Services;
@@ -7,24 +6,19 @@ namespace MogMogCheck.Services;
 [RegisterSingleton, AutoConstruct]
 public partial class ShopItemService
 {
-    private readonly ItemService _itemService;
-    private readonly ExcelService _excelService;
     private readonly ItemQuantityCache _itemQuantityCache;
 
-    public bool IsUnlockedOrCollected(uint itemId)
+    public bool IsUnlockedOrCollected(ItemHandle item)
     {
         // Unlockables
-        if (_itemService.IsUnlockable(itemId) &&
-            _itemService.IsUnlocked(itemId))
-        {
+        if (item.IsUnlocked)
             return true;
-        }
 
         // Equipable items for "All Classes"
-        if (_excelService.TryGetRow<Item>(itemId, out var item) &&
-            item.ClassJobCategory.RowId == 1 &&
-            _itemQuantityCache.TryGetValue(itemId, out var itemQuantity) &&
-            itemQuantity != 0)
+        if (item.TryGetItem(out var itemRow)
+            && itemRow.ClassJobCategory.RowId == 1
+            && _itemQuantityCache.TryGetValue(item, out var itemQuantity)
+            && itemQuantity != 0)
         {
             return true;
         }
