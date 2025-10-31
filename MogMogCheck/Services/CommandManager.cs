@@ -1,16 +1,19 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using HaselCommon.Services;
 using Lumina.Excel.Sheets;
+using Microsoft.Extensions.Hosting;
 using MogMogCheck.Config;
 using MogMogCheck.Windows;
 
 namespace MogMogCheck.Services;
 
-[RegisterSingleton, AutoConstruct]
-public partial class CommandManager : IDisposable
+[RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
+public partial class CommandManager : IHostedService
 {
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly WindowManager _windowManager;
@@ -22,8 +25,7 @@ public partial class CommandManager : IDisposable
     private readonly SpecialShopService _specialShopService;
     private bool _mainUiHandlerRegistered;
 
-    [AutoPostConstruct]
-    private void Initialize()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _commandService.Register("/mogmog", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
 
@@ -35,9 +37,11 @@ public partial class CommandManager : IDisposable
 
         _addonObserver.AddonOpen += AddonObserver_AddonOpen;
         _addonObserver.AddonClose += AddonObserver_AddonClose;
+
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         DisableMainUiHandler();
 
@@ -48,6 +52,8 @@ public partial class CommandManager : IDisposable
 
         _addonObserver.AddonOpen -= AddonObserver_AddonOpen;
         _addonObserver.AddonClose -= AddonObserver_AddonClose;
+
+        return Task.CompletedTask;
     }
 
     private void OnLogin()
@@ -84,6 +90,10 @@ public partial class CommandManager : IDisposable
         {
             case "config":
                 ToggleConfigWindow();
+                break;
+
+            case "debug":
+                ToggleDebugWindow();
                 break;
 
             default:
@@ -163,5 +173,10 @@ public partial class CommandManager : IDisposable
     private void ToggleConfigWindow()
     {
         _windowManager.CreateOrToggle<ConfigWindow>();
+    }
+
+    private void ToggleDebugWindow()
+    {
+        _windowManager.CreateOrToggle<DebugWindow>();
     }
 }

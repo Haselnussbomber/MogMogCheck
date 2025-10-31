@@ -2,37 +2,38 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MogMogCheck.Config;
-using MogMogCheck.Services;
 
 namespace MogMogCheck;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    private readonly ServiceProvider _serviceProvider;
+    private readonly IHost _host;
 
-    public Plugin(IDalamudPluginInterface pluginInterface, IFramework framework)
+    public Plugin(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IFramework framework)
     {
 #if CUSTOM_CS
         pluginInterface.InitializeCustomClientStructs();
 #endif
 
-        _serviceProvider = new ServiceCollection()
-            .AddDalamud(pluginInterface)
-            .AddSingleton(PluginConfig.Load)
-            .AddHaselCommon()
-            .AddMogMogCheck()
-            .BuildServiceProvider();
+        _host = new HostBuilder()
+            .UseContentRoot(pluginInterface.AssemblyLocation.Directory!.FullName)
+            .ConfigureServices(services =>
+            {
+                services.AddDalamud(pluginInterface);
+                services.AddConfig(PluginConfig.Load(pluginInterface, pluginLog));
+                services.AddHaselCommon();
+                services.AddMogMogCheck();
+            })
+            .Build();
 
-        framework.RunOnFrameworkThread(() =>
-        {
-            _serviceProvider.GetRequiredService<CommandManager>();
-            _serviceProvider.GetRequiredService<AutoUntrackService>();
-        });
+        framework.RunOnFrameworkThread(_host.Start);
     }
 
     void IDisposable.Dispose()
     {
-        _serviceProvider.Dispose();
+        _host.StopAsync().GetAwaiter().GetResult();
+        _host.Dispose();
     }
 }

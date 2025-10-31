@@ -1,14 +1,17 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
+using Microsoft.Extensions.Hosting;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 
 namespace MogMogCheck.Services;
 
-[RegisterSingleton, AutoConstruct]
-public partial class AutoUntrackService : IDisposable
+[RegisterSingleton, RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
+public partial class AutoUntrackService : IHostedService
 {
     private readonly IClientState _clientState;
     private readonly IGameInventory _gameInventory;
@@ -16,15 +19,16 @@ public partial class AutoUntrackService : IDisposable
     private readonly SpecialShopService _specialShopService;
     private readonly ItemQuantityCache _itemQuantityCache;
 
-    [AutoPostConstruct]
-    private void Initialize()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _gameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         _gameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
+        return Task.CompletedTask;
     }
 
     private void GameInventory_InventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)

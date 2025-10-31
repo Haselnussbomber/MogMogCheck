@@ -32,10 +32,16 @@ public partial class PluginConfig : IPluginConfiguration
     [JsonIgnore]
     private static IPluginLog? PluginLog;
 
-    public static PluginConfig Load(IServiceProvider serviceProvider)
+    public static PluginConfig Load(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog)
     {
-        PluginInterface = serviceProvider.GetRequiredService<IDalamudPluginInterface>();
-        PluginLog = serviceProvider.GetRequiredService<IPluginLog>();
+        PluginInterface = pluginInterface;
+        PluginLog = pluginLog;
+
+        SerializerOptions = new JsonSerializerOptions()
+        {
+            IncludeFields = true,
+            WriteIndented = true,
+        };
 
         var fileInfo = PluginInterface.ConfigFile;
         if (!fileInfo.Exists || fileInfo.Length < 2)
@@ -87,4 +93,12 @@ public partial class PluginConfig
     public bool OpenWithShop = true;
     public bool GrayOutCollectedItems = false;
     public bool HidePreviousSeasons = true;
+}
+
+public static class PluginConfigExtension
+{
+    public static void AddConfig(this IServiceCollection services, PluginConfig pluginConfig)
+    {
+        services.AddSingleton(pluginConfig);
+    }
 }
