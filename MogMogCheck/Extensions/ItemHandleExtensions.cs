@@ -1,14 +1,12 @@
+using HaselCommon.Services;
 using HaselCommon.Utils;
 using MogMogCheck.Caches;
 
-namespace MogMogCheck.Services;
+namespace MogMogCheck.Extensions;
 
-[RegisterSingleton, AutoConstruct]
-public partial class ShopItemService
+public static class ItemHandleExtensions
 {
-    private readonly ItemQuantityCache _itemQuantityCache;
-
-    public bool IsUnlockedOrCollected(ItemHandle item)
+    public static bool IsUnlockedOrCollected(this ItemHandle item)
     {
         // Unlockables
         if (item.IsUnlocked)
@@ -17,7 +15,8 @@ public partial class ShopItemService
         // Equipable items for "All Classes"
         if (item.TryGetItem(out var itemRow)
             && itemRow.ClassJobCategory.RowId == 1
-            && _itemQuantityCache.TryGetValue(item, out var itemQuantity)
+            && ServiceLocator.TryGetService<ItemQuantityCache>(out var itemQuantityCache)
+            && itemQuantityCache.TryGetValue(item, out var itemQuantity)
             && itemQuantity != 0)
         {
             return true;

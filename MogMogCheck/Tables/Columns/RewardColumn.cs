@@ -17,6 +17,7 @@ using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
+using MogMogCheck.Extensions;
 using MogMogCheck.Records;
 using MogMogCheck.Services;
 
@@ -35,7 +36,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly ItemQuantityCache _itemQuantityCache;
-    private readonly ShopItemService _shopItemService;
     private readonly PluginConfig _pluginConfig;
 
     private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
@@ -50,7 +50,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         var (item, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
-        var isCollected = _shopItemService.IsUnlockedOrCollected(item);
+        var isCollected = item.IsUnlockedOrCollected();
         var grayOut = _pluginConfig.GrayOutCollectedItems && isCollected;
 
         ImGui.BeginGroup();
@@ -116,7 +116,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.TableNextColumn(); // Icon
         ImGui.Image(icon.Handle, ImGuiHelpers.ScaledVector2(40));
 
-        var isUnlocked = _shopItemService.IsUnlockedOrCollected(item.RowId);
+        var isUnlocked = ((ItemHandle)item).IsUnlockedOrCollected();
         if (isUnlocked)
         {
             ImGui.SameLine(1 + ImGui.GetStyle().CellPadding.X + itemInnerSpacing.X, 0);
