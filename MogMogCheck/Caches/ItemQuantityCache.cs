@@ -87,11 +87,12 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
                         var container = inventoryManager->GetInventoryContainer((InventoryType)type);
                         if (container != null && container->IsLoaded)
                         {
-                            foreach (ref var item in new Span<InventoryItem>(container->Items, (int)container->Size))
+                            for (var i = 0; i < container->GetSize(); i++)
                             {
-                                if (item.GetItemId() == itemId)
+                                var item = container->GetInventorySlot(i);
+                                if (item != null && item->GetItemId() == itemId)
                                 {
-                                    count += item.GetQuantity();
+                                    count += item->GetQuantity();
                                 }
                             }
                         }
