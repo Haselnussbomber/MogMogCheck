@@ -48,8 +48,6 @@ public partial class CommandManager : IDisposable
 
         _addonObserver.AddonOpen -= AddonObserver_AddonOpen;
         _addonObserver.AddonClose -= AddonObserver_AddonClose;
-
-        GC.SuppressFinalize(this);
     }
 
     private void OnLogin()

@@ -33,7 +33,6 @@ public partial class ShopItemTable : Table<ShopItem>
     {
         _pluginInterface.UiBuilder.DefaultGlobalScaleChanged -= OnGlobalScaleChanged;
         base.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     private void OnGlobalScaleChanged()

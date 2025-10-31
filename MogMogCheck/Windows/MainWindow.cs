@@ -9,6 +9,7 @@ using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using HaselCommon.Gui;
 using HaselCommon.Services;
+using HaselCommon.Windows;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
 using MogMogCheck.Services;
@@ -29,7 +30,6 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
     private readonly AutoUntrackService _autoUntrackService;
-    private readonly ItemService _itemService;
     private readonly ShopItemTable _table;
     private bool _hasClearedUntrackedItems;
 
@@ -69,7 +69,6 @@ public unsafe partial class MainWindow : SimpleWindow
     {
         _gameInventory.InventoryChangedRaw -= OnInventoryChanged;
         base.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
