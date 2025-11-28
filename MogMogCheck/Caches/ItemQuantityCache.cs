@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using HaselCommon.Cache;
+using HaselCommon.Extensions;
+using HaselCommon.Utils;
 
 namespace MogMogCheck.Caches;
 
@@ -16,12 +17,14 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
     private readonly IClientState _clientState;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
-    private CancellationTokenSource? _cancellationTokenSource;
+    private Debouncer _clearDebouncer;
 
     [AutoPostConstruct]
     private void Initialize()
     {
-        _clientState.Login -= ClientState_Login;
+        _clearDebouncer = _framework.CreateDebouncer(TimeSpan.FromMilliseconds(500), Clear);
+
+        _clientState.Login += ClientState_Login;
         _gameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
     }
 
@@ -29,7 +32,8 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
     {
         _clientState.Login -= ClientState_Login;
         _gameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
-        _cancellationTokenSource?.Cancel();
+
+        _clearDebouncer.Dispose();
         base.Dispose();
     }
 
@@ -43,9 +47,7 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
         // Clear cache immediately when an item was added to the Inventory, delay otherwise
         if (events.Any(evt => evt.Type != GameInventoryEvent.Added || (ushort)evt.Item.ContainerType is not (>= 0 and <= 3)))
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
-            _framework.RunOnTick(Clear, TimeSpan.FromMilliseconds(500), cancellationToken: _cancellationTokenSource.Token);
+            _clearDebouncer.Debounce();
         }
         else
         {
