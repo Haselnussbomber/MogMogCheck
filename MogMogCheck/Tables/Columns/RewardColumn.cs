@@ -1,11 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions;
 using HaselCommon.Game.Enums;
 using HaselCommon.Graphics;
@@ -32,8 +29,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly PluginConfig _pluginConfig;
-
-    private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
         => row.ReceiveItems[0].Item.Name.ToString();
@@ -200,40 +195,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 }
                 break;
         }
-    }
-
-    private unsafe bool TryGetFacePaintIconId(ushort dataId, out uint iconId)
-    {
-        if (_facePaintIconCache.TryGetValue(dataId, out iconId))
-            return true;
-
-        var playerState = PlayerState.Instance();
-        if (playerState == null || playerState->IsLoaded)
-        {
-            _facePaintIconCache.Add(dataId, iconId = 0);
-            return false;
-        }
-
-        if (!_excelService.TryFindRow<HairMakeType>(t => t.Tribe.RowId == playerState->Tribe && t.Gender == playerState->Sex, out var hairMakeType))
-        {
-            _facePaintIconCache.Add(dataId, iconId = 0);
-            return false;
-        }
-
-        if (!_excelService.TryFindRow<CharaMakeCustomize>(row => row.IsPurchasable && row.UnlockLink == dataId && hairMakeType.CharaMakeStruct[7].SubMenuParam.Any(id => id == row.RowId), out var charaMakeCustomize))
-        {
-            _facePaintIconCache.Add(dataId, iconId = 0);
-            return false;
-        }
-
-        _facePaintIconCache.Add(dataId, iconId = charaMakeCustomize.Icon);
-        return true;
-    }
-
-    private void DrawTripleTriadCard(Item item)
-    {
-        if (item.ItemAction.IsValid)
-            DrawTripleTriadCard(item.ItemAction.Value.Data[0]);
     }
 
     private void DrawTripleTriadCard(uint cardId)
