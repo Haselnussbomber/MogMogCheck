@@ -13,7 +13,6 @@ using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
 using HaselCommon.Utils;
-using Lumina.Data.Files;
 using Lumina.Excel.Sheets;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
@@ -38,7 +37,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ItemQuantityCache _itemQuantityCache;
     private readonly PluginConfig _pluginConfig;
 
-    private readonly Dictionary<uint, Vector2> _iconSizeCache = [];
     private readonly Dictionary<ushort, uint> _facePaintIconCache = [];
 
     public override string ToName(ShopItem row)
@@ -171,11 +169,11 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 _textureProvider.DrawIcon((uint)emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item.RowId) is { } hairStyleIconId && hairStyleIconId != 0:
+            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item) is { } hairStyleIconId && hairStyleIconId != 0:
                 _textureProvider.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 9390 && TryGetFacePaintIconId(item.ItemAction.Value.Data[0], out var facePaintIconId):
+            case ItemActionType.UnlockLink when item.ItemAction.Value.Data[1] == 9390 && _itemService.GetFacePaintIconId(item) is { } facePaintIconId && facePaintIconId != 0:
                 _textureProvider.DrawIcon(facePaintIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
@@ -197,9 +195,12 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 break;
 
             default:
-                if (item.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)) // Paintings
+                if (item.ItemUICategory.RowId == 95 // Paintings
+                    && _excelService.TryGetRow<Picture>(item.AdditionalData.RowId, out var picture)
+                    && _textureProvider.TryGetIconSize((uint)picture.Image, out var pictureSize))
                 {
-                    _textureProvider.DrawIcon(picture.Image, ResizeToFit(GetIconSize((uint)picture.Image), ImGui.GetContentRegionAvail().X));
+                    var maxSize = new Vector2(ImGui.GetContentRegionAvail().X, 1);
+                    _textureProvider.DrawIcon(picture.Image, pictureSize.Cover(maxSize));
                 }
                 break;
         }
@@ -401,33 +402,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
         Left = 4,
         BottomLeft = 3,
         BottomRight = 2
-    }
-
-    // TODO: move to TextureService?
-    private Vector2 GetIconSize(uint iconId)
-    {
-        if (_iconSizeCache.TryGetValue(iconId, out var size))
-            return size;
-
-        var iconPath = _textureProvider.GetIconPath(iconId);
-        if (string.IsNullOrEmpty(iconPath))
-        {
-            _iconSizeCache.Add(iconId, size = Vector2.Zero);
-            return size;
-        }
-
-        var file = _dataManager.GetFile<TexFile>(iconPath);
-        _iconSizeCache.Add(iconId, size = file != null ? new Vector2(file.Header.Width, file.Header.Height) : Vector2.Zero);
-        return size;
-    }
-
-    private static Vector2 ResizeToFit(Vector2 imageSize, float outerWidth)
-    {
-        if (imageSize.X <= outerWidth)
-            return new Vector2(imageSize.X, imageSize.Y);
-
-        var aspectRatio = imageSize.Y / imageSize.X;
-        return new Vector2(outerWidth, outerWidth * aspectRatio);
     }
 
     private static void DrawSeparator(float marginTop = 2, float marginBottom = 5)

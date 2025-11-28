@@ -96,19 +96,14 @@ public partial class SpecialShopService : IDisposable
 
     private unsafe void Reset()
     {
-        if (HasData)
-            HasData = false;
+        if (!HasData)
+            return;
 
-        if (_seasonTarget != null)
-            _seasonTarget = null;
+        HasData = false;
 
-        if (ShopId != 0)
-            ShopId = 0;
-
-        if (TomestoneItem != 0)
-            TomestoneItem = 0;
-
-        if (ShopItems.Count > 0)
-            ShopItems = [];
+        _seasonTarget = null;
+        ShopId = 0;
+        TomestoneItem = 0;
+        ShopItems = [];
     }
 }
