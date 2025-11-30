@@ -18,7 +18,7 @@ namespace MogMogCheck.Tables;
 public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 {
     private readonly ITextureProvider _textureProvider;
-    private readonly ItemQuantityCache _itemQuantityCache;
+    private readonly ItemQuantityService _itemQuantityService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
 
     [AutoPostConstruct]
@@ -37,7 +37,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
         // TODO: add support for items 2 and 3 whenever it becomes necessary
         var (item, amount) = row.GiveItems[0];
 
-        var hasEnoughTomestones = _itemQuantityCache.GetValue(item) >= amount;
+        var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
 
         _textureProvider.DrawIcon(item.Icon, new DrawInfo(ImGui.GetFrameHeight())
         {

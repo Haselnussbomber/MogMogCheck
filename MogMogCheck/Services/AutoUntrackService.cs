@@ -17,7 +17,7 @@ public partial class AutoUntrackService : IHostedService
     private readonly IGameInventory _gameInventory;
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
-    private readonly ItemQuantityCache _itemQuantityCache;
+    private readonly ItemQuantityService _itemQuantityService;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -41,7 +41,7 @@ public partial class AutoUntrackService : IHostedService
         if (!_clientState.IsLoggedIn || !_specialShopService.HasData || !_pluginConfig.CheckboxMode || !_pluginConfig.AutoUntrack)
             return;
 
-        if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 1 && _itemQuantityCache.TryGetValue(itemId, out var quantity) && quantity != 0))
+        if (_pluginConfig.TrackedItems.RemoveAll((uint itemId, uint amount) => amount == 1 && _itemQuantityService.TryGetValue(itemId, out var quantity) && quantity != 0))
             _pluginConfig.Save();
     }
 }

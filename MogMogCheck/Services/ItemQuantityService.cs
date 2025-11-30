@@ -5,36 +5,33 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
-using HaselCommon.Cache;
 using HaselCommon.Extensions;
 using HaselCommon.Utils;
 
 namespace MogMogCheck.Caches;
 
 [RegisterSingleton, AutoConstruct]
-public partial class ItemQuantityCache : MemoryCache<uint, uint>
+public partial class ItemQuantityService : IDisposable
 {
     private readonly IClientState _clientState;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
+    private readonly Dictionary<uint, uint> _cache = []; // Key: ItemId, Value: Quantity
     private Debouncer _clearDebouncer;
 
     [AutoPostConstruct]
     private void Initialize()
     {
         _clearDebouncer = _framework.CreateDebouncer(TimeSpan.FromMilliseconds(500), Clear);
-
         _clientState.Login += ClientState_Login;
         _gameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
-        _clientState.Login -= ClientState_Login;
         _gameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
-
+        _clientState.Login -= ClientState_Login;
         _clearDebouncer.Dispose();
-        base.Dispose();
     }
 
     private void ClientState_Login()
@@ -55,25 +52,38 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
         }
     }
 
-    public override unsafe uint CreateEntry(uint itemId)
+    public void Clear()
     {
+        _cache.Clear(); 
+    }
+
+    public bool TryGetValue(ItemHandle item, out uint itemQuantity)
+    {
+        return _cache.TryGetValue(item, out itemQuantity);
+    }
+
+    public unsafe uint Get(ItemHandle item)
+    {
+        if (_cache.TryGetValue(item, out var result))
+            return result;
+
         var inventoryManager = InventoryManager.Instance();
         var itemFinderModule = ItemFinderModule.Instance();
         var retainerManager = RetainerManager.Instance();
 
-        var count = (uint)inventoryManager->GetInventoryItemCount(itemId) + (uint)inventoryManager->GetInventoryItemCount(itemId, true);
+        var count = (uint)inventoryManager->GetInventoryItemCount(item) + (uint)inventoryManager->GetInventoryItemCount(item, true);
 
-        if (itemFinderModule->SaddleBagItemIds.IndexOf(itemId) is { } saddleBagIndex && saddleBagIndex != -1)
+        if (itemFinderModule->SaddleBagItemIds.IndexOf(item) is { } saddleBagIndex && saddleBagIndex != -1)
         {
             count += itemFinderModule->SaddleBagItemCount[saddleBagIndex];
         }
 
-        if (itemFinderModule->PremiumSaddleBagItemIds.IndexOf(itemId) is { } premiumSaddleBagIndex && premiumSaddleBagIndex != -1)
+        if (itemFinderModule->PremiumSaddleBagItemIds.IndexOf(item) is { } premiumSaddleBagIndex && premiumSaddleBagIndex != -1)
         {
             count += itemFinderModule->PremiumSaddleBagItemCount[premiumSaddleBagIndex];
         }
 
-        if (itemFinderModule->GlamourDresserItemIds.Contains(itemId))
+        if (itemFinderModule->GlamourDresserItemIds.Contains(item))
         {
             count += 1;
         }
@@ -91,22 +101,22 @@ public partial class ItemQuantityCache : MemoryCache<uint, uint>
                         {
                             for (var i = 0; i < container->GetSize(); i++)
                             {
-                                var item = container->GetInventorySlot(i);
-                                if (item != null && item->GetItemId() == itemId)
+                                var slot = container->GetInventorySlot(i);
+                                if (slot != null && slot->GetItemId() == item)
                                 {
-                                    count += item->GetQuantity();
+                                    count += slot->GetQuantity();
                                 }
                             }
                         }
                     }
                 }
-                else if (retainerInventory.Value->ItemIds.IndexOf(itemId) is { } retainerIndex && retainerIndex != -1)
+                else if (retainerInventory.Value->ItemIds.IndexOf(item) is { } retainerIndex && retainerIndex != -1)
                 {
                     count += retainerInventory.Value->ItemCount[retainerIndex];
                 }
             }
         }
 
-        return count;
+        return _cache[item] = count;
     }
 }

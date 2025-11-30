@@ -25,7 +25,7 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly IClientState _clientState;
     private readonly TextService _textService;
     private readonly ITextureProvider _textureProvider;
-    private readonly ItemQuantityCache _itemQuantityCache;
+    private readonly ItemQuantityService _itemQuantityService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
@@ -73,7 +73,7 @@ public unsafe partial class MainWindow : SimpleWindow
 
     private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
     {
-        _itemQuantityCache.Clear();
+        _itemQuantityService.Clear();
     }
 
     public override void PreDraw()
@@ -94,7 +94,7 @@ public unsafe partial class MainWindow : SimpleWindow
 
     public override void OnOpen()
     {
-        _itemQuantityCache.Clear();
+        _itemQuantityService.Clear();
         base.OnOpen();
     }
 
@@ -150,7 +150,7 @@ public unsafe partial class MainWindow : SimpleWindow
             needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].Item, out var amount) ? amount * items[i].GiveItems[0].Amount : 0u;
         }
 
-        var quantity = _itemQuantityCache.GetValue(tomestoneItem);
+        var quantity = _itemQuantityService.Get(tomestoneItem);
         if (needed > quantity)
         {
             var remaining = needed - quantity;
