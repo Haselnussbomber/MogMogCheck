@@ -19,6 +19,8 @@ public partial class ItemQuantityService : IDisposable
     private readonly Dictionary<uint, uint> _cache = []; // Key: ItemId, Value: Quantity
     private Debouncer _clearDebouncer;
 
+    public event Action? Cleared;
+
     [AutoPostConstruct]
     private void Initialize()
     {
@@ -54,12 +56,8 @@ public partial class ItemQuantityService : IDisposable
 
     public void Clear()
     {
-        _cache.Clear(); 
-    }
-
-    public bool TryGetValue(ItemHandle item, out uint itemQuantity)
-    {
-        return _cache.TryGetValue(item, out itemQuantity);
+        _cache.Clear();
+        Cleared?.Invoke();
     }
 
     public unsafe uint Get(ItemHandle item)

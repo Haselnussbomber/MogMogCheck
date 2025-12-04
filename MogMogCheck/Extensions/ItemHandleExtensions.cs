@@ -16,7 +16,7 @@ public static class ItemHandleExtensions
         if (item.TryGetItem(out var itemRow)
             && itemRow.ClassJobCategory.RowId == 1
             && ServiceLocator.TryGetService<ItemQuantityService>(out var itemQuantityCache)
-            && itemQuantityCache.TryGetValue(item, out var itemQuantity)
+            && itemQuantityCache.Get(item) is { } itemQuantity
             && itemQuantity != 0)
         {
             return true;
