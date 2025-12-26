@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
   <!-- Project settings -->
   <PropertyGroup>
+    <Name>MogMogCheck</Name>
     <Version>3.2.5</Version>
+    <Author>Haselnussbomber</Author>
+    <RepoUrl>https://github.com/Haselnussbomber/MogMogCheck</RepoUrl>
+    <Punchline>Tracking assistant for Moogle Treasure Trove rewards.</Punchline>
+    <Description>MogMogCheck is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).</Description>
+    <LoadRequiredState>1</LoadRequiredState>
+    <CanUnloadAsync>true</CanUnloadAsync>
+    <AcceptsFeedback>false</AcceptsFeedback>
+  </PropertyGroup>
+
+  <!-- Build settings -->
+  <PropertyGroup>
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
     <NoWarn>$(NoWarn);Dalamud001</NoWarn>
@@ -26,7 +38,7 @@
 
   <!-- NuGet dependencies -->
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.9.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="AutoCtor" Version="2.10.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Injectio" Version="5.1.0" PrivateAssets="all" />
   </ItemGroup>
 

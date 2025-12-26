@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="HaselCommon/HaselCommon/HaselCommon.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="MogMogCheck/MogMogCheck.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>
