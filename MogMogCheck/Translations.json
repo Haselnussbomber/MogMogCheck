@@ -25,9 +25,13 @@
     "en": "Licenses",
     "de": "Lizenzen"
   },
-  "CommandHandlerHelpMessage": {
-    "en": "Open Window",
-    "de": "Öffne Fenster"
+  "MogMogCheck.CommandHandlerHelpMessage": {
+    "en": "Opens the MogMogCheck window",
+    "de": "Öffnet das MogMogCheck-Fenster"
+  },
+  "MogMogCheck.CommandHandler.Config.HelpMessage": {
+    "en": "Opens the MogMogCheck configuration window",
+    "de": "Öffnet das MogMogCheck-Konfigurationsfenster"
   },
   "Config.CouldNotLoadConfigNotification": {
     "en": "Could not load the configuration file. Creating a new one.",

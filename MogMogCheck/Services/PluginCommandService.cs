@@ -5,6 +5,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using HaselCommon.Services;
+using HaselCommon.Services.Commands;
 using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Hosting;
 using MogMogCheck.Config;
@@ -13,7 +14,7 @@ using MogMogCheck.Windows;
 namespace MogMogCheck.Services;
 
 [RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
-public partial class CommandManager : IHostedService
+public partial class PluginCommandService : IHostedService
 {
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly WindowManager _windowManager;
@@ -27,7 +28,17 @@ public partial class CommandManager : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _commandService.Register("/mogmog", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
+        _commandService.AddCommand("mogmog", cmd => cmd
+            .WithHelpTextKey("MogMogCheck.CommandHandlerHelpMessage")
+            .WithHandler(OnMainCommand)
+            .AddSubcommand("config", cmd => cmd
+                .WithHelpTextKey("MogMogCheck.CommandHandler.Config.HelpMessage")
+                .WithHandler(OnConfigCommand))
+            .AddSubcommand("debug", cmd => cmd
+#if !DEBUG
+                .SetEnabled(false)
+#endif
+                .WithHandler(OnDebugCommand)));
 
         _pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
         if (_clientState.IsLoggedIn) EnableMainUiHandler();
@@ -84,22 +95,19 @@ public partial class CommandManager : IHostedService
         }
     }
 
-    private void HandleCommand(string command, string arguments)
+    private void OnMainCommand(CommandContext ctx)
     {
-        switch (arguments)
-        {
-            case "config":
-                ToggleConfigWindow();
-                break;
+        ToggleMainWindow();
+    }
 
-            case "debug":
-                ToggleDebugWindow();
-                break;
+    private void OnConfigCommand(CommandContext ctx)
+    {
+        ToggleConfigWindow();
+    }
 
-            default:
-                ToggleMainWindow();
-                break;
-        }
+    private void OnDebugCommand(CommandContext context)
+    {
+        ToggleDebugWindow();
     }
 
     private unsafe void AddonObserver_AddonOpen(string addonName)
