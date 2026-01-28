@@ -105,7 +105,9 @@ public unsafe partial class MainWindow : SimpleWindow
     }
 
     public override bool DrawConditions()
-        => _clientState.IsLoggedIn;
+    {
+        return _clientState.IsLoggedIn && base.DrawConditions();
+    }
 
     public override void Draw()
     {
