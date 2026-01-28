@@ -13,10 +13,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IFramework framework)
     {
-#if CUSTOM_CS
-        pluginInterface.InitializeCustomClientStructs();
-#endif
-
         _host = new HostBuilder()
             .UseContentRoot(pluginInterface.AssemblyLocation.Directory!.FullName)
             .ConfigureServices(services =>
