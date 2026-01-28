@@ -25,23 +25,23 @@ public partial class ItemQuantityService : IDisposable
     private void Initialize()
     {
         _clearDebouncer = _framework.CreateDebouncer(TimeSpan.FromMilliseconds(500), Clear);
-        _clientState.Login += ClientState_Login;
-        _gameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
+        _clientState.Login += OnLogin;
+        _gameInventory.InventoryChangedRaw += OnInventoryChanged;
     }
 
     public void Dispose()
     {
-        _gameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
-        _clientState.Login -= ClientState_Login;
+        _gameInventory.InventoryChangedRaw -= OnInventoryChanged;
+        _clientState.Login -= OnLogin;
         _clearDebouncer.Dispose();
     }
 
-    private void ClientState_Login()
+    private void OnLogin()
     {
         Clear();
     }
 
-    private void GameInventory_InventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
+    private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
     {
         // Clear cache immediately when an item was added to the Inventory, delay otherwise
         if (events.Any(evt => evt.Type != GameInventoryEvent.Added || (ushort)evt.Item.ContainerType is not (>= 0 and <= 3)))
