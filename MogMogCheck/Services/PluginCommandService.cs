@@ -2,13 +2,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using HaselCommon.Services;
 using HaselCommon.Services.Commands;
-using Lumina.Excel.Sheets;
 using Microsoft.Extensions.Hosting;
-using MogMogCheck.Config;
 using MogMogCheck.Windows;
 
 namespace MogMogCheck.Services;
@@ -20,34 +16,34 @@ public partial class PluginCommandService : IHostedService
     private readonly WindowManager _windowManager;
     private readonly CommandService _commandService;
     private readonly IClientState _clientState;
-    private readonly PluginConfig _pluginConfig;
-    private readonly AddonObserver _addonObserver;
-    private readonly ExcelService _excelService;
-    private readonly SpecialShopService _specialShopService;
+
     private bool _mainUiHandlerRegistered;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _commandService.AddCommand("mogmog", cmd => cmd
-            .WithHelpTextKey("MogMogCheck.CommandHandlerHelpMessage")
-            .WithHandler(OnMainCommand)
-            .AddSubcommand("config", cmd => cmd
-                .WithHelpTextKey("MogMogCheck.CommandHandler.Config.HelpMessage")
-                .WithHandler(OnConfigCommand))
-            .AddSubcommand("debug", cmd => cmd
-#if !DEBUG
-                .SetEnabled(false)
+        _commandService.AddCommand("mogmog", cmd =>
+        {
+            cmd.WithHelpTextKey("MogMogCheck.CommandHandlerHelpMessage");
+            cmd.WithHandler(OnMainCommand);
+
+            cmd.AddSubcommand("config", cmd =>
+            {
+                cmd.WithHelpTextKey("MogMogCheck.CommandHandler.Config.HelpMessage");
+                cmd.WithHandler(OnConfigCommand);
+            });
+
+#if DEBUG
+            cmd.AddSubcommand("debug", cmd => cmd.WithHandler(OnDebugCommand));
 #endif
-                .WithHandler(OnDebugCommand)));
+        });
 
         _pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
-        if (_clientState.IsLoggedIn) EnableMainUiHandler();
 
         _clientState.Login += OnLogin;
         _clientState.Logout += OnLogout;
 
-        _addonObserver.AddonOpen += AddonObserver_AddonOpen;
-        _addonObserver.AddonClose += AddonObserver_AddonClose;
+        if (_clientState.IsLoggedIn)
+            EnableMainUiHandler();
 
         return Task.CompletedTask;
     }
@@ -61,9 +57,6 @@ public partial class PluginCommandService : IHostedService
         _clientState.Login -= OnLogin;
         _clientState.Logout -= OnLogout;
 
-        _addonObserver.AddonOpen -= AddonObserver_AddonOpen;
-        _addonObserver.AddonClose -= AddonObserver_AddonClose;
-
         return Task.CompletedTask;
     }
 
@@ -75,24 +68,6 @@ public partial class PluginCommandService : IHostedService
     private void OnLogout(int type, int code)
     {
         DisableMainUiHandler();
-    }
-
-    private void EnableMainUiHandler()
-    {
-        if (!_mainUiHandlerRegistered)
-        {
-            _pluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
-            _mainUiHandlerRegistered = true;
-        }
-    }
-
-    private void DisableMainUiHandler()
-    {
-        if (_mainUiHandlerRegistered)
-        {
-            _pluginInterface.UiBuilder.OpenMainUi -= ToggleMainWindow;
-            _mainUiHandlerRegistered = false;
-        }
     }
 
     private void OnMainCommand(CommandContext ctx)
@@ -110,66 +85,21 @@ public partial class PluginCommandService : IHostedService
         ToggleDebugWindow();
     }
 
-    private unsafe void AddonObserver_AddonOpen(string addonName)
+    private void EnableMainUiHandler()
     {
-        if (_pluginConfig.OpenWithMogpendium && addonName == "MoogleCollection")
+        if (!_mainUiHandlerRegistered)
         {
-            var window = _windowManager.CreateOrOpen<MainWindow>(false);
-            window.DisableWindowSounds = true;
-        }
-        else if (_pluginConfig.OpenWithShop && addonName == "ShopExchangeItem")
-        {
-            // Find the SpecialShopEventHandler the LocalPlayer is interacting with
-            // and check if it's one of the SpecialShops the Itinerant moogle provides.
-            // TODO: find a better way lol
-
-            var localPlayer = Control.GetLocalPlayer();
-            if (localPlayer == null)
-                return;
-
-            if (!_excelService.TryGetSubrows<CustomTalkNestHandlers>(720897, out var handlers))
-                return;
-
-            foreach (var eventHandler in EventFramework.Instance()->EventHandlerModule.EventHandlerMap.Values)
-            {
-                if (eventHandler.Value == null || eventHandler.Value->Info.EventId.ContentId != EventHandlerContent.SpecialShop)
-                    continue;
-
-                foreach (var eventObject in eventHandler.Value->EventObjects)
-                {
-                    if (eventObject.Value == null || eventObject.Value != localPlayer)
-                        continue;
-
-                    foreach (var handler in handlers)
-                    {
-                        var shopId = eventHandler.Value->Info.EventId.Id;
-
-                        if (handler.NestHandler.RowId != shopId)
-                            continue;
-
-                        if (_specialShopService.HasData && _specialShopService.ShopId != shopId)
-                            continue;
-
-                        var window = _windowManager.CreateOrOpen<MainWindow>(false);
-                        window.DisableWindowSounds = true;
-                        break;
-                    }
-
-                    break;
-                }
-            }
+            _pluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
+            _mainUiHandlerRegistered = true;
         }
     }
 
-    private void AddonObserver_AddonClose(string addonName)
+    private void DisableMainUiHandler()
     {
-        if (_pluginConfig.OpenWithMogpendium && addonName == "MoogleCollection")
+        if (_mainUiHandlerRegistered)
         {
-            _windowManager.Close<MainWindow>();
-        }
-        else if (_pluginConfig.OpenWithShop && addonName == "ShopExchangeItem")
-        {
-            _windowManager.Close<MainWindow>();
+            _pluginInterface.UiBuilder.OpenMainUi -= ToggleMainWindow;
+            _mainUiHandlerRegistered = false;
         }
     }
 
