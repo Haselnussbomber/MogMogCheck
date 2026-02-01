@@ -19,7 +19,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 {
     private readonly ITextureProvider _textureProvider;
     private readonly ItemQuantityService _itemQuantityService;
-    private readonly ImGuiContextMenuService _imGuiContextMenuService;
+    private readonly ItemService _itemService;
 
     [AutoPostConstruct]
     private void Initialize()
@@ -39,12 +39,12 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
         var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
 
-        _textureProvider.DrawIcon(item.Icon, new DrawInfo(ImGui.GetFrameHeight())
+        _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImGui.GetFrameHeight())
         {
             TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey
         });
 
-        _imGuiContextMenuService.Draw($"##RequiredItemColumnContextMenu{item}", builder =>
+        ImGuiContextMenu.Draw($"##RequiredItemColumnContextMenu{item}", builder =>
         {
             builder.AddItemFinder(item);
             builder.AddLinkItem(item);

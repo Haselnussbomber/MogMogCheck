@@ -24,14 +24,13 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ExcelService _excelService;
     private readonly UldService _uldService;
     private readonly ItemService _itemService;
-    private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly ITextureProvider _textureProvider;
     private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
     private readonly PluginConfig _pluginConfig;
 
     public override string ToName(ShopItem row)
-        => row.ReceiveItems[0].Item.Name.ToString();
+        => _itemService.GetItemName(row.ReceiveItems[0].Item).ToString();
 
     public override void DrawColumn(ShopItem row)
     {
@@ -39,12 +38,12 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         var (item, quantity) = row.ReceiveItems[0];
         var iconSize = ImGui.GetFrameHeight();
-        var isCollected = item.IsUnlockedOrCollected();
+        var isCollected = _itemService.IsUnlockedOrCollected(item);
         var grayOut = _pluginConfig.GrayOutCollectedItems && isCollected;
 
         ImGui.BeginGroup();
 
-        _textureProvider.DrawIcon(new GameIconLookup(item.Icon, item.IsHighQuality), new DrawInfo(iconSize)
+        _textureProvider.DrawIcon(new GameIconLookup(_itemService.GetItemIcon(item), item.IsHighQuality), new DrawInfo(iconSize)
         {
             TintColor = grayOut ? (Vector4)Color.Grey : null
         });
@@ -52,7 +51,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.SameLine();
 
         using (Color.From(ImGuiCol.TextDisabled).Push(ImGuiCol.Text, grayOut))
-            ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{item.Name}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
+            ImGui.Selectable($"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_itemService.GetItemName(item)}##Selectable{row.Index}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImGui.GetStyle().FramePadding.Y));
 
         ImGui.EndGroup();
 
@@ -61,7 +60,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             DrawItemTooltip(item);
         }
 
-        _imGuiContextMenuService.Draw($"##RewardColumnContextMenu{item}", builder =>
+        ImGuiContextMenu.Draw($"##RewardColumnContextMenu{item}", builder =>
         {
             builder.AddTryOn(item);
             builder.AddItemFinder(item);
@@ -83,9 +82,9 @@ public partial class RewardColumn : ColumnString<ShopItem>
         }
     }
 
-    public unsafe void DrawItemTooltip(ItemHandle item, string? descriptionOverride = null)
+    public unsafe void DrawItemTooltip(ItemHandle item, string? description = null)
     {
-        if (!item.TryGetItem(out var itemRow) || !_textureProvider.TryGetFromGameIcon(item.Icon, out var tex) || !tex.TryGetWrap(out var icon, out _))
+        if (!_itemService.TryGetItem(item, out var itemRow) || !_textureProvider.TryGetFromGameIcon(_itemService.GetItemIcon(item), out var tex) || !tex.TryGetWrap(out var icon, out _))
             return;
 
         using var id = ImRaii.PushId("##ItemTooltip");
@@ -97,7 +96,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!popuptable) return;
 
         var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing * ImGuiHelpers.GlobalScale;
-        var title = item.Name.ToString();
+        var title = _itemService.GetItemName(item).ToString();
 
         ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, 40 * ImGuiHelpers.GlobalScale + itemInnerSpacing.X);
         ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
@@ -105,7 +104,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.TableNextColumn(); // Icon
         ImGui.Image(icon.Handle, ImGuiHelpers.ScaledVector2(40));
 
-        var isUnlocked = ((ItemHandle)item).IsUnlockedOrCollected();
+        var isUnlocked = _itemService.IsUnlockedOrCollected(item);
         if (isUnlocked)
         {
             ImGui.SameLine(1 + ImGui.GetStyle().CellPadding.X + itemInnerSpacing.X, 0);
@@ -134,7 +133,15 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 ImGui.Text(category);
         }
 
-        var description = descriptionOverride ?? (!item.Description.IsEmpty ? item.Description.ToString() : null);
+        if (description == null)
+        {
+            var itemDescription = _itemService.GetItemDescription(item);
+            if (!itemDescription.IsEmpty)
+            {
+                description = itemDescription.ToString();
+            }
+        }
+
         if (!string.IsNullOrEmpty(description))
         {
             DrawSeparator(marginTop: 1, marginBottom: 4);
@@ -142,34 +149,37 @@ public partial class RewardColumn : ColumnString<ShopItem>
             ImGui.TextWrapped(description);
         }
 
-        switch (item.ItemActionType)
+        if (!itemRow.ItemAction.TryGetRow(out var itemAction))
+            return;
+
+        switch ((ItemActionType)itemAction.Action.RowId)
         {
-            case ItemActionType.Mount when _excelService.TryGetRow<Mount>(itemRow.ItemAction.Value.Data[0], out var mount):
+            case ItemActionType.Mount when _excelService.TryGetRow<Mount>(itemAction.Data[0], out var mount):
                 _textureProvider.DrawIcon(64000 + mount.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.Companion when _excelService.TryGetRow<Companion>(itemRow.ItemAction.Value.Data[0], out var companion):
+            case ItemActionType.Companion when _excelService.TryGetRow<Companion>(itemAction.Data[0], out var companion):
                 _textureProvider.DrawIcon(64000 + companion.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.Ornament when _excelService.TryGetRow<Ornament>(itemRow.ItemAction.Value.Data[0], out var ornament):
+            case ItemActionType.Ornament when _excelService.TryGetRow<Ornament>(itemAction.Data[0], out var ornament):
                 _textureProvider.DrawIcon(59000 + ornament.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.UnlockLink when itemRow.ItemAction.Value.Data[1] == 5211 && _excelService.TryGetRow<Emote>(itemRow.ItemAction.Value.Data[2], out var emote):
-                _textureProvider.DrawIcon((uint)emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
+            case ItemActionType.UnlockLink when itemAction.Data[1] == 5211 && _excelService.TryGetRow<Emote>(itemAction.Data[2], out var emote):
+                _textureProvider.DrawIcon(emote.Icon, new DrawInfo() { Scale = 0.5f * ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.UnlockLink when itemRow.ItemAction.Value.Data[1] == 4659 && _itemService.GetHairstyleIconId(item) is { } hairStyleIconId && hairStyleIconId != 0:
+            case ItemActionType.UnlockLink when itemAction.Data[1] == 4659 && _itemService.GetHairstyleIconId(item) is { } hairStyleIconId && hairStyleIconId != 0:
                 _textureProvider.DrawIcon(hairStyleIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
-            case ItemActionType.UnlockLink when itemRow.ItemAction.Value.Data[1] == 9390 && _itemService.GetFacePaintIconId(item) is { } facePaintIconId && facePaintIconId != 0:
+            case ItemActionType.UnlockLink when itemAction.Data[1] == 9390 && _itemService.GetFacePaintIconId(item) is { } facePaintIconId && facePaintIconId != 0:
                 _textureProvider.DrawIcon(facePaintIconId, new DrawInfo() { Scale = ImGuiHelpers.GlobalScale });
                 break;
 
             case ItemActionType.TripleTriadCard:
-                if (_excelService.TryGetRow<TripleTriadCardResident>(itemRow.ItemAction.Value.Data[0], out var residentRow) &&
+                if (_excelService.TryGetRow<TripleTriadCardResident>(itemAction.Data[0], out var residentRow) &&
                     _excelService.TryGetRow<TripleTriadCardObtain>(residentRow.AcquisitionType.RowId, out var obtainRow) &&
                     obtainRow.Text.RowId != 0)
                 {
@@ -186,12 +196,10 @@ public partial class RewardColumn : ColumnString<ShopItem>
                 break;
 
             default:
-                if (itemRow.ItemUICategory.RowId == 95 // Paintings
-                    && _excelService.TryGetRow<Picture>(itemRow.AdditionalData.RowId, out var picture)
-                    && _textureProvider.TryGetIconSize((uint)picture.Image, out var pictureSize))
+                // Paintings
+                if (itemRow.ItemUICategory.RowId == 95 && _excelService.TryGetRow<Picture>(itemRow.AdditionalData.RowId, out var picture))
                 {
-                    var maxSize = new Vector2(ImGui.GetContentRegionAvail().X, 1);
-                    _textureProvider.DrawIcon(picture.Image, pictureSize.Cover(maxSize));
+                    _textureProvider.DrawIcon(picture.Image, new DrawInfo { Fit = ContentFit.Cover });
                 }
                 break;
         }

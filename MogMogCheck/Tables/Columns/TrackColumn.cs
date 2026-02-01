@@ -11,8 +11,8 @@ namespace MogMogCheck.Tables;
 public partial class TrackColumn : Column<ShopItem>
 {
     private readonly PluginConfig _pluginConfig;
-    private readonly ExcelService _excelService;
     private readonly TextService _textService;
+    private readonly ItemService _itemService;
 
     [AutoPostConstruct]
     private void Initialize()
@@ -38,7 +38,7 @@ public partial class TrackColumn : Column<ShopItem>
         ImGui.Dummy(new Vector2(ImGui.GetFrameHeightWithSpacing()));
         ImGui.SetCursorPos(pos);
 
-        if (!item.TryGetItem(out var itemRow))
+        if (!_itemService.TryGetItem(item, out var itemRow))
             return;
 
         ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding

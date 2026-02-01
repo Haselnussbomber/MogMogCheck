@@ -9,6 +9,7 @@ using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using HaselCommon.Gui;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using HaselCommon.Windows;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
@@ -24,9 +25,9 @@ public unsafe partial class MainWindow : SimpleWindow
     private readonly IGameInventory _gameInventory;
     private readonly IClientState _clientState;
     private readonly TextService _textService;
+    private readonly ItemService _itemService;
     private readonly ITextureProvider _textureProvider;
     private readonly ItemQuantityService _itemQuantityService;
-    private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly PluginConfig _pluginConfig;
     private readonly SpecialShopService _specialShopService;
     private readonly AutoUntrackService _autoUntrackService;
@@ -133,9 +134,9 @@ public unsafe partial class MainWindow : SimpleWindow
         var items = _specialShopService.ShopItems;
         var tomestoneItem = _specialShopService.TomestoneItem;
 
-        _textureProvider.DrawIcon(tomestoneItem.Icon, 32 * scale);
+        _textureProvider.DrawIcon(_itemService.GetItemIcon(tomestoneItem), 32 * scale);
 
-        _imGuiContextMenuService.Draw("##Tomestone_ItemContextMenu", builder =>
+        ImGuiContextMenu.Draw("##Tomestone_ItemContextMenu", builder =>
         {
             builder.AddItemFinder(tomestoneItem);
             builder.AddLinkItem(tomestoneItem);

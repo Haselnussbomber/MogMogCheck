@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
-using HaselCommon.Utils;
+using HaselCommon.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Caches;
@@ -16,6 +16,7 @@ public partial class AutoUntrackService : IHostedService
     private readonly ILogger<AutoUntrackService> _logger;
     private readonly IClientState _clientState;
     private readonly PluginConfig _pluginConfig;
+    private readonly ItemService _itemService;
     private readonly SpecialShopService _specialShopService;
     private readonly ItemQuantityService _itemQuantityService;
 
@@ -50,7 +51,7 @@ public partial class AutoUntrackService : IHostedService
 
             if (amount == 1 && _itemQuantityService.Get(itemId) is { } quantity && quantity != 0)
             {
-                _logger.LogDebug("Untracking item #{itemId} ({name})", itemId, ((ItemHandle)itemId).Name.ToString());
+                _logger.LogDebug("Untracking item #{itemId} ({name})", itemId, _itemService.GetItemName(itemId).ToString());
                 anyRemoved |= _pluginConfig.TrackedItems.Remove(itemId);
             }
         }
