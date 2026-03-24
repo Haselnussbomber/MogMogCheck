@@ -192,7 +192,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     ]).ToString());
                 }
 
-                DrawTripleTriadCard(item);
+                DrawTripleTriadCard(itemRow.AdditionalData.RowId);
                 break;
 
             default:
