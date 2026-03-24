@@ -3,7 +3,7 @@
   <!-- Project settings -->
   <PropertyGroup>
     <Name>MogMogCheck</Name>
-    <Version>3.2.5</Version>
+    <Version>3.2.6</Version>
     <Author>Haselnussbomber</Author>
     <RepoUrl>https://github.com/Haselnussbomber/MogMogCheck</RepoUrl>
     <Punchline>Tracking assistant for Moogle Treasure Trove rewards.</Punchline>

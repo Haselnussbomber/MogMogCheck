@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.6] (2026-03-24)
+
+Update for Patch 7.45.
+
 ## [3.2.5] (2025-11-11)
 
 Update for Patch 7.38.
@@ -135,7 +139,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.5...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.6...main
+[3.2.6]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.5...v3.2.6
 [3.2.5]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.4...v3.2.5
 [3.2.4]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.3...v3.2.4
 [3.2.3]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.2...v3.2.3
