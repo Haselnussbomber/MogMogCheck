@@ -24,6 +24,7 @@ on:
         options:
           - master
           - stg
+          - api15
 
 jobs:
   build:
@@ -63,6 +64,7 @@ jobs:
           DALAMUD_URL: |-
             ${{ case(
               github.event.inputs.dalamud_branch == 'stg' || github.event.ref == 'refs/heads/stg' || startsWith(github.event.head_commit.message, '[stg]'), 'https://goatcorp.github.io/dalamud-distrib/stg/latest.zip',
+              github.event.inputs.dalamud_branch == 'api15' || github.event.ref == 'refs/heads/api15' || startsWith(github.event.head_commit.message, '[api15]'), 'https://goatcorp.github.io/dalamud-distrib/api15/latest.zip',
               'https://goatcorp.github.io/dalamud-distrib/latest.zip'
             ) }}
         run: |
