@@ -14,7 +14,7 @@ using MogMogCheck.Tables;
 namespace MogMogCheck.Windows;
 
 [RegisterSingleton, AutoConstruct]
-public unsafe partial class ConfigWindow : SimpleWindow
+public partial class ConfigWindow : SimpleWindow
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly PluginConfig _pluginConfig;
