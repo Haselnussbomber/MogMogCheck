@@ -9,7 +9,6 @@ using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Utils;
 using HaselCommon.Windows;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
@@ -19,7 +18,7 @@ using MogMogCheck.Tables;
 namespace MogMogCheck.Windows;
 
 [RegisterSingleton, AutoConstruct]
-public unsafe partial class MainWindow : SimpleWindow
+public partial class MainWindow : SimpleWindow
 {
     private readonly WindowManager _windowManager;
     private readonly IGameInventory _gameInventory;
@@ -130,13 +129,13 @@ public unsafe partial class MainWindow : SimpleWindow
 
     private void DrawTomestoneCount()
     {
-        var scale = ImGuiHelpers.GlobalScale;
+        var scale = ImStyle.Scale;
         var items = _specialShopService.ShopItems;
         var tomestoneItem = _specialShopService.TomestoneItem;
 
         _textureProvider.DrawIcon(_itemService.GetItemIcon(tomestoneItem), 32 * scale);
 
-        ImGuiContextMenu.Draw("##Tomestone_ItemContextMenu", builder =>
+        ImGuiContextMenu.Draw("TomestoneItemContextMenu", builder =>
         {
             builder.AddItemFinder(tomestoneItem);
             builder.AddLinkItem(tomestoneItem);
@@ -145,7 +144,7 @@ public unsafe partial class MainWindow : SimpleWindow
         });
 
         ImGui.SameLine(45 * scale);
-        ImGuiUtils.PushCursorY(6 * scale);
+        ImCursor.Y += 6 * scale;
 
         var needed = 0u;
         for (var i = 0; i < items.Count; i++)

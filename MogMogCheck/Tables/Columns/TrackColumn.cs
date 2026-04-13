@@ -34,14 +34,14 @@ public partial class TrackColumn : Column<ShopItem>
         var item = row.ReceiveItems[0].Item;
 
         // Ensure LineHeight???
-        var pos = ImGui.GetCursorPos();
+        var pos = ImCursor.Position;
         ImGui.Dummy(new Vector2(ImGui.GetFrameHeightWithSpacing()));
-        ImGui.SetCursorPos(pos);
+        ImCursor.Position = pos;
 
         if (!_itemService.TryGetItem(item, out var itemRow))
             return;
 
-        ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
+        ImCursor.Y += MathF.Round(ImStyle.FramePadding.Y / 2f); // my cell padding
 
         ImGui.SetNextItemWidth(-1);
 
@@ -51,7 +51,7 @@ public partial class TrackColumn : Column<ShopItem>
                 savedAmount = 0;
 
             var isChecked = savedAmount > 0;
-            if (ImGui.Checkbox($"##Row{row.Index}", ref isChecked))
+            if (ImGui.Checkbox("##Row"u8, ref isChecked))
             {
                 if (isChecked)
                 {
@@ -85,7 +85,7 @@ public partial class TrackColumn : Column<ShopItem>
 
             var inputAmount = (int)savedAmount;
 
-            var changed = ImGui.DragInt($"##Row{row.Index}", ref inputAmount, 1, 0, (int)stackSize, $"%d / {stackSize}", ImGuiSliderFlags.AlwaysClamp);
+            var changed = ImGui.DragInt("##Row"u8, ref inputAmount, 1, 0, (int)stackSize, $"%d / {stackSize}", ImGuiSliderFlags.AlwaysClamp);
             if (changed && savedAmount != inputAmount)
             {
                 if (inputAmount > 0)

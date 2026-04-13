@@ -67,7 +67,7 @@ public partial class ConfigWindow : SimpleWindow
 
             if (_pluginConfig.TrackedItems.Any(kv => kv.Value > 1))
             {
-                ImGuiUtils.PushCursorY(-3);
+                ImCursor.Y -= 3 * ImStyle.Scale;
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
                 ImGui.TextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.ResetInfo"));
             }
@@ -106,7 +106,7 @@ public partial class ConfigWindow : SimpleWindow
         ImGui.Separator();
         ImGui.Spacing();
 
-        var cursorPos = ImGui.GetCursorPos();
+        var cursorPos = ImCursor.Position;
         var contentAvail = ImGui.GetContentRegionAvail();
 
         ImGuiUtils.DrawLink("GitHub", _textService.Translate("ConfigWindow.GitHubLink.Tooltip"), "https://github.com/Haselnussbomber/MogMogCheck");
@@ -131,7 +131,7 @@ public partial class ConfigWindow : SimpleWindow
         if (version != null)
         {
             var versionString = "v" + version.ToString(3);
-            ImGui.SetCursorPos(cursorPos + contentAvail - ImGui.CalcTextSize(versionString));
+            ImCursor.Position = cursorPos + contentAvail - ImGui.CalcTextSize(versionString);
             ImGui.TextDisabled(versionString);
         }
     }

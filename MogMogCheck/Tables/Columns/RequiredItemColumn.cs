@@ -32,7 +32,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
     public override void DrawColumn(ShopItem row)
     {
-        ImGuiUtils.PushCursorY(MathF.Round(ImGui.GetStyle().FramePadding.Y / 2f)); // my cell padding
+        ImCursor.Y += MathF.Round(ImStyle.FramePadding.Y / 2f); // my cell padding
 
         // TODO: add support for items 2 and 3 whenever it becomes necessary
         var (item, amount) = row.GiveItems[0];
@@ -44,7 +44,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
             TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey
         });
 
-        ImGuiContextMenu.Draw($"##RequiredItemColumnContextMenu{item}", builder =>
+        ImGuiContextMenu.Draw("RequiredItemColumnContextMenu", builder =>
         {
             builder.AddItemFinder(item);
             builder.AddLinkItem(item);

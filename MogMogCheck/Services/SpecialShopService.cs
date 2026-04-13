@@ -94,7 +94,7 @@ public partial class SpecialShopService : IDisposable
         HasData = true;
     }
 
-    private unsafe void Reset()
+    private void Reset()
     {
         if (!HasData)
             return;

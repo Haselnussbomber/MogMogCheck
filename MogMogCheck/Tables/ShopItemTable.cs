@@ -1,5 +1,5 @@
-using Dalamud.Interface.Utility;
 using Dalamud.Plugin;
+using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using MogMogCheck.Config;
 using MogMogCheck.Records;
@@ -42,12 +42,12 @@ public partial class ShopItemTable : Table<ShopItem>
 
     private void UpdateColumnWidth()
     {
-        _trackColumn.Width = ImGui.GetFrameHeight() / ImGuiHelpers.GlobalScale * (_pluginConfig.CheckboxMode ? 1 : 3);
+        _trackColumn.Width = ImGui.GetFrameHeight() / ImStyle.Scale * (_pluginConfig.CheckboxMode ? 1 : 3);
     }
 
     public override float CalculateLineHeight()
     {
-        return ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().CellPadding.Y * 2f;
+        return ImGui.GetFrameHeightWithSpacing() + ImStyle.CellPadding.Y * 2f;
     }
 
     public override void LoadRows()
