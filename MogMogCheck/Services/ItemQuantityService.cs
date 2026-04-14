@@ -65,6 +65,7 @@ public partial class ItemQuantityService : IDisposable
         if (_cache.TryGetValue(item, out var result))
             return result;
 
+        var mirageManager = MirageManager.Instance();
         var inventoryManager = InventoryManager.Instance();
         var itemFinderModule = ItemFinderModule.Instance();
         var retainerManager = RetainerManager.Instance();
@@ -81,7 +82,11 @@ public partial class ItemQuantityService : IDisposable
             count += itemFinderModule->PremiumSaddleBagItemCount[premiumSaddleBagIndex];
         }
 
-        if (itemFinderModule->GlamourDresserItemIds.Contains(item))
+        var prismBoxItems = mirageManager->PrismBoxLoaded
+            ? mirageManager->PrismBoxItemIds
+            : itemFinderModule->GlamourDresserItemIds;
+
+        if (prismBoxItems.Contains(item))
         {
             count += 1;
         }
