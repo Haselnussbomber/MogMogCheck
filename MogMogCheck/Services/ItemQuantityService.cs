@@ -3,19 +3,26 @@ using System.Linq;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using HaselCommon.Extensions;
+using HaselCommon.Services;
 using HaselCommon.Utils;
+using Lumina.Excel.Sheets;
+using Microsoft.Extensions.Logging;
+using Action = System.Action;
 
 namespace MogMogCheck.Caches;
 
 [RegisterSingleton, AutoConstruct]
 public partial class ItemQuantityService : IDisposable
 {
+    private readonly ILogger<ItemQuantityService> _logger;
     private readonly IClientState _clientState;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
+    private readonly ExcelService _excelService;
     private readonly Dictionary<uint, uint> _cache = []; // Key: ItemId, Value: Quantity
     private Debouncer _clearDebouncer;
 
@@ -91,6 +98,35 @@ public partial class ItemQuantityService : IDisposable
             count += 1;
         }
 
+        if (_excelService.TryGetRow<MirageStoreSetItemLookup>(item.ItemId, out var setLookupRow))
+        {
+            foreach (var setRef in setLookupRow.Item)
+            {
+                if (setRef.RowId == 0)
+                    continue;
+
+                if (!_excelService.TryGetRow<MirageStoreSetItem>(setRef.RowId, out var setRow))
+                    continue;
+
+                if (!setRow.TryGetSetItemBitArray(out var bitArray))
+                    continue;
+
+                foreach (var (itemIndex, itemRef) in setRow.Items.Index())
+                {
+                    if (itemRef.RowId == 0 || itemRef.RowId != item.ItemId)
+                        continue;
+
+                    if (!bitArray.TryGet(itemIndex, out var slotLocked))
+                        continue;
+
+                    if (slotLocked)
+                        continue;
+
+                    count += 1;
+                }
+            }
+        }
+
         if (retainerManager->IsReady)
         {
             foreach (var (_, retainerInventory) in itemFinderModule->RetainerInventories)
@@ -105,7 +141,7 @@ public partial class ItemQuantityService : IDisposable
                             for (var i = 0; i < container->GetSize(); i++)
                             {
                                 var slot = container->GetInventorySlot(i);
-                                if (slot != null && slot->GetItemId() == item)
+                                if (slot != null && slot->GetItemId() == item.ItemId)
                                 {
                                     count += slot->GetQuantity();
                                 }
