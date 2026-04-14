@@ -3,14 +3,13 @@
   <!-- Project settings -->
   <PropertyGroup>
     <Name>MogMogCheck</Name>
-    <Version>3.2.6</Version>
+    <Version>3.3.0</Version>
     <Author>Haselnussbomber</Author>
     <RepoUrl>https://github.com/Haselnussbomber/MogMogCheck</RepoUrl>
     <Punchline>Tracking assistant for Moogle Treasure Trove rewards.</Punchline>
     <Description>MogMogCheck is a small plugin to assist you in tracking the rewards of the Moogle Treasure Trove event (called Mog Mog Kollektion in German, hence the name).</Description>
     <LoadRequiredState>1</LoadRequiredState>
     <CanUnloadAsync>true</CanUnloadAsync>
-    <AcceptsFeedback>false</AcceptsFeedback>
   </PropertyGroup>
 
   <!-- Build settings -->

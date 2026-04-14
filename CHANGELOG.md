@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.3.0] (2026-04-14)
+
+- **Added:** The checkmark for equippable items is now also displayed when the item is collected in an Outfit.
+
 ## [3.2.6] (2026-03-24)
 
 Update for Patch 7.45.
@@ -139,7 +143,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.6...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.0...main
+[3.3.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.6...v3.3.0
 [3.2.6]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.5...v3.2.6
 [3.2.5]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.4...v3.2.5
 [3.2.4]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.3...v3.2.4
