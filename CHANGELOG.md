@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Fixed:** The title in the Triple Triad Card tooltip was incorrectly positioned.
+
 ## [3.3.0] (2026-04-14)
 
 - **Added:** The checkmark for equippable items is now also displayed when the item is collected in an Outfit.
