@@ -42,7 +42,7 @@ public partial class ShopItemTable : Table<ShopItem>
 
     private void UpdateColumnWidth()
     {
-        _trackColumn.Width = ImGui.GetFrameHeight() / ImStyle.Scale * (_pluginConfig.CheckboxMode ? 1 : 3);
+        _trackColumn.Width = ImStyle.FrameHeight / ImStyle.Scale * (_pluginConfig.CheckboxMode ? 1 : 3);
     }
 
     public override float CalculateLineHeight()

@@ -39,9 +39,9 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
         var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
 
-        _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImGui.GetFrameHeight())
+        _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImStyle.FrameHeight)
         {
-            TintColor = hasEnoughTomestones ? null : (Vector4)Color.Grey
+            TintColor = hasEnoughTomestones ? null : Color.Text700.ToVector()
         });
 
         ImGuiContextMenu.Draw("RequiredItemColumnContextMenu", builder =>

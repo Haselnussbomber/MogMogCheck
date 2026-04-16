@@ -69,7 +69,7 @@ public partial class ConfigWindow : SimpleWindow
             {
                 ImCursor.Y -= 3 * ImStyle.Scale;
                 using var descriptionIndent = ImGuiUtils.ConfigIndent();
-                ImGui.TextColoredWrapped(Color.Grey, _textService.Translate("Config.CheckboxMode.ResetInfo"));
+                ImGui.TextColoredWrapped(Color.Text700, _textService.Translate("Config.CheckboxMode.ResetInfo"));
             }
 
             using var indent = ImGuiUtils.ConfigIndent();
@@ -107,7 +107,7 @@ public partial class ConfigWindow : SimpleWindow
         ImGui.Spacing();
 
         var cursorPos = ImCursor.Position;
-        var contentAvail = ImGui.GetContentRegionAvail();
+        var contentAvail = ImStyle.ContentRegionAvail;
 
         ImGuiUtils.DrawLink("GitHub", _textService.Translate("ConfigWindow.GitHubLink.Tooltip"), "https://github.com/Haselnussbomber/MogMogCheck");
         ImGui.SameLine();

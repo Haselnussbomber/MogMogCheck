@@ -37,7 +37,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImCursor.Y += MathF.Round(ImStyle.FramePadding.Y / 2f); // my cell padding
 
         var (item, quantity) = row.ReceiveItems[0];
-        var iconSize = ImGui.GetFrameHeight();
+        var iconSize = ImStyle.FrameHeight;
         var isCollected = _itemService.IsUnlockedOrCollected(item);
         var grayOut = _pluginConfig.GrayOutCollectedItems && isCollected;
 
@@ -45,7 +45,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         {
             _textureProvider.DrawIcon(
                 new GameIconLookup(_itemService.GetItemIcon(item), item.IsHighQuality),
-                new DrawInfo(iconSize) { TintColor = grayOut ? Color.Grey.ToVector() : null });
+                new DrawInfo(iconSize) { TintColor = grayOut ? Color.Text700.ToVector() : null });
 
             ImGui.SameLine();
 
@@ -55,7 +55,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
                     $"{(quantity > 1 ? $"{quantity}x " : string.Empty)}{_itemService.GetItemName(item)}##Selectable{row.Index}",
                     false,
                     ImGuiSelectableFlags.None,
-                    new Vector2(ImGui.GetContentRegionAvail().X, iconSize - ImStyle.FramePadding.Y));
+                    new Vector2(ImStyle.ContentRegionAvail.X, iconSize - ImStyle.FramePadding.Y));
             }
         }
 
@@ -143,7 +143,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
         if (!string.IsNullOrEmpty(category))
         {
             ImCursor.Y -= 3 * ImStyle.Scale;
-            using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
+            using (ImRaii.PushColor(ImGuiCol.Text, Color.Text700))
                 ImGui.Text(category);
         }
 
@@ -234,11 +234,11 @@ public partial class RewardColumn : ColumnString<ShopItem>
         var addonRowId = isEx ? 9773u : 9772;
 
         var infoText = $"{_seStringEvaluator.EvaluateFromAddon(addonRowId, [order]).ExtractText()} - {card.Name}";
-        ImCursor.X -= ImStyle.IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - ImGui.CalcTextSize(infoText).X / 2f;
+        ImCursor.X += -ImStyle.IndentSpacing + ImStyle.ContentRegionAvail.X / 2f - ImGui.CalcTextSize(infoText).X / 2f;
         ImGui.Text(infoText);
 
         var cardSizeScaled = ImGuiHelpers.ScaledVector2(208, 256);
-        var cardStartPosX = ImCursor.X - ImStyle.IndentSpacing + ImGui.GetContentRegionAvail().X / 2f - cardSizeScaled.X / 2f;
+        var cardStartPosX = ImCursor.X - ImStyle.IndentSpacing + ImStyle.ContentRegionAvail.X / 2f - cardSizeScaled.X / 2f;
         var cardStartPos = new Vector2(cardStartPosX, ImCursor.Y);
 
         // draw background
@@ -389,7 +389,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
 
         ImGui.GetWindowDrawList().AddLine(
             ImCursor.ScreenPosition,
-            ImCursor.ScreenPosition + ImGui.GetContentRegionAvail().XOnly(),
+            ImCursor.ScreenPosition + ImStyle.ContentRegionAvail.XOnly(),
             ImGui.GetColorU32(ImGuiCol.Separator));
 
         ImCursor.Y += marginBottom * ImStyle.Scale;
