@@ -111,23 +111,19 @@ public partial class RewardColumn : ColumnString<ShopItem>
         ImGui.TableSetupColumn("Text"u8, ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImStyle.Scale));
 
         ImGui.TableNextColumn(); // Icon
+        var iconPos = ImCursor.ScreenPosition;
         ImGui.Image(icon.Handle, ImGuiHelpers.ScaledVector2(40));
 
         var isUnlocked = _itemService.IsUnlockedOrCollected(item);
-        if (isUnlocked)
+        if (isUnlocked && _textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var checkTex, out _))
         {
-            ImGui.SameLine(1 + ImStyle.CellPadding.X + itemInnerSpacing.X, 0);
-
-            if (_textureProvider.GetFromGame("ui/uld/RecipeNoteBook_hr1.tex").TryGetWrap(out var checkTex, out _))
-            {
-                var pos = ImCursor.ScreenPosition + ImGuiHelpers.ScaledVector2(40) / 2.1f;
-                ImGui.GetWindowDrawList().AddImage(
-                    checkTex.Handle,
-                    pos,
-                    pos + new Vector2(40 * ImStyle.Scale / 1.5f),
-                    new Vector2(0.6818182f, 0.21538462f),
-                    new Vector2(1, 0.4f));
-            }
+            var pos = iconPos + ImGuiHelpers.ScaledVector2(40) / 2.1f;
+            ImGui.GetWindowDrawList().AddImage(
+                checkTex.Handle,
+                pos,
+                pos + new Vector2(40 * ImStyle.Scale / 1.5f),
+                new Vector2(0.6818182f, 0.21538462f),
+                new Vector2(1, 0.4f));
         }
 
         ImGui.TableNextColumn(); // Text
@@ -135,9 +131,6 @@ public partial class RewardColumn : ColumnString<ShopItem>
         using var indent = ImRaii.PushIndent(1);
 
         ImGui.Text(title);
-
-        if (isUnlocked)
-            ImCursor.Y -= 40 * ImStyle.Scale / 2f - 3; // wtf
 
         var category = itemRow.ItemUICategory.IsValid ? itemRow.ItemUICategory.Value.Name.ToString() : null;
         if (!string.IsNullOrEmpty(category))
