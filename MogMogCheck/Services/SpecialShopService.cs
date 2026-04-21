@@ -80,7 +80,7 @@ public partial class SpecialShopService : IDisposable
                 if (giveItems.Length == 0)
                     return default;
 
-                return new ShopItem(item.Order, receiveItems, giveItems); // while I support multiple items here, it's not supported in the table
+                return new ShopItem(item.Order, receiveItems, giveItems, item.Quest); // while I support multiple items here, it's not supported in the table
             })
             .Where(item => item != default)
             .OrderBy(item => item.Index)

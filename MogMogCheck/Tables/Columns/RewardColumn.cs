@@ -3,6 +3,7 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using HaselCommon.Extensions;
 using HaselCommon.Game.Enums;
 using HaselCommon.Graphics;
@@ -24,6 +25,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
     private readonly ExcelService _excelService;
     private readonly UldService _uldService;
     private readonly ItemService _itemService;
+    private readonly TextService _textService;
     private readonly ITextureProvider _textureProvider;
     private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly TripleTriadNumberFont _tripleTriadNumberFont;
@@ -59,10 +61,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             }
         }
 
-        if (ImGui.IsItemHovered() && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
-        {
-            DrawItemTooltip(item);
-        }
+        var isHovered = ImGui.IsItemHovered();
 
         ImGuiContextMenu.Draw("RewardColumnContextMenu", builder =>
         {
@@ -73,6 +72,22 @@ public partial class RewardColumn : ColumnString<ShopItem>
             builder.AddItemSearch(item);
             builder.AddOpenOnGarlandTools("item", item);
         });
+
+        if (row.RequiredQuest.RowId != 0 && row.RequiredQuest.IsValid)
+        {
+            var questCompleted = QuestManager.IsQuestComplete(row.RequiredQuest.RowId);
+            var questIconBase = row.RequiredQuest.Value.EventIconType.Value.MapIconAvailable;
+            var questIconOffset = questCompleted ? 5 : 1u;
+            var questIconSize = ImStyle.FrameHeight;
+
+            ImGui.SameLine(ImStyle.ContentRegionAvail.X - questIconSize);
+            _textureProvider.DrawIcon(questIconBase + questIconOffset, questIconSize);
+        }
+
+        if (isHovered && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
+        {
+            DrawItemTooltip(row);
+        }
 
         if (isCollected)
         {
@@ -91,8 +106,10 @@ public partial class RewardColumn : ColumnString<ShopItem>
         }
     }
 
-    public void DrawItemTooltip(ItemHandle item, string? description = null)
+    public void DrawItemTooltip(ShopItem row, string? description = null)
     {
+        var item = row.ReceiveItems[0].Item;
+
         if (!_itemService.TryGetItem(item, out var itemRow) || !_textureProvider.TryGetFromGameIcon(_itemService.GetItemIcon(item), out var tex) || !tex.TryGetWrap(out var icon, out _))
             return;
 
@@ -154,6 +171,19 @@ public partial class RewardColumn : ColumnString<ShopItem>
             DrawSeparator(marginTop: 1, marginBottom: 4);
 
             ImGui.TextWrapped(description);
+        }
+
+        if (row.RequiredQuest.RowId != 0 && row.RequiredQuest.IsValid)
+        {
+            DrawSeparator(marginTop: 1, marginBottom: 4);
+
+            var questCompleted = QuestManager.IsQuestComplete(row.RequiredQuest.RowId);
+            var questName = _textService.GetQuestName(row.RequiredQuest.RowId);
+            var questStatus = questCompleted
+                ? _textService.Translate("Reward.RequiredQuest.Tooltip.Complete")
+                : _textService.Translate("Reward.RequiredQuest.Tooltip.Incomplete");
+
+            ImGui.TextWrapped(_textService.Translate("Reward.RequiredQuest.Tooltip", questName, questStatus));
         }
 
         if (!itemRow.ItemAction.TryGetRow(out var itemAction))
