@@ -81,7 +81,13 @@ public partial class RewardColumn : ColumnString<ShopItem>
             var questIconSize = ImStyle.FrameHeight;
 
             ImGui.SameLine(ImStyle.ContentRegionAvail.X - questIconSize);
+
             _textureProvider.DrawIcon(questIconBase + questIconOffset, questIconSize);
+
+            ImGuiContextMenu.Draw("RewardColumnQuestContextMenu", builder =>
+            {
+                builder.AddOpenOnGarlandTools("quest", row.RequiredQuest.RowId);
+            });
         }
 
         if (isHovered && !ImGui.IsKeyDown(ImGuiKey.LeftAlt))
