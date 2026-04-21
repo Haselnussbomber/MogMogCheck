@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.4.0] (2026-04-21)
+
+- **Added:** The required quest for item exchange is now displayed.
+
 ## [3.3.1] (2026-04-16)
 
 - **Fixed:** The title in the Triple Triad Card tooltip was incorrectly positioned.
@@ -147,7 +151,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.1...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.0...main
+[3.4.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.1...v3.4.0
 [3.3.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.6...v3.3.0
 [3.2.6]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.5...v3.2.6
