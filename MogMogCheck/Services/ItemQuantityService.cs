@@ -23,6 +23,7 @@ public partial class ItemQuantityService : IDisposable
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
     private readonly ExcelService _excelService;
+    private readonly MirageService _mirageService;
     private readonly Dictionary<uint, uint> _cache = []; // Key: ItemId, Value: Quantity
     private Debouncer _clearDebouncer;
 
@@ -108,18 +109,12 @@ public partial class ItemQuantityService : IDisposable
                 if (!_excelService.TryGetRow<MirageStoreSetItem>(setRef.RowId, out var setRow))
                     continue;
 
-                if (!setRow.TryGetSetItemBitArray(out var bitArray))
-                    continue;
-
-                foreach (var (itemIndex, itemRef) in setRow.Items.Index())
+                foreach (var (slotIndex, itemRef) in setRow.Items.Index())
                 {
                     if (itemRef.RowId == 0 || itemRef.RowId != item.ItemId)
                         continue;
 
-                    if (!bitArray.TryGet(itemIndex, out var slotLocked))
-                        continue;
-
-                    if (slotLocked)
+                    if (!_mirageService.IsSetSlotCollected(setRow.RowId, slotIndex))
                         continue;
 
                     count += 1;

@@ -120,10 +120,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             return;
 
         using var id = ImRaii.PushId("ItemTooltip"u8);
-
         using var tooltip = ImRaii.Tooltip();
-        if (!tooltip) return;
-
         using var popuptable = ImRaii.Table("PopupTable"u8, 2, ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.NoKeepColumnsVisible);
         if (!popuptable) return;
 

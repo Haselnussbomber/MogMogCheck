@@ -5,6 +5,7 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using HaselCommon.Gui;
