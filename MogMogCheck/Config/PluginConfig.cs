@@ -37,12 +37,6 @@ public partial class PluginConfig : IPluginConfiguration
         PluginInterface = pluginInterface;
         PluginLog = pluginLog;
 
-        SerializerOptions = new JsonSerializerOptions()
-        {
-            IncludeFields = true,
-            WriteIndented = true,
-        };
-
         var fileInfo = PluginInterface.ConfigFile;
         if (!fileInfo.Exists || fileInfo.Length < 2)
             return new();
