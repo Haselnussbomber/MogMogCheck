@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
@@ -7,29 +9,32 @@ using MogMogCheck.Config;
 
 namespace MogMogCheck;
 
-public sealed class Plugin : IDalamudPlugin
+[AutoConstruct]
+public partial class Plugin : IAsyncDalamudPlugin
 {
-    private readonly IHost _host;
+    private readonly IDalamudPluginInterface _pluginInterface;
+    private readonly IPluginLog _pluginLog;
+    private readonly IFramework _framework;
+    private IHost? _host;
 
-    public Plugin(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IFramework framework)
+    public Task LoadAsync(CancellationToken cancellationToken)
     {
         _host = new HostBuilder()
-            .UseContentRoot(pluginInterface.AssemblyLocation.Directory!.FullName)
+            .UseContentRoot(_pluginInterface.AssemblyLocation.Directory!.FullName)
             .ConfigureServices(services =>
             {
-                services.AddDalamud(pluginInterface);
-                services.AddConfig(PluginConfig.Load(pluginInterface, pluginLog));
+                services.AddDalamud(_pluginInterface);
+                services.AddConfig(PluginConfig.Load(_pluginInterface, _pluginLog));
                 services.AddHaselCommon();
                 services.AddMogMogCheck();
             })
             .Build();
 
-        framework.RunOnFrameworkThread(_host.Start);
+        return _host.StartOnFrameworkThread(_framework, cancellationToken);
     }
 
-    void IDisposable.Dispose()
+    public ValueTask DisposeAsync()
     {
-        _host.StopAsync().GetAwaiter().GetResult();
-        _host.Dispose();
+        return _host?.StopOnFrameworkThread(_framework) ?? ValueTask.CompletedTask;
     }
 }
