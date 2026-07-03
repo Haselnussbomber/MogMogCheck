@@ -4,9 +4,9 @@
     "net10.0-windows7.0": {
       "AutoCtor": {
         "type": "Direct",
-        "requested": "[2.12.0, )",
-        "resolved": "2.12.0",
-        "contentHash": "gkxeHDF73hQGBV/KVO1/e8KOoxhgEL0N+1DQSJzuPxnyEA5M1c+xO+KxvD/TXSzFqOJUqqCoL1QGbg8hAyEvBw=="
+        "requested": "[3.1.0, )",
+        "resolved": "3.1.0",
+        "contentHash": "Wc7TNqq/tQEqHvWPeIdyD4kbrNFhC+2hAjxLqN47QB3aE7z6dWZaE0UnV4JsZzfBGocPP2efchY1tmLvu3tx7Q=="
       },
       "DalamudPackager": {
         "type": "Direct",
@@ -22,12 +22,15 @@
       },
       "Injectio": {
         "type": "Direct",
-        "requested": "[5.1.0, )",
-        "resolved": "5.1.0",
-        "contentHash": "tHtbV+XCGYy7YbOsSteDIjbsQvpM5GM5Gj+6ecw6QxywelN6F6rUZIu4Pd6QiuAu+zJm8V6aKCEbQcPi7uurWw==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "9.0.9"
-        }
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "UrLWKpGTIliUPzKd0WnBAeXH3haZt7f13DESaWTUnTnpld5wAizlsJ9wwC5H8rs5APlmXIYDxfiDKIjnNpHdcw=="
+      },
+      "Roslynator.Analyzers": {
+        "type": "Direct",
+        "requested": "[4.15.0, )",
+        "resolved": "4.15.0",
+        "contentHash": "E8fu71Y+vzhniJKy1K13Rzwm8Vjcj7CDFBpflqncKUZfc3SzuF0kMBiyMmgXNPkjWTdE3Z+30HlGgYjHONZY/Q=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
