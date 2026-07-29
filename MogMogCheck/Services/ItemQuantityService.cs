@@ -25,7 +25,7 @@ public partial class ItemQuantityService : IDisposable
     private readonly ExcelService _excelService;
     private readonly MirageService _mirageService;
     private readonly Dictionary<uint, uint> _cache = []; // Key: ItemId, Value: Quantity
-    private Debouncer _clearDebouncer;
+    private IDebouncer _clearDebouncer;
 
     public event Action? Cleared;
 
