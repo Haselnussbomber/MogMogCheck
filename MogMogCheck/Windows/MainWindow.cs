@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -22,7 +20,6 @@ namespace MogMogCheck.Windows;
 public partial class MainWindow : SimpleWindow
 {
     private readonly WindowManager _windowManager;
-    private readonly IGameInventory _gameInventory;
     private readonly IClientState _clientState;
     private readonly TextService _textService;
     private readonly ItemService _itemService;
@@ -62,19 +59,6 @@ public partial class MainWindow : SimpleWindow
             },
             Click = (button) => _windowManager.CreateOrToggle<ConfigWindow>()
         });
-
-        _gameInventory.InventoryChangedRaw += OnInventoryChanged;
-    }
-
-    public override void Dispose()
-    {
-        _gameInventory.InventoryChangedRaw -= OnInventoryChanged;
-        base.Dispose();
-    }
-
-    private void OnInventoryChanged(IReadOnlyCollection<InventoryEventArgs> events)
-    {
-        _itemQuantityService.Clear();
     }
 
     public override void PreDraw()

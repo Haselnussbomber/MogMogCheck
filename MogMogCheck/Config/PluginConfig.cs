@@ -32,18 +32,17 @@ public partial class PluginConfig : IPluginConfiguration
     [JsonIgnore]
     private static IPluginLog? PluginLog;
 
-    public static PluginConfig Load(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog)
+    public static PluginConfig Load(IDalamudPluginInterface pluginInterface)
     {
         PluginInterface = pluginInterface;
-        PluginLog = pluginLog;
+        PluginLog = pluginInterface.GetRequiredService<IPluginLog>();
 
         var fileInfo = PluginInterface.ConfigFile;
         if (!fileInfo.Exists || fileInfo.Length < 2)
             return new();
 
         var json = File.ReadAllText(fileInfo.FullName);
-        var node = JsonNode.Parse(json);
-        if (node is not JsonObject)
+        if (JsonNode.Parse(json) is not JsonObject node)
             return new();
 
         return JsonSerializer.Deserialize<PluginConfig>(node, SerializerOptions) ?? new();
