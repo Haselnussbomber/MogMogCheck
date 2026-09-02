@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.4.1] (2026-09-02)
+
+Update for Patch 7.55.
+
 ## [3.4.0] (2026-04-21)
 
 - **Added:** The required quest for item exchange is now displayed.
@@ -151,7 +155,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.0...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.1...main
+[3.4.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.1...v3.4.0
 [3.3.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.2.6...v3.3.0
