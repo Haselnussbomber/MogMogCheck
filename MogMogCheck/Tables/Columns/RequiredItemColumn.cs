@@ -42,11 +42,11 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
             using var id = ImRaii.PushId(i);
 
             var (item, amount) = row.GiveItems[i];
-            var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
+            var hasEnough = _itemQuantityService.Get(item) >= amount;
 
             _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImStyle.FrameHeight)
             {
-                TintColor = hasEnoughTomestones ? null : Color.Text700.ToVector()
+                TintColor = hasEnough ? null : Color.Text700.ToVector()
             });
 
             ImGuiContextMenu.Draw("RequiredItemColumnContextMenu", builder =>
@@ -59,7 +59,7 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
 
             ImGui.SameLine(0, ImStyle.ItemInnerSpacing.X);
 
-            using (ImRaii.Disabled(!hasEnoughTomestones))
+            using (ImRaii.Disabled(!hasEnough))
                 ImGui.Text(amount.ToString());
 
             var it = new IterationArgs(i, giveItemCount);
