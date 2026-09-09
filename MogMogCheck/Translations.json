@@ -95,10 +95,8 @@
     "fr": "Objets échangeables"
   },
   "MogMogCheck.Tables.RequiredItemColumn.Label": {
-    "ja": "交換必要数",
-    "en": "Tomestones Required",
-    "de": "Benötigte Steine",
-    "fr": "Mémoquartz requis"
+    "en": "Required Items",
+    "de": "Benötigte Gegenstände"
   },
 
   "Reward.AmountInput.Tooltip.ResultOnly": {
