@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
@@ -34,27 +35,36 @@ public partial class RequiredItemColumn : ColumnNumber<ShopItem>
     {
         ImCursor.Y += MathF.Round(ImStyle.FramePadding.Y / 2f); // my cell padding
 
-        // TODO: add support for items 2 and 3 whenever it becomes necessary
-        var (item, amount) = row.GiveItems[0];
+        var giveItemCount = row.GiveItems.Count(tuple => !tuple.Item.IsEmpty && tuple.Amount > 0);
 
-        var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
-
-        _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImStyle.FrameHeight)
+        for (var i = 0; i < giveItemCount; i++)
         {
-            TintColor = hasEnoughTomestones ? null : Color.Text700.ToVector()
-        });
+            using var id = ImRaii.PushId(i);
 
-        ImGuiContextMenu.Draw("RequiredItemColumnContextMenu", builder =>
-        {
-            builder.AddItemFinder(item);
-            builder.AddLinkItem(item);
-            builder.AddCopyItemName(item);
-            builder.AddOpenOnGarlandTools("item", item);
-        });
+            var (item, amount) = row.GiveItems[i];
+            var hasEnoughTomestones = _itemQuantityService.Get(item) >= amount;
 
-        ImGui.SameLine();
+            _textureProvider.DrawIcon(_itemService.GetItemIcon(item), new DrawInfo(ImStyle.FrameHeight)
+            {
+                TintColor = hasEnoughTomestones ? null : Color.Text700.ToVector()
+            });
 
-        using (ImRaii.Disabled(!hasEnoughTomestones))
-            ImGui.Text(amount.ToString());
+            ImGuiContextMenu.Draw("RequiredItemColumnContextMenu", builder =>
+            {
+                builder.AddItemFinder(item);
+                builder.AddLinkItem(item);
+                builder.AddCopyItemName(item);
+                builder.AddOpenOnGarlandTools("item", item);
+            });
+
+            ImGui.SameLine(0, ImStyle.ItemInnerSpacing.X);
+
+            using (ImRaii.Disabled(!hasEnoughTomestones))
+                ImGui.Text(amount.ToString());
+
+            var it = new IterationArgs(i, giveItemCount);
+            if (!it.IsLast)
+                ImGui.SameLine();
+        }
     }
 }
