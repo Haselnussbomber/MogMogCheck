@@ -189,7 +189,7 @@ public partial class RewardColumn : ColumnString<ShopItem>
             ImGui.TextWrapped(_textService.Translate("Reward.RequiredQuest.Tooltip", questName, questStatus));
         }
 
-        if (!itemRow.ItemAction.TryGetRow(out var itemAction))
+        if (!itemRow.ItemAction.TryGetValue(out var itemAction))
             return;
 
         switch ((ItemActionType)itemAction.Action.RowId)
