@@ -52,7 +52,7 @@ public partial class SpecialShopService : IDisposable
             return;
 
         if (!_excelService.TryGetRow<CSBonusSeason>(manager->EventInfo.Season, out var seasonRow) ||
-            !_excelService.TryGetRow<SpecialShop>(ShopId = manager->EventInfo.Season == 0 ? 1770710u : 1769929, out var currentShop))
+            !_excelService.TryGetRow<SpecialShop>(ShopId = manager->EventInfo.Season == 0 ? 1769929u : 1770710, out var currentShop))
         {
             Reset();
             return;
