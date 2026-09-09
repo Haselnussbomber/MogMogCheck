@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.5.0] (2026-09-09)
+
+- **Added:** The required Uolon Horn Tokens are now also displayed on the Uolon Horn item.
+- **Fixed:** The shop of the second week was already displayed in the first week of the event.
+
 ## [3.4.1] (2026-09-02)
 
 Update for Patch 7.55.
@@ -155,7 +160,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.1...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.5.0...main
+[3.5.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.1...v3.5.0
 [3.4.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.1...v3.4.0
 [3.3.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.0...v3.3.1
