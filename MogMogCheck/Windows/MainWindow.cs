@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
@@ -30,6 +31,7 @@ public partial class MainWindow : SimpleWindow
     private readonly AutoUntrackService _autoUntrackService;
     private readonly ShopItemTable _table;
     private bool _hasClearedUntrackedItems;
+    private HashSet<uint> _processedItems = [];
 
     private bool IsConfigWindowOpen => _windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen;
 
@@ -132,9 +134,18 @@ public partial class MainWindow : SimpleWindow
         ImCursor.Y += 6 * scale;
 
         var needed = 0u;
+        _processedItems.Clear();
         for (var i = 0; i < items.Count; i++)
         {
-            needed += _pluginConfig.TrackedItems.TryGetValue(items[i].ReceiveItems[0].Item, out var amount) ? amount * items[i].GiveItems[0].Amount : 0u;
+            var recieveItem = items[i].ReceiveItems[0].Item;
+
+            if (!_processedItems.Add(recieveItem))
+                continue;
+
+            if (!_pluginConfig.TrackedItems.TryGetValue(recieveItem, out var count))
+                continue;
+
+            needed += items[i].GiveItems[0].Amount * count;
         }
 
         var quantity = _itemQuantityService.Get(tomestoneItem);
