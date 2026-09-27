@@ -123,7 +123,9 @@ public partial class MainWindow : SimpleWindow
 
     private void DrawTomestoneCount(uint itemId)
     {
-        _textureProvider.DrawIcon(_itemService.GetItemIcon(itemId), ImStyle.FrameHeight);
+        var startY = ImCursor.Y;
+
+        _textureProvider.DrawIcon(_itemService.GetItemIcon(itemId), 32 * ImStyle.Scale);
 
         ImGuiContextMenu.Draw("TomestoneItemContextMenu" + itemId.ToString(), builder =>
         {
@@ -134,7 +136,7 @@ public partial class MainWindow : SimpleWindow
         });
 
         ImGui.SameLine(0, ImCursor.X);
-        ImCursor.Y += 2 * ImStyle.Scale;
+        ImCursor.Y = startY + 16 * ImStyle.Scale / 2f - 1.5f; // idk lol
 
         var needed = 0u;
         _processedItems.Clear();
