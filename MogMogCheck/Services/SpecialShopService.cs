@@ -25,7 +25,8 @@ public partial class SpecialShopService : IDisposable
 
     public bool HasData { get; private set; }
     public uint ShopId { get; private set; }
-    public ItemHandle TomestoneItem { get; private set; }
+    public ItemHandle TomestoneItem1 { get; private set; }
+    public ItemHandle TomestoneItem2 { get; private set; }
     public IReadOnlyList<ShopItem> ShopItems { get; private set; } = [];
 
     [AutoPostConstruct]
@@ -59,7 +60,8 @@ public partial class SpecialShopService : IDisposable
         }
 
         _seasonTarget = manager->EventInfo.SeasonTarget;
-        TomestoneItem = seasonRow.Item.RowId;
+        TomestoneItem1 = seasonRow.Item.RowId;
+        TomestoneItem2 = seasonRow.Unknown13;
 
         ShopItems = currentShop.Item
             .Select(item =>
@@ -103,7 +105,8 @@ public partial class SpecialShopService : IDisposable
 
         _seasonTarget = null;
         ShopId = 0;
-        TomestoneItem = 0;
+        TomestoneItem1 = 0;
+        TomestoneItem2 = 0;
         ShopItems = [];
     }
 }

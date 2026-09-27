@@ -110,34 +110,37 @@ public partial class MainWindow : SimpleWindow
             return;
         }
 
-        DrawTomestoneCount();
+        DrawTomestoneCount(_specialShopService.TomestoneItem1);
+        if (_specialShopService.TomestoneItem2 != 0)
+        {
+            ImGui.SameLine();
+            DrawTomestoneCount(_specialShopService.TomestoneItem2);
+        }
+        ImCursor.Y += 1;
+
         _table.Draw();
     }
 
-    private void DrawTomestoneCount()
+    private void DrawTomestoneCount(uint itemId)
     {
-        var scale = ImStyle.Scale;
-        var items = _specialShopService.ShopItems;
-        var tomestoneItem = _specialShopService.TomestoneItem;
+        _textureProvider.DrawIcon(_itemService.GetItemIcon(itemId), ImStyle.FrameHeight);
 
-        _textureProvider.DrawIcon(_itemService.GetItemIcon(tomestoneItem), 32 * scale);
-
-        ImGuiContextMenu.Draw("TomestoneItemContextMenu", builder =>
+        ImGuiContextMenu.Draw("TomestoneItemContextMenu" + itemId.ToString(), builder =>
         {
-            builder.AddItemFinder(tomestoneItem);
-            builder.AddLinkItem(tomestoneItem);
-            builder.AddCopyItemName(tomestoneItem);
-            builder.AddOpenOnGarlandTools("item", tomestoneItem);
+            builder.AddItemFinder(itemId);
+            builder.AddLinkItem(itemId);
+            builder.AddCopyItemName(itemId);
+            builder.AddOpenOnGarlandTools("item", itemId);
         });
 
-        ImGui.SameLine(45 * scale);
-        ImCursor.Y += 6 * scale;
+        ImGui.SameLine(0, ImCursor.X);
+        ImCursor.Y += 2 * ImStyle.Scale;
 
         var needed = 0u;
         _processedItems.Clear();
-        for (var i = 0; i < items.Count; i++)
+        foreach (var item in _specialShopService.ShopItems)
         {
-            var recieveItem = items[i].ReceiveItems[0].Item;
+            var recieveItem = item.ReceiveItems[0].Item;
 
             if (!_processedItems.Add(recieveItem))
                 continue;
@@ -145,10 +148,17 @@ public partial class MainWindow : SimpleWindow
             if (!_pluginConfig.TrackedItems.TryGetValue(recieveItem, out var count))
                 continue;
 
-            needed += items[i].GiveItems[0].Amount * count;
+            foreach (var giveItem in item.GiveItems)
+            {
+                if (giveItem.Item.ItemId == itemId)
+                {
+                    needed += giveItem.Amount * count;
+                    break;
+                }
+            }
         }
 
-        var quantity = _itemQuantityService.Get(tomestoneItem);
+        var quantity = _itemQuantityService.Get(itemId);
         if (needed > quantity)
         {
             var remaining = needed - quantity;
