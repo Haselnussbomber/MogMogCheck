@@ -110,18 +110,18 @@ public partial class MainWindow : SimpleWindow
             return;
         }
 
-        DrawTomestoneCount(_specialShopService.CurrencyItem1);
+        DrawCurrency(_specialShopService.CurrencyItem1);
         if (_specialShopService.CurrencyItem2 != 0)
         {
             ImGui.SameLine();
-            DrawTomestoneCount(_specialShopService.CurrencyItem2);
+            DrawCurrency(_specialShopService.CurrencyItem2);
         }
         ImCursor.Y += 1;
 
         _table.Draw();
     }
 
-    private void DrawTomestoneCount(uint itemId)
+    private void DrawCurrency(uint itemId)
     {
         var startY = ImCursor.Y;
 
