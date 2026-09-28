@@ -1,10 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
-using HaselCommon.Extensions;
+using HaselCommon.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MogMogCheck.Config;
 
 namespace MogMogCheck;
 
@@ -26,8 +25,8 @@ public partial class Plugin : IAsyncDalamudPlugin
             })
             .ConfigureServices(services =>
             {
-                services.AddDalamud(_pluginInterface);
-                services.AddConfig(PluginConfig.Load(_pluginInterface));
+                services.AddSingleton(new PluginAssembly(GetType().Assembly));
+                services.AddSingleton(_pluginInterface);
                 services.AddHaselCommon();
                 services.AddMogMogCheck();
             })
