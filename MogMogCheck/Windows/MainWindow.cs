@@ -110,11 +110,11 @@ public partial class MainWindow : SimpleWindow
             return;
         }
 
-        DrawTomestoneCount(_specialShopService.TomestoneItem1);
-        if (_specialShopService.TomestoneItem2 != 0)
+        DrawTomestoneCount(_specialShopService.CurrencyItem1);
+        if (_specialShopService.CurrencyItem2 != 0)
         {
             ImGui.SameLine();
-            DrawTomestoneCount(_specialShopService.TomestoneItem2);
+            DrawTomestoneCount(_specialShopService.CurrencyItem2);
         }
         ImCursor.Y += 1;
 
