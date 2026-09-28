@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.6.0] (2026-09-28)
+
+- **Added:** The secondary currency (Uolon Horn Token) is now also displayed at the very top of the window. The progress text has been shortened to accommodate for this.
+
 ## [3.5.0] (2026-09-09)
 
 - **Added:** The required Uolon Horn Tokens are now also displayed on the Uolon Horn item.
@@ -160,7 +164,8 @@ Update for Patch 6.5.
 
 First release. 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.5.0...main
+[Unreleased]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.6.0...main
+[3.6.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.1...v3.5.0
 [3.4.1]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/Haselnussbomber/MogMogCheck/compare/v3.3.1...v3.4.0
