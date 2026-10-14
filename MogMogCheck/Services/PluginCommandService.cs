@@ -4,7 +4,6 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using HaselCommon.Services.Commands;
-using Microsoft.Extensions.Hosting;
 using MogMogCheck.Windows;
 
 namespace MogMogCheck.Services;

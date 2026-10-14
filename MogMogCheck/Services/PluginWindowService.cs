@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using HaselCommon.Services;
 using Lumina.Excel.Sheets;
-using Microsoft.Extensions.Hosting;
 using MogMogCheck.Config;
 using MogMogCheck.Windows;
 

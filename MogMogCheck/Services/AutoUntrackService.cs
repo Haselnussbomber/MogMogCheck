@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MogMogCheck.Caches;
 using MogMogCheck.Config;
